@@ -54,13 +54,18 @@
                 >Dashboard</a
               >
             </li>
+
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+              <a
+                class="nav-link active"
+                aria-current="page"
+                href="{% url 'dashboard' %}"
+                >Profile</a
+              >
             </li>
-            <li class="nav-item">
-              <a class="nav-link"><b>{{request.user.username}}</b></a>
-            </li>
-            <form class="d-flex" role="search">
+
+            <!--
+               <form class="d-flex" role="search">
               <input
                 class="form-control me-2"
                 type="search"
@@ -71,6 +76,20 @@
                 Search
               </button>
             </form>
+            
+            -->
+
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+            </li>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <li class="nav-item">
+              <a class="nav-link"
+                ><b> Hi , User : {{request.user.username}}</b></a
+              >
+            </li>
           </ul>
         </div>
       </div>

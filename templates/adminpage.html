@@ -1,11 +1,437 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-  </head>
-  <body>
-    <h1>welcome admin {{request.user.username}}</h1>
-  </body>
-</html>
+{% extends "adminnav.html" %} {% load static %} {% block content %}
+
+<style>
+  :root {
+    --primary-color: #6366f1;
+    --primary-light: #a5b4fc;
+    --hover-color: #4f46e5;
+    --success-color: #10b981;
+    --warning-color: #f59e0b;
+    --danger-color: #ef4444;
+    --card-bg: #ffffff;
+    --text-dark: #1e293b;
+    --text-light: #64748b;
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  body {
+    background-color: #f8fafc;
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+      sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  .dashboard-container {
+    flex: 1;
+    padding: 2rem 0;
+  }
+
+  .dashboard-header {
+    margin-bottom: 2rem;
+  }
+
+  .dashboard-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 0.5rem;
+  }
+
+  .dashboard-subtitle {
+    color: var(--text-light);
+    font-size: 1rem;
+  }
+
+  .stat-card {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 1.75rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow-md);
+    transition: var(--transition);
+    border-top: 4px solid var(--primary-color);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stat-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: var(--primary-color);
+  }
+
+  .stat-card.pending::before {
+    background: var(--warning-color);
+  }
+
+  .stat-card.accepted::before {
+    background: var(--success-color);
+  }
+
+  .stat-card.rejected::before {
+    background: var(--danger-color);
+  }
+
+  .stat-card.all::before {
+    background: linear-gradient(
+      90deg,
+      var(--primary-color),
+      var(--success-color)
+    );
+  }
+
+  .stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .stat-value {
+    font-size: 2.75rem;
+    font-weight: 800;
+    color: var(--text-dark);
+    margin-bottom: 0.25rem;
+    display: flex;
+    align-items: center;
+  }
+
+  .stat-icon {
+    font-size: 1.5rem;
+    margin-right: 0.75rem;
+    color: var(--primary-color);
+  }
+
+  .stat-card.pending .stat-icon {
+    color: var(--warning-color);
+  }
+
+  .stat-card.accepted .stat-icon {
+    color: var(--success-color);
+  }
+
+  .stat-card.rejected .stat-icon {
+    color: var(--danger-color);
+  }
+
+  .stat-card.all .stat-icon {
+    background: linear-gradient(
+      90deg,
+      var(--primary-color),
+      var(--success-color)
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .stat-title {
+    font-size: 1.1rem;
+    color: var(--text-light);
+    margin-bottom: 0;
+    font-weight: 500;
+  }
+
+  .stat-link {
+    text-decoration: none;
+    transition: var(--transition);
+  }
+
+  .stat-link:hover {
+    opacity: 0.9;
+  }
+
+  .stat-meta {
+    display: flex;
+    align-items: center;
+    margin-top: 1rem;
+    font-size: 0.875rem;
+    color: var(--text-light);
+  }
+
+  .trend-indicator {
+    display: flex;
+    align-items: center;
+    margin-left: 0.5rem;
+    font-weight: 600;
+  }
+
+  .trend-up {
+    color: var(--success-color);
+  }
+
+  .trend-down {
+    color: var(--danger-color);
+  }
+
+  .footer {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    color: white;
+    padding: 2.5rem 0 1.5rem;
+    position: relative;
+  }
+
+  .footer::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 8px;
+    background: linear-gradient(
+      90deg,
+      var(--primary-color),
+      var(--success-color)
+    );
+  }
+
+  .footer-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .footer-logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    background: linear-gradient(
+      90deg,
+      var(--primary-color),
+      var(--success-color)
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .footer-text {
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+    max-width: 600px;
+    line-height: 1.6;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .footer-link {
+    color: var(--primary-light);
+    text-decoration: none;
+    transition: var(--transition);
+  }
+
+  .footer-link:hover {
+    color: white;
+    text-decoration: underline;
+  }
+
+  .copyright {
+    font-size: 0.875rem;
+    opacity: 0.8;
+    margin-top: 1rem;
+  }
+
+  .social-links {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .social-link {
+    color: white;
+    background: rgba(255, 255, 255, 0.1);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+  }
+
+  .social-link:hover {
+    background: var(--primary-color);
+    transform: translateY(-3px);
+  }
+
+  @media (max-width: 768px) {
+    .stat-value {
+      font-size: 2.25rem;
+    }
+
+    .footer-links {
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+  }
+</style>
+
+<div class="dashboard-container">
+  <div class="container">
+    <div class="dashboard-header">
+      <h1 class="dashboard-title">Admin Dashboard</h1>
+      <p class="dashboard-subtitle">
+        Current Admin :
+        <b style="color=red;"> {{request.user.username}}</b>
+      </p>
+    </div>
+
+    <div class="row">
+      <!-- Pending Notes Card -->
+      <div class="col-lg-3 col-md-6">
+        <a href="#" class="stat-link">
+          <div class="stat-card pending">
+            <div class="stat-value">
+              <i class="fas fa-clock stat-icon"></i>
+              {{pn}}
+            </div>
+            <h3 class="stat-title">Pending Notes</h3>
+            <div class="stat-meta">
+              <!--<span>Last 7 days</span>
+              <span class="trend-indicator trend-up">
+                <i class="fas fa-arrow-up"></i> 12%
+              </span>-->
+            </div>
+          </div>
+        </a>
+      </div>
+
+      <!-- Accepted Notes Card -->
+      <div class="col-lg-3 col-md-6">
+        <a href="#" class="stat-link">
+          <div class="stat-card accepted">
+            <div class="stat-value">
+              <i class="fas fa-check-circle stat-icon"></i>
+              {{an}}
+            </div>
+            <h3 class="stat-title">Accepted Notes</h3>
+            <div class="stat-meta">
+              <!--
+              <span>Last 7 days</span>
+              <span class="trend-indicator trend-up">
+                <i class="fas fa-arrow-up"></i> 24%
+              </span>-->
+            </div>
+          </div>
+        </a>
+      </div>
+
+      <!-- Rejected Notes Card -->
+      <div class="col-lg-3 col-md-6">
+        <a href="#" class="stat-link">
+          <div class="stat-card rejected">
+            <div class="stat-value">
+              <i class="fas fa-times-circle stat-icon"></i>
+              {{rn}}
+            </div>
+            <h3 class="stat-title">Rejected Notes</h3>
+            <div class="stat-meta">
+              <!--<span>Last 7 days</span>
+              <span class="trend-indicator trend-down">
+                <i class="fas fa-arrow-down"></i> 8%
+              </span>-->
+            </div>
+          </div>
+        </a>
+      </div>
+
+      <!-- All Notes Card -->
+      <div class="col-lg-3 col-md-6">
+        <a href="#" class="stat-link">
+          <div class="stat-card all">
+            <div class="stat-value">
+              <i class="fas fa-book stat-icon"></i>
+              {{all}}
+            </div>
+            <h3 class="stat-title">All Notes</h3>
+            <div class="stat-meta">
+              <span>Total collection</span>
+              <!-- 
+                <span class="trend-indicator trend-up">
+                <i class="fas fa-arrow-up"></i> 18%
+              </span>
+              -->
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-content">
+      <div class="footer-logo">Note Sharing System</div>
+      <p class="footer-text">
+        A modern notes management system designed for educators and students to
+        share knowledge seamlessly.
+      </p>
+      <!--
+        <div class="footer-links">
+        <a href="#" class="footer-link">About</a>
+        <a href="#" class="footer-link">Features</a>
+        <a href="#" class="footer-link">Documentation</a>
+        <a href="#" class="footer-link">Contact</a>
+      </div>
+      
+      -->
+
+      <div class="social-links">
+        <a
+          href="https://www.linkedin.com/in/binod-raj-pant-303767330/"
+          class="social-link"
+          target="_blank"
+          ><i class="fab fa-linkedin-in"></i
+        ></a>
+        <a
+          href="https://www.facebook.com/Binod.r.pant.69"
+          target="_blank"
+          class="social-link"
+          ><i class="fab fa-facebook-f"></i
+        ></a>
+        <a
+          href="https://www.instagram.com/i.was.binod/"
+          target="_blank"
+          class="social-link"
+          ><i class="fab fa-instagram"></i
+        ></a>
+        <a
+          href="https://github.com/Just-Binod"
+          target="_blank"
+          class="social-link"
+          ><i class="fab fa-github"></i
+        ></a>
+      </div>
+
+      <p class="copyright">
+        &copy;
+        <script>
+          document.write(new Date().getFullYear());
+        </script>
+        NoteSharingSystem. All rights reserved.
+        <br />
+        Made with <i class="fas fa-heart" style="color: #ef4444"></i> by Binod
+        Raj Pant
+      </p>
+    </div>
+  </div>
+</footer>
+
+<!-- Font Awesome for icons -->
+<script
+  src="https://kit.fontawesome.com/a076d05399.js"
+  crossorigin="anonymous"
+></script>
+
+{% endblock content %}

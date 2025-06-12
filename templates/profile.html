@@ -1,0 +1,116 @@
+{% extends "usernav.html" %} {% load static %} {% block content %}
+
+<style>
+  :root {
+    --primary-color: #4361ee;
+    --secondary-color: #3f37c9;
+    --text-dark: #2b2d42;
+    --text-light: #8d99ae;
+    --bg-light: #f8f9fa;
+    --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  }
+
+  .profile-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: var(--card-shadow);
+  }
+
+  .profile-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    position: relative;
+  }
+
+  .profile-header h2 {
+    color: var(--primary-color);
+    font-weight: 700;
+    position: relative;
+    display: inline-block;
+  }
+
+  .profile-header h2::after {
+    content: "";
+    position: absolute;
+    width: 50px;
+    height: 3px;
+    background: var(--primary-color);
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 3px;
+  }
+
+  .profile-detail {
+    padding: 1.2rem 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+  }
+
+  .profile-detail:hover {
+    background: var(--bg-light);
+    padding-left: 1rem;
+    border-radius: 8px;
+  }
+
+  .detail-label {
+    font-weight: 600;
+    color: var(--text-dark);
+    font-size: 1.1rem;
+  }
+
+  .detail-value {
+    color: var(--text-light);
+    font-size: 1rem;
+    text-transform: capitalize;
+  }
+
+  .edit-btn {
+    background: var(--primary-color);
+    border: none;
+    padding: 0.8rem 2rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    margin-top: 2rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .edit-btn:hover {
+    background: var(--secondary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+  }
+
+  .edit-btn i {
+    margin-right: 8px;
+  }
+
+  @media (max-width: 768px) {
+    .profile-container {
+      padding: 1.5rem;
+    }
+
+    .profile-detail {
+      padding: 1rem 0;
+    }
+  }
+</style>
+
+<div class="profile-container">
+  <div class="profile-header">
+    <h2>My Profile</h2>
+  </div>
+
+  <div class="profile-detail row align-items-center">
+    <div class="col-md-4 detail-label">Full Name</div>
+    <div class="col-md-8 detail-value">{{request.user.username}}</div>
+  </div>
+</div>
+
+{% endblock content %}

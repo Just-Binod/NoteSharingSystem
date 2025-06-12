@@ -1,4 +1,5 @@
-{% extends "app.html" %} {% block content %}
+{% extends "app.html" %} {% comment %} {% extends "app.html" %} {% block content
+%}
 
 <div class="row justify-content-center">
   <div class="col-sm-6">
@@ -44,6 +45,113 @@
         >
       </button>
     </form>
+  </div>
+</div>
+
+{% endblock content %} {% endcomment %} {% block content %} {% comment %}
+<div class="row justify-content-center">
+  <div class="col-sm-6">
+    <h2 class="text-muted">Login</h2>
+
+    {% if form.non_field_errors %}
+    <small class="text-danger"> {{ form.non_field_errors.as_ul }} </small>
+    {% endif %}
+
+    <form action="{% url 'login' %}" method="POST">
+      {% csrf_token %}
+
+      <div class="form-group">
+        <label for="id_email">Email</label>
+        <input
+          type="email"
+          name="email"
+          class="form-control"
+          id="id_email"
+          value="{{ form.email.value|default_if_none:'' }}"
+        />
+        <span class="text-danger">{{ form.email.errors }}</span>
+      </div>
+
+      <div class="form-group">
+        <label for="id_password">Password</label>
+        <input
+          type="password"
+          name="password"
+          class="form-control"
+          id="id_password"
+          value="{{ form.password.value|default_if_none:'' }}"
+        />
+        <span class="text-danger">{{ form.password.errors }}</span>
+      </div>
+
+      <br />
+      <button type="submit" class="btn-dark">Login</button>
+      <br /><br />
+      <label>Oh, I don't have any Account!</label><br /><br />
+      <a href="{% url 'register' %}" class="btn btn-default"
+        >Create New Account</a
+      >
+    </form>
+  </div>
+</div>
+{% endcomment %}
+
+<div class="row justify-content-center my-5">
+  <div class="col-md-5 col-lg-4 p-4 border rounded shadow-sm bg-white">
+    <h2 class="text-center mb-4 text-secondary">Login</h2>
+
+    {% if form.non_field_errors %}
+    <div class="alert alert-danger">{{ form.non_field_errors.as_ul }}</div>
+    {% endif %}
+
+    <form action="{% url 'login' %}" method="POST" novalidate>
+      {% csrf_token %}
+
+      <div class="mb-3">
+        <label for="id_email" class="form-label fw-semibold">Email</label>
+        <input
+          type="email"
+          name="email"
+          class="form-control {% if form.email.errors %}is-invalid{% endif %}"
+          id="id_email"
+          value="{{ form.email.value|default_if_none:'' }}"
+          placeholder="Enter your email"
+          required
+          autofocus
+        />
+        {% if form.email.errors %}
+        <div class="invalid-feedback">
+          {{ form.email.errors.as_text|striptags }}
+        </div>
+        {% endif %}
+      </div>
+
+      <div class="mb-4">
+        <label for="id_password" class="form-label fw-semibold">Password</label>
+        <input
+          type="password"
+          name="password"
+          class="form-control {% if form.password.errors %}is-invalid{% endif %}"
+          id="id_password"
+          placeholder="Enter your password"
+          required
+        />
+        {% if form.password.errors %}
+        <div class="invalid-feedback">
+          {{ form.password.errors.as_text|striptags }}
+        </div>
+        {% endif %}
+      </div>
+
+      <button type="submit" class="btn btn-dark w-100 fw-bold">Login</button>
+    </form>
+
+    <div class="text-center mt-4">
+      <p class="mb-2 text-muted">Don't have an account yet?</p>
+      <a href="{% url 'register' %}" class="btn btn-outline-dark px-4">
+        Create New Account
+      </a>
+    </div>
   </div>
 </div>
 
