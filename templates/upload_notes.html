@@ -1,0 +1,279 @@
+{% extends "usernav.html" %} {% load static %} {% block content %} {% comment %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+          <h2 class="text-center mb-0">Upload Notes</h2>
+        </div>
+        <div class="card-body">
+          <!-- Error Message Display -->
+          {% if error == "yes" %}
+          <div
+            class="alert alert-danger alert-dismissible fade show"
+            role="alert"
+          >
+            <strong>Error!</strong> {{ error_message }}
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="alert"
+              aria-label="Close"
+            ></button>
+          </div>
+          {% endif %}
+
+          <!-- Success Message -->
+          {% if success %}
+          <div
+            class="alert alert-success alert-dismissible fade show"
+            role="alert"
+          >
+            <strong>Success!</strong> Your notes have been uploaded
+            successfully.
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="alert"
+              aria-label="Close"
+            ></button>
+          </div>
+          {% endif %}
+
+          <form method="post" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+
+            <!-- Title Field -->
+            <div class="form-group mb-3">
+              <label class="fw-bold">Title*</label>
+              <input
+                type="text"
+                class="form-control form-control-lg {% if field_errors.title %}is-invalid{% endif %}"
+                placeholder="Enter Note Title"
+                name="title"
+                value="{{ form_data.title|default:'' }}"
+                required
+              />
+              {% if field_errors.title %}
+              <div class="invalid-feedback">Please enter a valid title</div>
+              {% endif %}
+            </div>
+
+            <!-- Subject Field -->
+            <div class="form-group mb-3">
+              <label class="fw-bold">Subject*</label>
+              <input
+                type="text"
+                class="form-control form-control-lg {% if field_errors.subject_name %}is-invalid{% endif %}"
+                placeholder="Enter Subject Name"
+                name="subject_name"
+                value="{{ form_data.subject_name|default:'' }}"
+                required
+              />
+              {% if field_errors.subject_name %}
+              <div class="invalid-feedback">Please enter a subject</div>
+              {% endif %}
+            </div>
+
+            <!-- Description Field -->
+            <div class="form-group mb-3">
+              <label class="fw-bold">Description*</label>
+              <textarea
+                class="form-control {% if field_errors.description %}is-invalid{% endif %}"
+                placeholder="Enter detailed description"
+                name="description"
+                rows="5"
+                required
+              >
+{{ form_data.description|default:'' }}</textarea
+              >
+              {% if field_errors.description %}
+              <div class="invalid-feedback">Please enter a description</div>
+              {% endif %}
+            </div>
+
+            <!-- File Upload Field -->
+            <div class="form-group mb-4">
+              <label class="fw-bold">Notes File*</label>
+              <input
+                type="file"
+                class="form-control {% if field_errors.notes_file %}is-invalid{% endif %}"
+                name="notes_file"
+                required
+                accept=".pdf,.jpg,.jpeg,.png"
+              />
+              {% if field_errors.notes_file %}
+              <div class="invalid-feedback">{{ field_errors.notes_file }}</div>
+              {% endif %}
+              <small class="form-text text-muted">
+                Accepted formats: PDF, JPG, PNG (Max 10MB)
+              </small>
+            </div>
+
+            <div class="d-grid gap-2">
+              <button type="submit" class="btn btn-primary btn-lg">
+                <i class="fas fa-upload me-2"></i>Upload Notes
+              </button>
+              <a
+                href="{% url 'viewmy_notes' %}"
+                class="btn btn-outline-secondary"
+              >
+                <i class="fas fa-list me-2"></i>View My Notes
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endcomment %}
+
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+          <h2 class="text-center mb-0">Upload Notes</h2>
+        </div>
+        <div class="card-body">
+          <!-- Error Message Display -->
+          {% if error == "yes" %}
+          <div
+            class="alert alert-danger alert-dismissible fade show"
+            role="alert"
+          >
+            <strong>Error!</strong> {{ error_message }}
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="alert"
+              aria-label="Close"
+            ></button>
+          </div>
+          {% endif %}
+
+          <!-- Success Message -->
+          {% if success %}
+          <div
+            class="alert alert-success alert-dismissible fade show"
+            role="alert"
+          >
+            <strong>Success!</strong> Your notes have been uploaded
+            successfully.
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="alert"
+              aria-label="Close"
+            ></button>
+          </div>
+          {% endif %}
+
+          <form method="post" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+
+            <!-- Title Field -->
+            <div class="form-group mb-3">
+              <label class="fw-bold">Title*</label>
+              <input
+                type="text"
+                class="form-control form-control-lg {% if field_errors.title %}is-invalid{% endif %}"
+                placeholder="Enter Note Title"
+                name="title"
+                value="{{ form_data.title|default:'' }}"
+                required
+              />
+              {% if field_errors.title %}
+              <div class="invalid-feedback">Please enter a valid title</div>
+              {% endif %}
+            </div>
+
+            <!-- Subject Field -->
+            <div class="form-group mb-3">
+              <label class="fw-bold">Subject*</label>
+              <input
+                type="text"
+                class="form-control form-control-lg {% if field_errors.subject_name %}is-invalid{% endif %}"
+                placeholder="Enter Subject Name"
+                name="subject_name"
+                value="{{ form_data.subject_name|default:'' }}"
+                required
+              />
+              {% if field_errors.subject_name %}
+              <div class="invalid-feedback">Please enter a subject</div>
+              {% endif %}
+            </div>
+
+            <!-- Description Field -->
+            <div class="form-group mb-3">
+              <label class="fw-bold">Description*</label>
+              <textarea
+                class="form-control {% if field_errors.description %}is-invalid{% endif %}"
+                placeholder="Enter detailed description"
+                name="description"
+                rows="5"
+                required
+              >
+{{ form_data.description|default:'' }}</textarea
+              >
+              {% if field_errors.description %}
+              <div class="invalid-feedback">Please enter a description</div>
+              {% endif %}
+            </div>
+
+            <!-- Upload Date Field -->
+            <div class="form-group mb-3">
+              <label class="fw-bold">Upload Date*</label>
+              <input
+                type="date"
+                class="form-control form-control-lg {% if field_errors.upload_date %}is-invalid{% endif %}"
+                name="upload_date"
+                value="{{ form_data.upload_date|default:'' }}"
+                required
+              />
+              {% if field_errors.upload_date %}
+              <div class="invalid-feedback">Please select a valid date</div>
+              {% endif %}
+              <small class="form-text text-muted">
+                Format: DD/MM/YYYY (Today's date will be selected by default)
+              </small>
+            </div>
+
+            <!-- File Upload Field -->
+            <div class="form-group mb-4">
+              <label class="fw-bold">Notes File*</label>
+              <input
+                type="file"
+                class="form-control {% if field_errors.notes_file %}is-invalid{% endif %}"
+                name="notes_file"
+                required
+                accept=".pdf,.jpg,.jpeg,.png"
+              />
+              {% if field_errors.notes_file %}
+              <div class="invalid-feedback">{{ field_errors.notes_file }}</div>
+              {% endif %}
+              <small class="form-text text-muted">
+                Accepted formats: PDF, JPG, PNG (Max 10MB)
+              </small>
+            </div>
+
+            <div class="d-grid gap-2">
+              <button type="submit" class="btn btn-primary btn-lg">
+                <i class="fas fa-upload me-2"></i>Upload Notes
+              </button>
+              <a
+                href="{% url 'viewmy_notes' %}"
+                class="btn btn-outline-secondary"
+              >
+                <i class="fas fa-list me-2"></i>View My Notes
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

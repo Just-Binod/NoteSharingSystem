@@ -89,7 +89,7 @@ class Subject(models.Model):
     subject_id=models.AutoField(primary_key=True)
     subject_name=models.CharField(max_length=100)
     subject_code=models.CharField(max_length=20)
-    category_id=models.ForeignKey(Category,on_delete=models.CASCADE)
+    category_id=models.ForeignKey(Category,on_delete=models.CASCADE,null=True,blank=True)
 
     def __str__(self):
         return self.subject_name
@@ -100,8 +100,8 @@ class Notes(models.Model):
     note_id=models.AutoField(primary_key=True)
     title=models.CharField(max_length=100)
     description=models.TextField()
-    notes_file=models.FileField(null=True)
-    upload_date=models.DateField(auto_now_add=True)
+    notes_file = models.FileField(upload_to='notes/')  # This creates a 'notes' subfolder in MEDIA_ROOT
+    upload_date=models.DateTimeField(auto_now_add=True)
     user_id=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
     subject_id=models.ForeignKey(Subject,on_delete=models.CASCADE)
     download_count=models.PositiveIntegerField(default=0)

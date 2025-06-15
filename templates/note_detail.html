@@ -1,0 +1,9 @@
+{% extends 'usernav.html' %} {% block content %}
+<h2>{{ note.title }}</h2>
+<p>{{ note.description }}</p>
+<p>Subject: {{ note.subject_id }}</p>
+<p>Uploaded on: {{ note.upload_date }}</p>
+<p>Downloads: {{ note.download_count }}</p>
+{% if note.notes_file %}
+<a href="{{ note.notes_file.url }}" download>Download File</a>
+{% endif %} {% endblock %}
