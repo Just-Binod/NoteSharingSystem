@@ -1,4 +1,6 @@
-{% extends "usernav.html" %} {% load static %} {% block content %} {% comment %}
+{% extends "defaultnav.html" %}
+
+{% comment %} {% extends "defaultnav.html" %} {% load static %} {% block content %}
 <div class="container mt-5">
   <div class="row justify-content-center">
     <div class="col-md-8 col-lg-6">
@@ -92,6 +94,24 @@
               {% endif %}
             </div>
 
+            <!-- Upload Date Field -->
+            <div class="form-group mb-3">
+              <label class="fw-bold">Upload Date*</label>
+              <input
+                type="date"
+                class="form-control form-control-lg {% if field_errors.upload_date %}is-invalid{% endif %}"
+                name="upload_date"
+                value="{{ form_data.upload_date|default:'' }}"
+                required
+              />
+              {% if field_errors.upload_date %}
+              <div class="invalid-feedback">Please select a valid date</div>
+              {% endif %}
+              <small class="form-text text-muted">
+                Format: DD/MM/YYYY (Today's date will be selected by default)
+              </small>
+            </div>
+
             <!-- File Upload Field -->
             <div class="form-group mb-4">
               <label class="fw-bold">Notes File*</label>
@@ -127,8 +147,11 @@
     </div>
   </div>
 </div>
-{% endcomment %}
 
+{% endblock %} {% endcomment %}
+
+
+ {% load static %} {% block content %}
 <div class="container mt-5">
   <div class="row justify-content-center">
     <div class="col-md-8 col-lg-6">
@@ -186,6 +209,28 @@
               />
               {% if field_errors.title %}
               <div class="invalid-feedback">Please enter a valid title</div>
+              {% endif %}
+            </div>
+
+            <!-- Category Field -->
+            <div class="form-group mb-3">
+              <label class="fw-bold">Category*</label>
+              <select
+                class="form-select form-control-lg {% if field_errors.category %}is-invalid{% endif %}"
+                name="category"
+                required
+              >
+                <option value="" disabled selected>Select Category</option>
+                <option value="BE COMPUTER" {% if form_data.category == "BE COMPUTER" %}selected{% endif %}>BE COMPUTER</option>
+                <option value="BBA" {% if form_data.category == "BBA" %}selected{% endif %}>BBA</option>
+                <option value="BCA" {% if form_data.category == "BCA" %}selected{% endif %}>BCA</option>
+                <option value="BE CIVIL" {% if form_data.category == "BE CIVIL" %}selected{% endif %}>BE CIVIL</option>
+                <option value="MBA" {% if form_data.category == "MBA" %}selected{% endif %}>MBA</option>
+                <option value="+2" {% if form_data.category == "+2" %}selected{% endif %}>+2</option>
+                <option value="Others" {% if form_data.category == "Others" %}selected{% endif %}>Others</option>
+              </select>
+              {% if field_errors.category %}
+              <div class="invalid-feedback">Please select a category</div>
               {% endif %}
             </div>
 

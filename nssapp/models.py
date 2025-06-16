@@ -96,15 +96,53 @@ class Subject(models.Model):
 
 
    
+# class Notes(models.Model):
+#         CATEGORY_CHOICES = [
+#         ('BE_COMPUTER', 'BE COMPUTER'),
+#         ('BBA', 'BBA'),
+#         ('BCA', 'BCA'),
+#         ('BE_CIVIL', 'BE CIVIL'),
+#         ('MBA', 'MBA'),
+#         ('PLUS_TWO', '+2'),
+#         ('OTHERS', 'Others'),
+#     ]
+#     note_id=models.AutoField(primary_key=True)
+#     title=models.CharField(max_length=100)
+#     description=models.TextField()
+#     notes_file = models.FileField(upload_to='notes/')  # This creates a 'notes' subfolder in MEDIA_ROOT
+#     upload_date=models.DateTimeField(auto_now_add=True)
+#     user_id=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
+#     subject_id=models.ForeignKey(Subject,on_delete=models.CASCADE)
+#     download_count=models.PositiveIntegerField(default=0)
+
+#     def __str__(self):
+#         return self.title
+
+
 class Notes(models.Model):
-    note_id=models.AutoField(primary_key=True)
-    title=models.CharField(max_length=100)
-    description=models.TextField()
-    notes_file = models.FileField(upload_to='notes/')  # This creates a 'notes' subfolder in MEDIA_ROOT
-    upload_date=models.DateTimeField(auto_now_add=True)
-    user_id=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
-    subject_id=models.ForeignKey(Subject,on_delete=models.CASCADE)
-    download_count=models.PositiveIntegerField(default=0)
+    CATEGORY_CHOICES = [
+        ('BE_COMPUTER', 'BE COMPUTER'),
+        ('BBA', 'BBA'),
+        ('BCA', 'BCA'),
+        ('BE_CIVIL', 'BE CIVIL'),
+        ('MBA', 'MBA'),
+        ('PLUS_TWO', '+2'),
+        ('OTHERS', 'Others'),
+    ]
+    
+    note_id = models.AutoField(primary_key=True)
+    title = models.CharField(max_length=100)
+    description = models.TextField()
+    notes_file = models.FileField(upload_to='notes/')
+    upload_date = models.DateTimeField(auto_now_add=True)
+    user_id = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    subject_id = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    download_count = models.PositiveIntegerField(default=0)
+    category = models.CharField(
+        max_length=20,
+        choices=CATEGORY_CHOICES,
+        default='BE_COMPUTER'
+    )
 
     def __str__(self):
         return self.title

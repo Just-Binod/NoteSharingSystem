@@ -11,7 +11,7 @@
         class="mb-0 d-flex align-items-center text-shadow"
         style="color: #fff5e1"
       >
-        <i class="fas fa-file-alt me-2 animate-pulse"></i>My Uploaded Notes
+        <i class="fas fa-file-alt me-2 animate-pulse"></i> Uploaded Notes
       </h2>
       <a
         href="{% url 'upload_notes' %}"
@@ -30,6 +30,7 @@
               <th class="text-center">#</th>
               <th>Title</th>
               <th>Description</th>
+               <th>Category</th>
               <th>Subject</th>
               <th>Uploaded By</th>
               <th>Upload Date</th>
@@ -46,9 +47,10 @@
               <td class="text-center">{{ forloop.counter }}</td>
               <td class="fw-bold text-primary">{{ note.title }}</td>
               <td>{{ note.description|truncatechars:50 }}</td>
+              <td>{{ note.category }}</td>
               <td>{{ note.subject_id.subject_name }}</td>
               <td>{{ note.user_id.username }}</td>
-              <td>{{ note.upload_date|date:"M d, Y H:i" }}</td>
+              <td>{{ note.upload_date|date:"M d, Y " }}</td>
               <td>
                 <a
                   href="{{ note.notes_file.url }}"

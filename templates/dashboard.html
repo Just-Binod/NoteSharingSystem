@@ -1,3 +1,231 @@
-{% extends "usernav.html" %} {% block content %}
-<h1>dash : {{request.user.username}}</h1>
+{% extends "usernav.html" %}
+{% load static %}
+{% block content %}
+<div class="container mt-5">
+  <!-- Main Header Card -->
+  <div class="card shadow-lg border-0 rounded-4 mb-4">
+    <div
+      class="card-header bg-gradient-primary text-white d-flex align-items-center justify-content-between"
+      style="background: linear-gradient(135deg, #ff6f61, #6b48ff)"
+    >
+      <h2
+        class="mb-0 d-flex align-items-center text-shadow"
+        style="color: #fff5e1"
+      >
+        <i class="fas fa-file-alt me-2 animate-pulse"></i>All Notes
+      </h2>
+      <div>
+        <nav class="navbar bg-body-tertiary">
+          <div class="container-fluid">
+            <form class="d-flex" role="search" method="GET" action="{% url "notes_list" %}">
+              <!-- Title Search -->
+              <input
+                class="form-control me-2"
+                type="search"
+                name="title"
+                placeholder="Search by title"
+                aria-label="Search by title"
+                value="{{ request.GET.title }}"
+              />
+              <!-- Category Filter -->
+              <select class="form-select me-2" name="category">
+                <option value="">All Categories</option>
+                <option value="BE COMPUTER" {% if request.GET.category == "BE COMPUTER" %}selected{% endif %}>BE COMPUTER</option>
+                <option value="BBA" {% if request.GET.category == "BBA" %}selected{% endif %}>BBA</option>
+                <option value="BCA" {% if request.GET.category == "BCA" %}selected{% endif %}>BCA</option>
+                <option value="BE CIVIL" {% if request.GET.category == "BE CIVIL" %}selected{% endif %}>BE CIVIL</option>
+                <option value="MBA" {% if request.GET.category == "MBA" %}selected{% endif %}>MBA</option>
+                <option value="+2" {% if request.GET.category == "+2" %}selected{% endif %}>+2</option>
+                <option value="Others" {% if request.GET.category == "Others" %}selected{% endif %}>Others</option>
+              </select>
+              <button class="btn btn-outline-success" type="submit">
+                Search
+              </button>
+            </form>
+          </div>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notes Grid -->
+  {% if notes %}
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    {% for note in notes %}
+    <div class="col">
+      <div class="card h-100 shadow-sm border-0 rounded-3 note-card">
+        <!-- Card Header -->
+        <div class="card-header bg-white border-0 pb-0">
+          <div class="d-flex justify-content-between align-items-start">
+            <h5 class="card-title mb-1 text-primary">
+              Title: {{ note.title }}
+            </h5>
+            <span class="badge bg-primary bg-opacity-10 text-primary">
+              Category: {{ note.category }}
+            </span>
+          </div>
+          <p class="text-muted small mb-0">
+            <i class="fas fa-user me-1"></i>User: {{ note.user_id.username }}
+          </p>
+        </div>
+
+        <!-- Card Body -->
+        <div class="card-body pt-2">
+          <p class="card-text text-muted mb-3">
+            Description: {{ note.description|truncatechars:120 }}
+          </p>
+          <div class="d-flex align-items-center mb-2">
+            <i class="fas fa-book me-2 text-primary"></i>
+            <span>Subject: {{ note.subject_id.subject_name }}</span>
+          </div>
+          <div class="d-flex align-items-center">
+            <i class="fas fa-calendar-alt me-2 text-primary"></i>
+            <span>Upload Date: {{ note.upload_date|date:"M d, Y" }}</span>
+          </div>
+        </div>
+
+        <!-- Card Footer -->
+        <div
+          class="card-footer bg-white border-0 d-flex justify-content-between align-items-center pt-0"
+        >
+          <span class="badge bg-light text-dark">
+            <i class="fas fa-download me-1"></i> Downloads: {{ note.download_count }}
+          </span>
+          <!--  -->
+
+
+        {% if user.is_authenticated %}
+          <a
+          href="{% url 'download_note' note.note_id %}"
+           class="btn btn-sm btn-primary rounded-pill px-3"
+          >
+          <i class="fas fa-download me-1"></i> Download
+          </a>
+        {% else %}
+          <button
+          class="btn btn-sm btn-outline-primary rounded-pill px-3"
+         data-bs-toggle="modal"
+     data-bs-target="#loginModal"
+>
+  <i class="fas fa-lock me-1"></i> Login to Download
+</button>
+{% endif %}
+
+
+
+
+
+
+
+
+
+
+
+          {% comment %} {% if user.is_authenticated %}
+          <a
+            target="_blank"
+            href="{{ note.notes_file.url }}"
+            class="btn btn-sm btn-primary rounded-pill px-3"
+          >
+            <i class="fas fa-download me-1"></i> Download
+          </a>
+          {% else %}
+          <button
+            class="btn btn-sm btn-outline-primary rounded-pill px-3"
+            data-bs-toggle="modal"
+            data-bs-target="#loginModal"
+          >
+            <i class="fas fa-lock me-1"></i> Login to Download
+          </button>
+          {% endif %} {% endcomment %}
+
+
+        
+
+          <!--  -->
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Pagination -->
+  {% if notes.has_other_pages %}
+  <nav aria-label="Page navigation" class="mt-4">
+    <ul class="pagination justify-content-center">
+      {% if notes.has_previous %}
+      <li class="page-item">
+        <a
+          class="page-link"
+          href="?page={{ notes.previous_page_number }}{% if request.GET.title %}&title={{ request.GET.title }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}"
+          aria-label="Previous"
+        >
+          <span aria-hidden="true">«</span>
+        </a>
+      </li>
+      {% endif %}
+      {% for num in notes.paginator.page_range %}
+      <li class="page-item {% if notes.number == num %}active{% endif %}">
+        <a
+          class="page-link"
+          href="?page={{ num }}{% if request.GET.title %}&title={{ request.GET.title }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}"
+        >
+          {{ num }}
+        </a>
+      </li>
+      {% endfor %}
+      {% if notes.has_next %}
+      <li class="page-item">
+        <a
+          class="page-link"
+          href="?page={{ notes.next_page_number }}{% if request.GET.title %}&title={{ request.GET.title }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}"
+          aria-label="Next"
+        >
+          <span aria-hidden="true">»</span>
+        </a>
+      </li>
+      {% endif %}
+    </ul>
+  </nav>
+  {% endif %}
+  {% else %}
+  <!-- Empty State -->
+  <div class="alert alert-info text-center" role="alert">
+    <i class="fas fa-info-circle me-2"></i>
+    No notes are available at the moment.
+  </div>
+  {% endif %}
+</div>
+
+<style>
+  .note-card {
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+  }
+  .note-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  }
+  .animate-pulse {
+    animation: pulse 1.5s infinite;
+  }
+  .text-shadow {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  }
+  .bg-gradient-light {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  }
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+  }
+  .card-header {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  }
+  .badge {
+    font-weight: 500;
+    padding: 5px 10px;
+  }
+</style>
 {% endblock content %}

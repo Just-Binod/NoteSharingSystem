@@ -110,7 +110,14 @@
   <div class="profile-detail row align-items-center">
     <div class="col-md-4 detail-label">Full Name</div>
     <div class="col-md-8 detail-value">{{request.user.username}}</div>
-  </div>
-</div>
 
-{% endblock content %}
+    <div class="profile-detail row align-items-center">
+      <div class="col-md-4 detail-label">Email id:</div>
+      <div class="col-md-8 detail-value" style="text-transform: lowercase" ;>
+        {{request.user.email}}
+      </div>
+    </div>
+  </div>
+
+  {% endblock content %}
+</div>
