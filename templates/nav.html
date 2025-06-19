@@ -1,35 +1,98 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>NoteSharingSystem</title>
-    {% comment %}
-    <link rel="stylesheet" href="{% static 'css/nav.css' %}" />
-    {% endcomment %}
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css"
       rel="stylesheet"
       integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT"
       crossorigin="anonymous"
     />
+    <style>
+      :root {
+        --violet: #7c3aed;
+        --dark-violet: #6d28d9;
+        --amber: #f59e0b;
+        --dark-amber: #d97706;
+        --text-dark: #1f2937;
+        --text-muted: #6b7280;
+        --bg-light: #f9fafb;
+      }
+      body {
+        background-color: var(--bg-light);
+      }
+      .navbar {
+        background-color: var(--violet) !important;
+        box-shadow: 0 4px 12px rgba(124, 58, 237, 0.15);
+        animation: fadeInDown 0.8s ease-out;
+      }
+      .navbar-brand {
+        color: #fff !important;
+        font-weight: 700;
+        font-size: 1.5rem;
+        transition: all 0.3s ease;
+      }
+      .navbar-brand:hover {
+        color: var(--amber) !important;
+        transform: scale(1.05);
+      }
+      .nav-link {
+        color: #fff !important;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        padding: 0.5rem 1rem !important;
+      }
+      .nav-link:hover {
+        color: var(--amber) !important;
+        transform: translateY(-2px);
+      }
+      .nav-link.active {
+        color: var(--amber) !important;
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+      }
+      .navbar-toggler {
+        border-color: rgba(255, 255, 255, 0.5);
+      }
+      .navbar-toggler-icon {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 0.8)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+      }
+      @keyframes fadeInDown {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes gentleScale {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.02);
+        }
+      }
+      @media (max-width: 991px) {
+        .navbar-nav {
+          padding: 1rem;
+          background-color: var(--violet);
+          border-radius: 8px;
+          margin-top: 0.5rem;
+        }
+      }
+    </style>
   </head>
   <body>
-    <!--bootstrap-->
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO"
-      crossorigin="anonymous"
-    ></script>
-    <!---->
-    <!--nav-->
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <nav class="navbar navbar-expand-lg">
       <div class="container-fluid">
-        <a class="navbar-brand" href="{% url 'home' %}"
-          ><b>Note Sharing System</b></a
-        >
+        <a class="navbar-brand" href="{% url 'home' %}">Note Sharing System</a>
         <button
           class="navbar-toggler"
           type="button"
@@ -48,25 +111,40 @@
           >
             <li class="nav-item">
               <a
-                class="nav-link active"
-                aria-current="page"
+                class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}"
                 href="{% url 'home' %}"
                 >Home</a
               >
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'login' %}">Login</a>
+              <a
+                class="nav-link {% if request.resolver_match.url_name == 'login' %}active{% endif %}"
+                href="{% url 'login' %}"
+                >Login</a
+              >
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'register' %}">Register</a>
+              <a
+                class="nav-link {% if request.resolver_match.url_name == 'register' %}active{% endif %}"
+                href="{% url 'register' %}"
+                >Register</a
+              >
             </li>
           </ul>
         </div>
       </div>
     </nav>
 
-    {% block content %}{% endblock content %}
+    {% block content %}{% endblock %}
 
-    <!--footer-->
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://kit.fontawesome.com/4f3965c7a3.js"
+      crossorigin="anonymous"
+    ></script>
   </body>
 </html>

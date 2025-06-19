@@ -85,6 +85,8 @@ def profile(request):
     return render(request,'profile.html')
 
 #
+def profile1(request):
+    return render(request,'profile1.html')
 
 # from django.shortcuts import render, redirect, get_object_or_404
 # from .forms import NotesForm
@@ -542,3 +544,108 @@ def download_note(request, pk):  # Changed parameter name to be generic
     
     # Return the file as attachment
     return FileResponse(note.notes_file.open(), as_attachment=True)
+
+
+
+
+# def upload_notes_admin(request):
+
+
+@login_required
+def upload_notes_admin(request):
+    if request.method == 'POST':
+        try:
+            title = request.POST['title']
+            category = request.POST.get('category')
+            subject_name = request.POST['subject_name']
+            description = request.POST['description']
+            notes_file = request.FILES['notes_file']
+            upload_date_str = request.POST.get('upload_date')
+
+            # Validate file type
+            allowed_types = ['application/pdf', 'image/jpeg', 'image/png']
+            if notes_file.content_type not in allowed_types:
+                return render(request, 'upload_notes_admin.html', {
+                    'error': 'yes',
+                    'error_message': 'Only PDF, JPG, and PNG files are allowed',
+                    'form_data': request.POST,  # Preserve form data
+                })
+
+            # Validate upload date
+            try:
+                upload_date = datetime.strptime(upload_date_str, '%Y-%m-%d').date()
+                if upload_date > datetime.now().date():
+                    return render(request, 'upload_notes.html', {
+                        'error': 'yes',
+                        'error_message': 'Date cannot be in the future',
+                        'form_data': request.POST,  # Preserve form data
+                    })
+            except (ValueError, TypeError):
+                return render(request, 'upload_notes.html', {
+                    'error': 'yes',
+                    'error_message': 'Invalid date format',
+                    'form_data': request.POST,  # Preserve form data
+                })
+
+            # Create or get default category
+            default_category, _ = Category.objects.get_or_create(
+                category_name='General',
+                defaults={'category_code': 'GEN'}
+            )
+
+            # Create or get subject with the required category
+            subject, _ = Subject.objects.get_or_create(
+                subject_name=subject_name,
+                defaults={'category_id': default_category}
+            )
+
+            # Create the note
+            note = Notes(
+                title=title,
+                category=category,
+                description=description,
+                notes_file=notes_file,
+                user_id=request.user,
+                subject_id=subject,
+                upload_date=upload_date
+            )
+            note.save()
+
+            return render(request, 'upload_notes_admin.html', {'success': True})
+
+        except Exception as e:
+            return render(request, 'upload_notes_admin.html', {
+                'error': 'yes',
+                'error_message': str(e),
+                'form_data': request.POST,  # Preserve form data
+            })
+
+    # For GET requests, set default form data with today's date
+    form_data = {
+        'title': '',
+        'category': '',
+        'subject_name': '',
+        'description': '',
+        'upload_date': date.today().isoformat(),  # Sets to 2025-06-16
+    }
+    return render(request, 'upload_notes_admin.html', {'form_data': form_data})
+#
+
+
+
+# viewmy_notes_admin
+@login_required
+def viewmy_notes_admin(request):
+    notes = Notes.objects.filter(user_id=request.user).order_by('upload_date')
+    return render(request, 'viewmy_notes_admin.html', {'notes': notes})
+
+
+
+#admin
+@login_required
+def delete_mynotes_admin(request, id):
+    if not request.user.is_authenticated:
+        return redirect('login')
+    note = get_object_or_404(Notes, note_id=id)
+    note.delete()
+    return redirect('viewmy_notes_admin')

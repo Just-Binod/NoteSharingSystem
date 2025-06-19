@@ -288,6 +288,7 @@
 
     <div class="row">
       <!-- Pending Notes Card -->
+      <!--user-->
       <div class="col-lg-3 col-md-6">
         <a href="#" class="stat-link">
           <div class="stat-card pending">
@@ -295,7 +296,7 @@
               <i class="fas fa-clock stat-icon"></i>
               {{pn}}
             </div>
-            <h3 class="stat-title">Pending Notes</h3>
+            <h3 class="stat-title">Users</h3>
             <div class="stat-meta">
               <!--<span>Last 7 days</span>
               <span class="trend-indicator trend-up">
@@ -306,6 +307,7 @@
         </a>
       </div>
 
+      {% comment %}
       <!-- Accepted Notes Card -->
       <div class="col-lg-3 col-md-6">
         <a href="#" class="stat-link">
@@ -325,7 +327,7 @@
           </div>
         </a>
       </div>
-
+      {% endcomment %} {% comment %}
       <!-- Rejected Notes Card -->
       <div class="col-lg-3 col-md-6">
         <a href="#" class="stat-link">
@@ -344,6 +346,7 @@
           </div>
         </a>
       </div>
+      {% endcomment %}
 
       <!-- All Notes Card -->
       <div class="col-lg-3 col-md-6">

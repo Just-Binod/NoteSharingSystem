@@ -48,7 +48,17 @@
                   class="nav-link active"
                   aria-current="page"
                   href="{% url 'adminpage' %}"
-                  >Admin Home</a
+                  >Admin_Home</a
+                >
+              </li>
+
+               <li class="nav-item dropdown">
+                <li class="nav-item">
+                <a
+                  class="nav-link active"
+                  aria-current="page"
+                  href="{% url 'profile1' %}"
+                  > view Profile</a
                 >
               </li>
               <li class="nav-item dropdown">
@@ -56,20 +66,14 @@
                 <a
                   class="nav-link active"
                   aria-current="page"
-                  href="{% url 'upload_notes' %}"
+                  href="{% url 'upload_notes_admin' %}"
                   >upload note</a
                 >
               </li>
-              <li class="nav-item dropdown">
-  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-    view Notes
-  </a>
-  <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-    <a class="dropdown-item" href="{% url 'viewall_notes' %}">All Notes</a>
-    <a class="dropdown-item" href="#">pending Notes</a>
-    <a class="dropdown-item" href="#">Rejected Notes</a>
-  </div>
-</li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'viewall_notes' %}">view notes</a>
+              </li>
+              
               <li class="nav-item">
                 <a class="nav-link" href="#">view users</a>
               </li>
