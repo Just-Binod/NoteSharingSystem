@@ -1,0 +1,189 @@
+{% extends "usernav.html" %} {% load static %} {% block content %}
+<style>
+  :root {
+    --teal: #20c997;
+    --dark-teal: #1aa179;
+    --amber: #ffc107;
+    --dark-amber: #e0a800;
+    --text-dark: #2b2d42;
+    --text-light: #6c757d;
+    --bg-light: #f8f9fa;
+    --card-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .profile-container {
+    max-width: 800px;
+    margin: 2.5rem auto;
+    padding: 2rem;
+    background: white;
+    border-radius: 16px;
+    box-shadow: var(--card-shadow);
+    animation: fadeIn 0.6s ease-in-out;
+  }
+
+  .profile-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    position: relative;
+  }
+
+  .profile-header h2 {
+    color: var(--teal);
+    font-weight: 700;
+    position: relative;
+    display: inline-block;
+    animation: slideIn 0.5s ease-out;
+  }
+
+  .profile-header h2::after {
+    content: "";
+    position: absolute;
+    width: 60px;
+    height: 4px;
+    background: var(--amber);
+    bottom: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+  }
+
+  .profile-header h2:hover::after {
+    width: 80px;
+  }
+
+  .profile-detail {
+    padding: 1.5rem 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    animation: fadeInUp 0.6s ease-out;
+    animation-delay: calc(0.1s * var(--order));
+  }
+
+  .profile-detail:hover {
+    background: var(--bg-light);
+    transform: translateX(8px);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(32, 201, 151, 0.1);
+  }
+
+  .detail-label {
+    font-weight: 600;
+    color: var(--text-dark);
+    font-size: 1.2rem;
+  }
+
+  .detail-value {
+    color: var(--text-light);
+    font-size: 1.1rem;
+    text-transform: capitalize;
+  }
+
+  .edit-btn {
+    background: var(--teal);
+    border: none;
+    padding: 0.9rem 2.5rem;
+    font-weight: 600;
+    color: white;
+    border-radius: 50px;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    margin-top: 2.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    animation: pulse 1.5s infinite;
+  }
+
+  .edit-btn:hover {
+    background: var(--dark-teal);
+    transform: scale(1.05) translateY(-3px);
+    box-shadow: 0 6px 20px rgba(32, 201, 151, 0.3);
+  }
+
+  .edit-btn i {
+    margin-right: 10px;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideIn {
+    from {
+      transform: translateY(-20px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes fadeInUp {
+    from {
+      transform: translateY(20px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes pulse {
+    0%,
+    100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.03);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .profile-container {
+      padding: 1.5rem;
+      margin: 1.5rem;
+    }
+
+    .profile-detail {
+      padding: 1rem 0;
+    }
+
+    .edit-btn {
+      padding: 0.8rem 2rem;
+      width: 100%;
+    }
+  }
+</style>
+
+<div class="profile-container">
+  <div class="profile-header">
+    <h2>My Profile</h2>
+  </div>
+
+  <div class="profile-detail row align-items-center" style="--order: 1">
+    <div class="col-md-4 detail-label">Full Name</div>
+    <div class="col-md-8 detail-value">{{ request.user.username }}</div>
+  </div>
+
+  <div class="profile-detail row align-items-center" style="--order: 2">
+    <div class="col-md-4 detail-label">Email</div>
+    <div class="col-md-8 detail-value" style="text-transform: lowercase">
+      {{ request.user.email }}
+    </div>
+  </div>
+
+  <div class="text-center">
+    <a href="{% url 'logout' %}" class="btn edit-btn">
+      <i class="fas fa-edit"></i>Logout
+    </a>
+  </div>
+</div>
+{% endblock %}

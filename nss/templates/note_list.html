@@ -1,0 +1,14 @@
+{% extends 'usernav.html' %} {% block content %}
+<h2>My Notes</h2>
+<ul>
+  {% for note in notes %}
+  <li>
+    <a href="{% url 'note_detail' note_id=note.note_id %}">{{ note.title }}</a>
+    ({{ note.subject_id }})
+  </li>
+  {% empty %}
+  <li>No notes yet.</li>
+  {% endfor %}
+</ul>
+<a href="{% url 'create_note' %}">Add New Note</a>
+{% endblock %}

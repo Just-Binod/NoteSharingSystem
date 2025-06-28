@@ -1,0 +1,208 @@
+{% extends "adminnav.html" %} {% load static %} {% block content %}
+
+<style>
+  /* Add these styles at the top of your style block */
+  html,
+  body {
+    height: 100%;
+  }
+  :root {
+    --primary-color: #4a6bff;
+    --hover-color: #3a56d4;
+    --card-bg: #ffffff;
+    --text-dark: #2d3748;
+    --text-light: #718096;
+    --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #f8fafc;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  .dashboard-container {
+    flex: 1; /* This makes the container grow to fill available space */
+    padding: 2rem 0;
+    padding: 2rem 0;
+  }
+
+  .stat-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow);
+    transition: all 0.3s ease;
+    border-left: 4px solid var(--primary-color);
+  }
+
+  .stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  }
+
+  .stat-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+  }
+
+  .stat-title {
+    font-size: 1.1rem;
+    color: var(--text-light);
+    margin-bottom: 0;
+  }
+
+  .stat-link {
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .stat-link:hover .stat-title {
+    color: var(--hover-color);
+  }
+
+  .footer {
+    background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+    color: white;
+    padding: 2rem 0;
+    border-radius: 12px 12px 0 0;
+    /* Remove margin-top as it's no longer needed */
+  }
+
+  .footer-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .footer-text {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+
+  .heart-icon {
+    color: #ff6b6b;
+    animation: heartbeat 1.5s infinite;
+  }
+
+  .author-link {
+    color: #93c5fd;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s;
+    position: relative;
+  }
+
+  .author-link:hover {
+    color: white;
+    text-decoration: underline;
+  }
+
+  @keyframes heartbeat {
+    0% {
+      transform: scale(1);
+    }
+    14% {
+      transform: scale(1.3);
+    }
+    28% {
+      transform: scale(1);
+    }
+    42% {
+      transform: scale(1.3);
+    }
+    70% {
+      transform: scale(1);
+    }
+  }
+
+  .copyright {
+    font-size: 0.9rem;
+    opacity: 0.8;
+  }
+
+  .divider {
+    color: rgba(255, 255, 255, 0.3);
+    margin: 0 0.5rem;
+  }
+</style>
+
+<div class="dashboard-container">
+  <div class="container">
+    <div class="row">
+      <!-- Pending Notes Card -->
+      <div class="col-lg-3 col-md-6">
+        <a href="#" class="stat-link">
+          {% comment %} {% url 'pending_notes' %} {% endcomment %}
+          <div class="stat-card">
+            <div class="stat-value">{{pn}}</div>
+            <h3 class="stat-title">Pending Notes</h3>
+          </div>
+        </a>
+      </div>
+
+      <!-- Accepted Notes Card -->
+      <div class="col-lg-3 col-md-6">
+        <a href="#" class="stat-link">
+          {% comment %} {% url 'accepted_notes' %} {% endcomment %}
+          <div class="stat-card">
+            <div class="stat-value">{{an}}</div>
+            <h3 class="stat-title">Accepted Notes</h3>
+          </div>
+        </a>
+      </div>
+
+      <!-- Rejected Notes Card -->
+      <div class="col-lg-3 col-md-6">
+        <a href="#" class="stat-link">
+          {% comment %} {% url 'rejected_notes' %} {% endcomment %}
+          <div class="stat-card">
+            <div class="stat-value">{{rn}}</div>
+            <h3 class="stat-title">Rejected Notes</h3>
+          </div>
+        </a>
+      </div>
+
+      <!-- All Notes Card -->
+      <div class="col-lg-3 col-md-6">
+        <a href="#" class="stat-link">
+          {% comment %} {% url 'all_notes' %} {% endcomment %}
+          <div class="stat-card">
+            <div class="stat-value">{{all}}</div>
+            <h3 class="stat-title">All Notes</h3>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-content">
+      <p class="footer-text">
+        Copyright &copy;
+        <script>
+          document.write(new Date().getFullYear());
+        </script>
+        All Rights Reserved <span class="divider">|</span> Made with
+        ❤️‍🩹 by
+        <a
+          href="https://www.instagram.com/i.was.binod/"
+          class="author-link"
+          target="_blank"
+        >
+          <b>Binod Raj Pant</b>
+        </a>
+      </p>
+      <p class="copyright"></p>
+    </div>
+  </div>
+</footer>
+{% endblock content %}

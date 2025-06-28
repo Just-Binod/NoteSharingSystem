@@ -1,0 +1,246 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NoteSharingSystem</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <style>
+      :root {
+        --violet: #7c3aed;
+        --dark-violet: #6d28d9;
+        --amber: #f59e0b;
+        --dark-amber: #d97706;
+        --text-dark: #1f2937;
+        --text-muted: #6b7280;
+        --bg-light: #f9fafb;
+      }
+      body {
+        background-color: var(--bg-light);
+      }
+      .navbar {
+        background-color: var(--violet) !important;
+        box-shadow: 0 4px 12px rgba(124, 58, 237, 0.15);
+        animation: fadeInDown 0.8s ease-out;
+      }
+      .navbar-brand {
+        color: #fff !important;
+        font-weight: 700;
+        font-size: 1.5rem;
+        transition: all 0.3s ease;
+      }
+      .navbar-brand:hover {
+        color: var(--amber) !important;
+        transform: scale(1.05);
+      }
+      .nav-link {
+        color: #fff !important;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        padding: 0.5rem 1rem !important;
+      }
+      .nav-link:hover {
+        color: var(--amber) !important;
+        transform: translateY(-2px);
+      }
+      .nav-link.active {
+        color: var(--amber) !important;
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+      }
+      .navbar-user {
+        color: #fff !important;
+        font-weight: 600;
+        background-color: var(--dark-violet);
+        padding: 0.5rem 1rem;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+      }
+      .navbar-user:hover {
+        background-color: var(--amber);
+        color: var(--text-dark) !important;
+        transform: scale(1.03);
+      }
+      .btn-search {
+        background-color: var(--amber);
+        color: var(--text-dark);
+        border: none;
+        padding: 0.5rem 1.5rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+      }
+      .btn-search:hover {
+        background-color: var(--dark-amber);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+      }
+      .form-control,
+      .form-select {
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+      }
+      .form-control:focus,
+      .form-select:focus {
+        border-color: var(--violet);
+        box-shadow: 0 0 8px rgba(124, 58, 237, 0.2);
+      }
+      .navbar-toggler {
+        border-color: rgba(255, 255, 255, 0.5);
+      }
+      .navbar-toggler-icon {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 0.8)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+      }
+      @keyframes fadeInDown {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes gentleScale {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.02);
+        }
+      }
+      @media (max-width: 991px) {
+        .navbar-nav {
+          padding: 1rem;
+          background-color: var(--violet);
+          border-radius: 8px;
+          margin-top: 0.5rem;
+        }
+        .navbar-username {
+          color: #fff !important;
+          font-weight: 600;
+          padding: 0.5rem 1rem;
+          border-radius: 12px;
+        }
+        .navbar-user {
+          margin-top: 0.5rem;
+        }
+        .search-form {
+          margin-top: 1rem;
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="{% url 'dashboard' %}"
+          >Note Sharing System</a
+        >
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarScroll"
+          aria-controls="navbarScroll"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarScroll">
+          <ul
+            class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll"
+            style="--bs-scroll-height: 100px"
+          >
+            {% comment %}
+            <li class="nav-item">
+              <a
+                class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
+                href="{% url 'dashboard' %}"
+                >Dashboard</a
+              >
+            </li>
+            {% endcomment %}
+            <li class="nav-item">
+              <a
+                class="nav-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}"
+                href="{% url 'profile' %}"
+                >Profile</a
+              >
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link {% if request.resolver_match.url_name == 'upload_notes' %}active{% endif %}"
+                href="{% url 'upload_notes' %}"
+                >Upload Note</a
+              >
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link {% if request.resolver_match.url_name == 'viewmy_notes' %}active{% endif %}"
+                href="{% url 'viewmy_notes' %}"
+                >View My Notes</a
+              >
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link {% if request.resolver_match.url_name == 'viewall_notes_user' %}active{% endif %}"
+                href="{% url 'viewall_notes_user' %}"
+                >View All Notes</a
+              >
+            </li>
+          </ul>
+          <form
+            class="d-flex search-form"
+            role="search"
+            method="GET"
+            action="{% url 'notes_list' %}"
+          >
+            <input
+              class="form-control me-2"
+              type="search"
+              name="title"
+              placeholder="Search notes..."
+              aria-label="Search notes"
+              value="{{ request.GET.title }}"
+            />
+            <button class="btn btn-search" type="submit" title="Search Notes">
+              <i class="fas fa-search me-1"></i>Search
+            </button>
+          </form>
+          <ul class="navbar-nav ms-3">
+            <li class="nav-item">
+              <span class="nav-link navbar-username"
+                >Hi, {{ request.user.username }}</span
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    {% block content %}{% endblock %}
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://kit.fontawesome.com/4f3965c7a3.js"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>
