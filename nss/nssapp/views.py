@@ -742,3 +742,38 @@ def delete_mynotes_admin(request, id):
     note = get_object_or_404(Notes, note_id=id)
     note.delete()
     return redirect('viewmy_notes_admin')
+
+
+from django.contrib import messages
+@login_required
+def edit_profile(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+
+        user = request.user
+        user.username = username
+        user.email = email
+        user.save()
+
+        messages.success(request, 'Profile updated successfully.')
+        return redirect('profile')  # or wherever your profile view is
+
+    return render(request, 'edit_profile.html', {'user': request.user})
+
+
+@login_required
+def edit_profile1(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+
+        user = request.user
+        user.username = username
+        user.email = email
+        user.save()
+
+        messages.success(request, 'Profile updated successfully.')
+        return redirect('profile1')  # or wherever your profile view is
+
+    return render(request, 'edit_profile1.html', {'user': request.user})

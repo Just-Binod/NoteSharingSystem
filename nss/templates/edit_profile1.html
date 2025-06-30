@@ -165,31 +165,108 @@
 
 <div class="profile-container">
   <div class="profile-header">
-    <h2>My Profile</h2>
+    <h2>update Profile</h2>
   </div>
-
-  <div class="profile-detail row align-items-center" style="--order: 1">
+  <form action="" method="POST">
+    {% csrf_token %}
+    <div class="profile-detail row align-items-center" style="--order: 1">
     <div class="col-md-4 detail-label">Full Name</div>
-    <div class="col-md-8 detail-value">{{ request.user.username }}</div>
+    <div class="col-md-8 detail-value"> <input
+        type="text"
+        name="username"
+        class="form-control"
+        value="{{ user.username }}"
+        required
+      /></div>
+   
   </div>
 
   <div class="profile-detail row align-items-center" style="--order: 2">
     <div class="col-md-4 detail-label">Email</div>
     <div class="col-md-8 detail-value" style="text-transform: lowercase">
-      {{ request.user.email }}
+      <input
+        type="email"
+        name="email"
+        class="form-control"
+        value="{{ user.email }}"
+        required
+      />
     </div>
   </div>
 
   <div class="text-center">
-    <a href="{% url 'edit_profile1' %}" class="btn edit-btn">
-      <i class="fas fa-edit"></i>edit
-    </a>
+     <button type="submit" class="btn edit-btn">
+      <i class="fas fa-save"></i> Save Changes
+    </button>
+    {% comment %} <a href="{% url 'logout' %}" class="btn edit-btn">
+      <i class="fas fa-edit"></i>update
+    </a> {% endcomment %}
   </div>
 
-  <div class="text-center">
-    <a href="{% url 'logout' %}" class="btn edit-btn">
-      <i class=""></i>Logout
-    </a>
-  </div>
+
 </div>
+
+
+
+  </form>
+
+  
 {% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% comment %} {% extends "usernav.html" %} {% load static %} {% block content %}
+<div class="profile-container">
+  <div class="profile-header">
+    <h2>Edit Profile</h2>
+  </div>
+
+  <form method="post">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label class="form-label">Full Name</label>
+      <input
+        type="text"
+        name="username"
+        class="form-control"
+        value="{{ user.username }}"
+        required
+      />
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Email</label>
+      <input
+        type="email"
+        name="email"
+        class="form-control"
+        value="{{ user.email }}"
+        required
+      />
+    </div>
+
+    <button type="submit" class="btn edit-btn">
+      <i class="fas fa-save"></i> Save Changes
+    </button>
+  </form>
+</div>
+{% endblock %} {% endcomment %}

@@ -29,6 +29,8 @@ urlpatterns = [
     path('delete_mynotes_admin/<int:id>/',views.delete_mynotes_admin,name='delete_mynotes_admin'),
     path('upload_notes_admin/', views.upload_notes_admin, name='upload_notes_admin'),
     path('viewmy_notes_admin/', views.viewmy_notes_admin, name='viewmy_notes_admin'),
+    path('edit_profile/', views.edit_profile, name='edit_profile'),
+    path('edit_profile1/', views.edit_profile1, name='edit_profile1'),
    
 #    path('edit_profile/', views.edit_profile, name='edit_profile'),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
