@@ -78,7 +78,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 class Category(models.Model):
     category_id=models.AutoField(primary_key=True)
     category_name=models.CharField(max_length=100)
-    category_code=models.CharField(max_length=20)
+    # category_code=models.CharField(max_length=20)
 
     def __str__(self):
         return self.category_name
@@ -88,7 +88,7 @@ class Category(models.Model):
 class Subject(models.Model):
     subject_id=models.AutoField(primary_key=True)
     subject_name=models.CharField(max_length=100)
-    subject_code=models.CharField(max_length=20)
+    # subject_code=models.CharField(max_length=20)
     category_id=models.ForeignKey(Category,on_delete=models.CASCADE,null=True,blank=True)
 
     def __str__(self):
@@ -120,15 +120,15 @@ class Subject(models.Model):
 
 
 class Notes(models.Model):
-    CATEGORY_CHOICES = [
-        ('BE_COMPUTER', 'BE COMPUTER'),
-        ('BBA', 'BBA'),
-        ('BCA', 'BCA'),
-        ('BE_CIVIL', 'BE CIVIL'),
-        ('MBA', 'MBA'),
-        ('PLUS_TWO', '+2'),
-        ('OTHERS', 'Others'),
-    ]
+    # CATEGORY_CHOICES = [
+    #     ('BE_COMPUTER', 'BE COMPUTER'),
+    #     ('BBA', 'BBA'),
+    #     ('BCA', 'BCA'),
+    #     ('BE_CIVIL', 'BE CIVIL'),
+    #     ('MBA', 'MBA'),
+    #     ('PLUS_TWO', '+2'),
+    #     ('OTHERS', 'Others'),
+    # ]
     
     note_id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=100)
@@ -138,11 +138,11 @@ class Notes(models.Model):
     user_id = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     subject_id = models.ForeignKey(Subject, on_delete=models.CASCADE)
     download_count = models.PositiveIntegerField(default=0)
-    category = models.CharField(
-        max_length=20,
-        choices=CATEGORY_CHOICES,
-        default='BE_COMPUTER'
-    )
+    # category = models.CharField(
+    #     max_length=20,
+    #     choices=CATEGORY_CHOICES,
+    #     default='BE_COMPUTER'
+    # )
 
     def __str__(self):
         return self.title

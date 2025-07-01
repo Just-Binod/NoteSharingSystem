@@ -9,130 +9,83 @@
           <h2 class="mb-0"><i class="fas fa-upload me-2"></i>Share Your Notes</h2>
         </div>
         <div class="card-body p-4">
-          <!-- Error Message Display -->
-          {% if error == "yes" %}
-          <div class="alert alert-danger alert-dismissible rounded-3" role="alert">
-            <strong>Oops!</strong> {{ error_message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-          </div>
-          {% endif %}
-
-          <!-- Success Message -->
-          {% if success %}
-          <div class="alert alert-success alert-dismissible rounded-3" role="alert">
-            <strong>Great Job!</strong> Your notes have been uploaded successfully.
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-          </div>
+          {% if messages %}
+            {% for message in messages %}
+              <div class="alert alert-{{ message.tags }} alert-dismissible fade show rounded-3" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {% endfor %}
           {% endif %}
 
           <form method="post" enctype="multipart/form-data" novalidate>
             {% csrf_token %}
 
-            <!-- Title Field -->
+            <!-- Title -->
             <div class="mb-3">
               <label class="fw-bold">Title*</label>
-              <input
-                type="text"
-                class="form-control {% if field_errors.title %}is-invalid{% endif %}"
-                placeholder="Enter Note Title"
-                name="title"
-                value="{{ form_data.title|default:'' }}"
-                required
-              />
+              <input type="text" class="form-control {% if field_errors.title %}is-invalid{% endif %}" name="title"
+                     placeholder="Enter Note Title" value="{{ form_data.title|default:'' }}" required />
               {% if field_errors.title %}
-              <div class="invalid-feedback">Please enter a valid title</div>
+              <div class="invalid-feedback">Please enter a title.</div>
               {% endif %}
             </div>
 
-            <!-- Category Field -->
-            <div class="mb-3">
-              <label class="fw-bold">Category*</label>
-              <select
-                class="form-select {% if field_errors.category %}is-invalid{% endif %}"
-                name="category"
-                required
-              >
-                <option value="" disabled selected>Select Category</option>
-                <option value="BE COMPUTER" {% if form_data.category == "BE COMPUTER" %}selected{% endif %}>BE COMPUTER</option>
-                <option value="BBA" {% if form_data.category == "BBA" %}selected{% endif %}>BBA</option>
-                <option value="BCA" {% if form_data.category == "BCA" %}selected{% endif %}>BCA</option>
-                <option value="BE CIVIL" {% if form_data.category == "BE CIVIL" %}selected{% endif %}>BE CIVIL</option>
-                <option value="MBA" {% if form_data.category == "MBA" %}selected{% endif %}>MBA</option>
-                <option value="+2" {% if form_data.category == "+2" %}selected{% endif %}>+2</option>
-                <option value="Others" {% if form_data.category == "Others" %}selected{% endif %}>Others</option>
-              </select>
-              {% if field_errors.category %}
-              <div class="invalid-feedback">Please select a category</div>
-              {% endif %}
-            </div>
-
-            <!-- Subject Field -->
+            <!-- Subject -->
             <div class="mb-3">
               <label class="fw-bold">Subject*</label>
-              <input
-                type="text"
-                class="form-control {% if field_errors.subject_name %}is-invalid{% endif %}"
-                placeholder="Enter Subject Name"
-                name="subject_name"
-                value="{{ form_data.subject_name|default:'' }}"
-                required
-              />
-              {% if field_errors.subject_name %}
-              <div class="invalid-feedback">Please enter a subject</div>
+              <div class="input-group">
+                <select class="form-select {% if field_errors.subject %}is-invalid{% endif %}" name="subject" required>
+                  <option value="" disabled {% if not form_data.subject %}selected{% endif %}>Select Subject</option>
+                  {% for subject in subjects %}
+                    <option value="{{ subject.subject_id }}"
+                      {% if form_data.subject == subject.subject_id|stringformat:"s" %}selected{% endif %}>
+                      {{ subject.subject_name }}{% if subject.category_id %} ({{ subject.category_id.category_name }}){% endif %}
+                    </option>
+                  {% endfor %}
+                </select>
+                <a href="{% url 'add_subject' %}" class="btn btn-outline-secondary" title="Add New Subject">
+                  <i class="fas fa-plus"></i>Add
+                </a>
+              </div>
+              {% if field_errors.subject %}
+              <div class="invalid-feedback">Please select a subject.</div>
               {% endif %}
             </div>
 
-            <!-- Description Field -->
+            <!-- Description -->
             <div class="mb-3">
               <label class="fw-bold">Description*</label>
-              <textarea
-                class="form-control {% if field_errors.description %}is-invalid{% endif %}"
-                placeholder="Enter detailed description"
-                name="description"
-                rows="5"
-                required
-              >{{ form_data.description|default:'' }}</textarea>
+              <textarea class="form-control {% if field_errors.description %}is-invalid{% endif %}" name="description"
+                        rows="5" required>{{ form_data.description|default:'' }}</textarea>
               {% if field_errors.description %}
-              <div class="invalid-feedback">Please enter a description</div>
+              <div class="invalid-feedback">Please enter a description.</div>
               {% endif %}
             </div>
 
-            <!-- Upload Date Field -->
+            <!-- Upload Date -->
             <div class="mb-3">
               <label class="fw-bold">Upload Date*</label>
-              <input
-                type="date"
-                class="form-control {% if field_errors.upload_date %}is-invalid{% endif %}"
-                name="upload_date"
-                value="{{ form_data.upload_date|default:'' }}"
-                required
-              />
+              <input type="date" class="form-control {% if field_errors.upload_date %}is-invalid{% endif %}" name="upload_date"
+                     value="{{ form_data.upload_date|default:'' }}" required />
               {% if field_errors.upload_date %}
-              <div class="invalid-feedback">Please select a valid date</div>
+              <div class="invalid-feedback">Please select a valid date.</div>
               {% endif %}
-              <small class="form-text text-muted">
-                Format: DD/MM/YYYY (Today's date is default)
-              </small>
+              <small class="form-text text-muted">Format: YYYY-MM-DD (Today's date is default)</small>
             </div>
 
-            <!-- File Upload Field -->
+            <!-- File Upload -->
             <div class="mb-4">
               <label class="fw-bold">Notes File*</label>
-              <input
-                type="file"
-                class="form-control {% if field_errors.notes_file %}is-invalid{% endif %}"
-                name="notes_file"
-                required
-                accept=".pdf,.jpg,.jpeg,.png"
-              />
+              <input type="file" class="form-control {% if field_errors.notes_file %}is-invalid{% endif %}" name="notes_file"
+                     accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" required />
               {% if field_errors.notes_file %}
-              <div class="invalid-feedback">{{ field_errors.notes_file }}</div>
+              <div class="invalid-feedback">Please upload a valid file.</div>
               {% endif %}
-              <small class="form-text text-muted">
-                Accepted formats: PDF, JPG, PNG (Max 10MB)
-              </small>
+              <small class="form-text text-muted">Accepted formats: PDF, DOC, DOCX, JPG, PNG (Max 10MB)</small>
             </div>
 
+            <!-- Submit Buttons -->
             <div class="d-grid gap-2">
               <button type="submit" class="btn btn-teal rounded-pill">
                 <i class="fas fa-upload me-2"></i>Upload Notes
@@ -147,6 +100,7 @@
     </div>
   </div>
 </div>
+
 <style>
   .card-header.bg-teal {
     background-color: #20c997 !important;

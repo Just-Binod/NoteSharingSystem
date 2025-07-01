@@ -9,6 +9,151 @@
           <h2 class="mb-0"><i class="fas fa-upload me-2"></i>Share Your Notes</h2>
         </div>
         <div class="card-body p-4">
+          {% if messages %}
+            {% for message in messages %}
+              <div class="alert alert-{{ message.tags }} alert-dismissible fade show rounded-3" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {% endfor %}
+          {% endif %}
+
+          <form method="post" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+
+            <!-- Title -->
+            <div class="mb-3">
+              <label class="fw-bold">Title*</label>
+              <input type="text" class="form-control {% if field_errors.title %}is-invalid{% endif %}" name="title"
+                     placeholder="Enter Note Title" value="{{ form_data.title|default:'' }}" required />
+              {% if field_errors.title %}
+              <div class="invalid-feedback">Please enter a title.</div>
+              {% endif %}
+            </div>
+
+            <!-- Subject -->
+            <div class="mb-3">
+              <label class="fw-bold">Subject*</label>
+              <div class="input-group">
+                <select class="form-select {% if field_errors.subject %}is-invalid{% endif %}" name="subject" required>
+                  <option value="" disabled {% if not form_data.subject %}selected{% endif %}>Select Subject</option>
+                  {% for subject in subjects %}
+                    <option value="{{ subject.subject_id }}"
+                      {% if form_data.subject == subject.subject_id|stringformat:"s" %}selected{% endif %}>
+                      {{ subject.subject_name }}{% if subject.category_id %} ({{ subject.category_id.category_name }}){% endif %}
+                    </option>
+                  {% endfor %}
+                </select>
+                <a href="{% url 'add_subject' %}" class="btn btn-outline-secondary" title="Add New Subject">
+                  <i class="fas fa-plus"></i>Add
+                </a>
+              </div>
+              {% if field_errors.subject %}
+              <div class="invalid-feedback">Please select a subject.</div>
+              {% endif %}
+            </div>
+
+            <!-- Description -->
+            <div class="mb-3">
+              <label class="fw-bold">Description*</label>
+              <textarea class="form-control {% if field_errors.description %}is-invalid{% endif %}" name="description"
+                        rows="5" required>{{ form_data.description|default:'' }}</textarea>
+              {% if field_errors.description %}
+              <div class="invalid-feedback">Please enter a description.</div>
+              {% endif %}
+            </div>
+
+            <!-- Upload Date -->
+            <div class="mb-3">
+              <label class="fw-bold">Upload Date*</label>
+              <input type="date" class="form-control {% if field_errors.upload_date %}is-invalid{% endif %}" name="upload_date"
+                     value="{{ form_data.upload_date|default:'' }}" required />
+              {% if field_errors.upload_date %}
+              <div class="invalid-feedback">Please select a valid date.</div>
+              {% endif %}
+              <small class="form-text text-muted">Format: YYYY-MM-DD (Today's date is default)</small>
+            </div>
+
+            <!-- File Upload -->
+            <div class="mb-4">
+              <label class="fw-bold">Notes File*</label>
+              <input type="file" class="form-control {% if field_errors.notes_file %}is-invalid{% endif %}" name="notes_file"
+                     accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" required />
+              {% if field_errors.notes_file %}
+              <div class="invalid-feedback">Please upload a valid file.</div>
+              {% endif %}
+              <small class="form-text text-muted">Accepted formats: PDF, DOC, DOCX, JPG, PNG (Max 10MB)</small>
+            </div>
+
+            <!-- Submit Buttons -->
+            <div class="d-grid gap-2">
+              <button type="submit" class="btn btn-teal rounded-pill">
+                <i class="fas fa-upload me-2"></i>Upload Notes
+              </button>
+              <a href="{% url 'viewmy_notes_admin' %}" class="btn btn-outline-teal rounded-pill">
+                <i class="fas fa-list me-2"></i>View My Notes
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .card-header.bg-teal {
+    background-color: #20c997 !important;
+  }
+  .btn-teal {
+    background-color: #20c997;
+    color: #fff;
+    border: none;
+  }
+  .btn-teal:hover {
+    background-color: #1aa179;
+    color: #fff;
+  }
+  .btn-outline-teal {
+    border-color: #20c997;
+    color: #20c997;
+  }
+  .btn-outline-teal:hover {
+    background-color: #20c997;
+    color: #fff;
+  }
+</style>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% comment %} 
+
+
+{% extends "adminnav.html" %}
+{% load static %}
+{% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card border-0 shadow-sm rounded-3 bg-white">
+        <div class="card-header bg-teal text-white text-center rounded-top">
+          <h2 class="mb-0"><i class="fas fa-upload me-2"></i>Share Your Notes</h2>
+        </div>
+        <div class="card-body p-4">
           <!-- Error Message Display -->
           {% if error == "yes" %}
           <div class="alert alert-danger alert-dismissible rounded-3" role="alert">
@@ -169,4 +314,4 @@
     color: #fff;
   }
 </style>
-{% endblock %}
+{% endblock %} {% endcomment %}

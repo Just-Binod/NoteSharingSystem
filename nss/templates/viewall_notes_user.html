@@ -36,7 +36,14 @@
               <td class="text-center">{{ forloop.counter }}</td>
               <td class="fw-bold text-teal">{{ note.title }}</td>
               <td>{{ note.description|truncatechars:50 }}</td>
-              <td>{{ note.category }}</td>
+
+              <td>
+                {% if note.subject_id.category_id %}
+                ({{note.subject_id.category_id.category_name }}) {% else %}
+                <span class="text-muted">(No category)</span>
+                {% endif %}
+              </td>
+
               <td>{{ note.subject_id.subject_name }}</td>
               <td>{{ note.user_id.username }}</td>
               <td>{{ note.upload_date|date:"M d, Y" }}</td>

@@ -31,6 +31,8 @@ urlpatterns = [
     path('viewmy_notes_admin/', views.viewmy_notes_admin, name='viewmy_notes_admin'),
     path('edit_profile/', views.edit_profile, name='edit_profile'),
     path('edit_profile1/', views.edit_profile1, name='edit_profile1'),
+    path('add_subject/', views.add_subject, name='add_subject'),
+    path('add_category/', views.add_category, name='add_category'),
    
 #    path('edit_profile/', views.edit_profile, name='edit_profile'),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
