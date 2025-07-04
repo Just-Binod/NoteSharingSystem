@@ -1,14 +1,20 @@
-{% extends "usernav.html" %}
-{% load static %}
-{% block content %}
+{% extends "usernav.html" %} {% load static %} {% block content %}
 <div class="container mt-5">
   <!-- Main Header Card -->
-  <div class="card border-0 shadow-sm rounded-3 mb-4" style="animation: fadeIn 0.8s ease-out;">
-    <div class="card-header bg-violet text-white d-flex align-items-center justify-content-between rounded-top">
-      <h2 class="mb-0">
-        <i class="fas fa-book-open me-2"></i>All Notes
-      </h2>
-      <form class="d-flex align-items-center" role="search" method="GET" action="{% url 'notes_list' %}">
+  <div
+    class="card border-0 shadow-sm rounded-3 mb-4"
+    style="animation: fadeIn 0.8s ease-out"
+  >
+    <div
+      class="card-header bg-violet text-white d-flex align-items-center justify-content-between rounded-top"
+    >
+      <h2 class="mb-0"><i class="fas fa-book-open me-2"></i>All Notes</h2>
+      <form
+        class="d-flex align-items-center"
+        role="search"
+        method="GET"
+        action="{% url 'notes_list' %}"
+      >
         <input
           class="form-control me-2 rounded-3"
           type="search"
@@ -16,19 +22,14 @@
           placeholder="Search notes by title..."
           aria-label="Search by title"
           value="{{ request.GET.title }}"
-          style="border: 1px solid #d1d5db; padding: 0.5rem 1rem;"
+          style="border: 1px solid #d1d5db; padding: 0.5rem 1rem"
         />
-        <select class="form-select me-2 rounded-3" name="category" style="border: 1px solid #d1d5db; padding: 0.5rem;">
-          <option value="">All Categories</option>
-          <option value="BE COMPUTER" {% if request.GET.category == "BE COMPUTER" %}selected{% endif %}>BE COMPUTER</option>
-          <option value="BBA" {% if request.GET.category == "BBA" %}selected{% endif %}>BBA</option>
-          <option value="BCA" {% if request.GET.category == "BCA" %}selected{% endif %}>BCA</option>
-          <option value="BE CIVIL" {% if request.GET.category == "BE CIVIL" %}selected{% endif %}>BE CIVIL</option>
-          <option value="MBA" {% if request.GET.category == "MBA" %}selected{% endif %}>MBA</option>
-          <option value="+2" {% if request.GET.category == "+2" %}selected{% endif %}>+2</option>
-          <option value="Others" {% if request.GET.category == "Others" %}selected{% endif %}>Others</option>
-        </select>
-        <button class="btn btn-violet rounded-3 px-4 py-2" type="submit" title="Search Notes">
+
+        <button
+          class="btn btn-violet rounded-3 px-4 py-2"
+          type="submit"
+          title="Search Notes"
+        >
           <i class="fas fa-search me-1"></i>Search
         </button>
       </form>
@@ -39,7 +40,10 @@
   {% if notes %}
   <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
     {% for note in notes %}
-    <div class="col" style="animation: slideIn 0.6s ease-out; animation-delay: calc(0.1s * {{ forloop.counter0 }});">
+    <div
+      class="col"
+      style="animation: slideIn 0.6s ease-out; animation-delay: calc(0.1s * {{ forloop.counter0 }});"
+    >
       <div class="card h-100 border-0 shadow-sm rounded-3 note-card">
         <!-- Card Header -->
         <div class="card-header bg-white border-0 pb-0">
@@ -54,7 +58,9 @@
 
         <!-- Card Body -->
         <div class="card-body pt-2">
-          <p class="card-text text-muted mb-3">{{ note.description|truncatechars:120 }}</p>
+          <p class="card-text text-muted mb-3">
+            {{ note.description|truncatechars:120 }}
+          </p>
           <div class="d-flex align-items-center mb-2">
             <i class="fas fa-book me-2 text-violet"></i>
             <span>{{ note.subject_id.subject_name }}</span>
@@ -66,16 +72,25 @@
         </div>
 
         <!-- Card Footer -->
-        <div class="card-footer bg-white border-0 d-flex justify-content-between align-items-center pt-0">
+        <div
+          class="card-footer bg-white border-0 d-flex justify-content-between align-items-center pt-0"
+        >
           <span class="badge bg-light text-dark">
             <i class="fas fa-download me-1"></i>{{ note.download_count }}
           </span>
           {% if user.is_authenticated %}
-          <a href="{% url 'download_note' note.note_id %}" class="btn btn-sm btn-violet rounded-pill px-3">
+          <a
+            href="{% url 'download_note' note.note_id %}"
+            class="btn btn-sm btn-violet rounded-pill px-3"
+          >
             <i class="fas fa-download me-1"></i>Download
           </a>
           {% else %}
-          <button class="btn btn-sm btn-outline-violet rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#loginModal">
+          <button
+            class="btn btn-sm btn-outline-violet rounded-pill px-3"
+            data-bs-toggle="modal"
+            data-bs-target="#loginModal"
+          >
             <i class="fas fa-lock me-1"></i>Login to Download
           </button>
           {% endif %}
@@ -95,30 +110,28 @@
           class="page-link rounded-circle"
           href="?page={{ notes.previous_page_number }}{% if request.GET.title %}&title={{ request.GET.title }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}"
           aria-label="Previous"
-          style="margin: 0 5px;"
+          style="margin: 0 5px"
         >
           <span aria-hidden="true">«</span>
         </a>
       </li>
-      {% endif %}
-      {% for num in notes.paginator.page_range %}
+      {% endif %} {% for num in notes.paginator.page_range %}
       <li class="page-item {% if notes.number == num %}active{% endif %}">
         <a
           class="page-link rounded-circle"
           href="?page={{ num }}{% if request.GET.title %}&title={{ request.GET.title }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}"
-          style="margin: 0 5px;"
+          style="margin: 0 5px"
         >
           {{ num }}
         </a>
       </li>
-      {% endfor %}
-      {% if notes.has_next %}
+      {% endfor %} {% if notes.has_next %}
       <li class="page-item">
         <a
           class="page-link rounded-circle"
           href="?page={{ notes.next_page_number }}{% if request.GET.title %}&title={{ request.GET.title }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}"
           aria-label="Next"
-          style="margin: 0 5px;"
+          style="margin: 0 5px"
         >
           <span aria-hidden="true">»</span>
         </a>
@@ -126,15 +139,25 @@
       {% endif %}
     </ul>
   </nav>
-  {% endif %}
-  {% else %}
+  {% endif %} {% else %}
   <!-- Empty State -->
-  <div class="card border-0 shadow-sm rounded-3 mt-4" style="animation: fadeIn 0.8s ease-out;">
+  <div
+    class="card border-0 shadow-sm rounded-3 mt-4"
+    style="animation: fadeIn 0.8s ease-out"
+  >
     <div class="card-body text-center p-5">
-      <i class="fas fa-feather-alt fa-4x mb-4 text-violet" style="animation: gentleBounce 2s infinite ease-in-out;"></i>
+      <i
+        class="fas fa-feather-alt fa-4x mb-4 text-violet"
+        style="animation: gentleBounce 2s infinite ease-in-out"
+      ></i>
       <h3 class="mb-3">No Notes Found</h3>
-      <p class="lead text-muted">Start your journey by exploring or sharing notes!</p>
-      <a href="{% url 'upload_notes' %}" class="btn btn-amber btn-lg rounded-pill mt-3">
+      <p class="lead text-muted">
+        Start your journey by exploring or sharing notes!
+      </p>
+      <a
+        href="{% url 'upload_notes' %}"
+        class="btn btn-amber btn-lg rounded-pill mt-3"
+      >
         <i class="fas fa-plus me-2"></i>Share a Note
       </a>
     </div>
@@ -143,23 +166,45 @@
 </div>
 
 <!-- Login Modal -->
-<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
-  <div class="modal-dialog" style="animation: zoomIn 0.5s ease-out;">
+<div
+  class="modal fade"
+  id="loginModal"
+  tabindex="-1"
+  aria-labelledby="loginModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog" style="animation: zoomIn 0.5s ease-out">
     <div class="modal-content rounded-3">
       <div class="modal-header bg-violet text-white">
         <h5 class="modal-title" id="loginModalLabel">Login Required</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
       </div>
       <div class="modal-body text-center py-4">
-        <i class="fas fa-lock fa-4x text-violet mb-3" style="animation: gentleBounce 2s infinite ease-in-out;"></i>
+        <i
+          class="fas fa-lock fa-4x text-violet mb-3"
+          style="animation: gentleBounce 2s infinite ease-in-out"
+        ></i>
         <h4>Login to Access Notes</h4>
-        <p class="text-muted">Sign in or create an account to download notes.</p>
+        <p class="text-muted">
+          Sign in or create an account to download notes.
+        </p>
       </div>
       <div class="modal-footer justify-content-center">
-        <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-violet px-4 rounded-pill">
+        <a
+          href="{% url 'login' %}?next={{ request.path }}"
+          class="btn btn-violet px-4 rounded-pill"
+        >
           <i class="fas fa-sign-in-alt me-2"></i>Login
         </a>
-        <a href="{% url 'register' %}" class="btn btn-outline-violet px-4 rounded-pill">
+        <a
+          href="{% url 'register' %}"
+          class="btn btn-outline-violet px-4 rounded-pill"
+        >
           <i class="fas fa-user-plus me-2"></i>Register
         </a>
       </div>
@@ -264,20 +309,43 @@
     border: none;
   }
   @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
   @keyframes slideIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
   @keyframes zoomIn {
-    from { opacity: 0; transform: scale(0.8); }
-    to { opacity: 1; transform: scale(1); }
+    from {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
   }
   @keyframes gentleBounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-5px); }
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-5px);
+    }
   }
 </style>
 {% endblock %}

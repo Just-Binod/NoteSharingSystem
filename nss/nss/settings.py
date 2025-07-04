@@ -86,9 +86,9 @@ WSGI_APPLICATION = 'nss.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'nss_db',               # 👈 use your schema name here
-        'USER': 'root',              # your MySQL username
-        'PASSWORD': 'root', # your MySQL password
+        'NAME': 'nss_db',               #  use  schema name here
+        'USER': 'root',              #  MySQL username
+        'PASSWORD': 'root', #  MySQL password
         'HOST': '127.0.0.1',
         'PORT': '3306',
         'OPTIONS': {

@@ -4,7 +4,7 @@
     <div class="col-md-6">
       <div class="card shadow rounded-3">
         <div class="card-header bg-teal text-white text-center">
-          <h4>Add New Subject</h4>
+          <h4 class="text-primary">Add New Subject</h4>
         </div>
         <div class="card-body">
           {% if messages %} {% for message in messages %}
@@ -24,11 +24,7 @@
             </div>
             <div class="mb-3">
               <label class="fw-bold">Category*</label>
-              <a
-                href="{% url 'add_category' %}"
-                class="btn btn-outline-secondary btn-sm ms-2"
-                >Add New Category</a
-              >
+
               <select name="category_id" class="form-select mt-2" required>
                 <option value="" disabled selected>Select Category</option>
                 {% for cat in categories %}
@@ -37,8 +33,13 @@
                 </option>
                 {% endfor %}
               </select>
+              <a
+                href="{% url 'add_category' %}"
+                class="btn btn-outline-primary w-100"
+                >Add New Category</a
+              >
             </div>
-            <button type="submit" class="btn btn-teal w-100">
+            <button type="submit" class="btn btn-outline-dark w-100">
               Add Subject
             </button>
           </form>
