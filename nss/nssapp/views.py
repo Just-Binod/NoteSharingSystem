@@ -1,4 +1,4 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,HttpResponse
 from django.contrib.auth.forms import UserCreationForm,AuthenticationForm
 from django.contrib.auth import login,logout
 from datetime import date
@@ -35,39 +35,208 @@ def home(request):
 
 
 
-@guest
-def register_view(request):
-    if request.method == 'POST':
+# @guest
+# def register_view(request):
+#     if request.method == 'POST':
+#         form = CustomUserCreationForm(request.POST)
+#         if form.is_valid():
+#             user = form.save()
+#             login(request, user)
+#             return redirect('login')
+#     else:
+#         form = CustomUserCreationForm()
+#     return render(request, 'register.html', {'form': form})
+
+
+#
+#
+#updated register view for email auth
+###
+# from django.shortcuts import render, redirect
+# from django.contrib.auth import login
+# from django.contrib import messages
+# from django.contrib.auth.models import User
+# from django.core.mail import send_mail
+# from django.template.loader import render_to_string
+# from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+# from django.utils.encoding import force_bytes, force_str
+# from django.contrib.auth.tokens import default_token_generator
+# from .forms import CustomUserCreationForm
+
+# def register_view(request):
+#     if request.method == 'POST':
+#         form = CustomUserCreationForm(request.POST)
+#         if form.is_valid():
+#             user = form.save(commit=False)
+#             user.is_active = False  # Deactivate until email is verified
+#             user.save()
+
+#             # Generate activation link
+#             uid = urlsafe_base64_encode(force_bytes(user.pk))
+#             token = default_token_generator.make_token(user)
+#             activation_link = request.build_absolute_uri(f'/activate/{uid}/{token}/')
+
+#             # Render activation email template
+#             subject = "Activate Your Account"
+#             message = render_to_string('activation_email.html', {
+#                 'user': user,
+#                 'activation_link': activation_link,
+#             })
+
+#             # Send email
+#             send_mail(subject, message, 'your_email@gmail.com', [user.email])
+
+#             messages.success(request, "Account created! Check your email to activate your account.")
+#             return redirect('login')
+#     else:
+#         form = CustomUserCreationForm()
+#     return render(request, 'register.html', {'form': form})
+
+
+
+
+
+#$#
+from django.contrib import messages
+from django.shortcuts import render, redirect
+from .forms import CustomUserCreationForm
+
+def register_user(request):
+    if request.method == "POST":
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            login(request, user)
-            return redirect('login')
+            user = form.save(commit=False)
+            user.is_active = False  # Deactivate until activation
+            user.save()
+            send_activation_email(user, request)
+            messages.success(request, "Registration successful! Check your email to activate.")
+            return redirect("login")
+        else:
+            messages.error(request, "Please correct the errors below.")
     else:
         form = CustomUserCreationForm()
     return render(request, 'register.html', {'form': form})
 
+#$#
 
-@guest
+###
+###
+#ew view--activation view
+###
+from django.utils.http import urlsafe_base64_decode
+from django.utils.encoding import force_str
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib import messages
+from django.shortcuts import redirect
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
+def activate(request, uidb64, token):
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+        print(f"Found user: {user.username}, is_active: {user.is_active}")  # Debug
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist) as e:
+        print(f"Error decoding UID or finding user: {e}")  # Debug
+        user = None
+
+    if user is not None and default_token_generator.check_token(user, token):
+        user.is_active = True
+        user.save()  # Ensure save is called
+        print(f"User activated: {user.username}, new is_active: {user.is_active}")  # Debug
+        messages.success(request, "Your account has been activated! You can now log in.")
+    else:
+        print(f"Token validation failed for user: {user}, token: {token}")  # Debug
+        messages.error(request, "Activation link is invalid or expired.")
+
+    return redirect("login")
+###
+
+
+# @guest
+# def login_view(request):
+#     if request.method == 'POST':
+#         form = CustomAuthenticationForm(request, data=request.POST)
+#         if form.is_valid():
+#             user = form.get_user()
+#             login(request, user)
+#             if user.is_superuser:
+#                 return redirect('adminpage')
+#             else:
+#                 return redirect('dashboard')
+#     else:
+#         form = CustomAuthenticationForm()
+#     return render(request, 'login.html', {'form': form})
+
+###
+#updated login view, block the in active
+###
+from django.contrib.auth import authenticate, login
+from django.contrib import messages
+from django.shortcuts import render, redirect
+from .forms import CustomAuthenticationForm
+
 def login_view(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         form = CustomAuthenticationForm(request, data=request.POST)
         if form.is_valid():
             user = form.get_user()
+            print(f"Authenticated user: {user}, is_active: {user.is_active if user else None}")  # Debug
+            if user and not user.is_active:
+                messages.error(request, "Please activate your account first.")
+                return redirect("login")
             login(request, user)
             if user.is_superuser:
-                return redirect('adminpage')
+                return redirect("adminpage")
             else:
-                return redirect('dashboard')
+                return redirect("dashboard")
+        else:
+            print(f"Form errors: {form.errors}")  # Debug
+            messages.error(request, "Invalid username or password.")
     else:
         form = CustomAuthenticationForm()
     return render(request, 'login.html', {'form': form})
 
+###
 
 def adminpage(request):
     return render(request,'adminpage.html')
 
+####
+#email sending code activation mail
+###
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.contrib.auth.tokens import default_token_generator
 
+def send_activation_email(user, request):
+    subject = "Activate Your Account"
+    from_email = "yourmail@gmail.com"  # Replace with your email
+    recipient_list = [user.email]
+
+    # Generate activation link (relative or local for dev)
+    uid = urlsafe_base64_encode(force_bytes(user.pk))
+    token = default_token_generator.make_token(user)
+    activation_link = f"/note/activate/{uid}/{token}/"  # Relative URL
+
+    # For local testing, you can use:
+    # activation_link = f"http://127.0.0.1:8000{note/activate/{uid}/{token}/"  # Uncomment for local dev
+
+    html_content = render_to_string("activation_email.html", {
+        'user': user,
+        'activation_link': request.build_absolute_uri(activation_link),  # Builds full URL
+    })
+
+    text_content = strip_tags(html_content)
+
+    email = EmailMultiAlternatives(subject, text_content, from_email, recipient_list)
+    email.attach_alternative(html_content, "text/html")
+    email.send()
+###
 
 
 

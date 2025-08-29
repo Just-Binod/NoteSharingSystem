@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'nssapp',
+    'django.contrib.sites',
 ]
 
 MIDDLEWARE = [
@@ -66,6 +67,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+               
             ],
         },
     },
@@ -151,3 +153,15 @@ AUTH_USER_MODEL = 'nssapp.User'
 #
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+
+# settings.py
+SITE_ID = 1  # Ensure this is set
+#email login sys
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'dc.aloneboe@gmail.com'
+EMAIL_HOST_PASSWORD = 'dhfs fyjd fdjc wsfu '
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
