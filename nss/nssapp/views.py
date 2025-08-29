@@ -1486,3 +1486,23 @@ def edit_profile1(request):
         return redirect('profile1')  # or wherever your profile view is
 
     return render(request, 'edit_profile1.html', {'user': request.user})
+
+
+
+
+
+
+#
+#view users
+
+from django.shortcuts import render
+from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth import get_user_model  # Add this import
+
+# Use get_user_model() to get the correct User model
+User = get_user_model()
+
+@user_passes_test(lambda u: u.is_superuser)
+def view_users(request):
+    users = User.objects.all()
+    return render(request, "view_users.html", {"users": users})
