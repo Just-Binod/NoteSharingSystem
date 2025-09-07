@@ -1,6 +1,34 @@
 {% extends "app.html" %} {% load static %} {% block content %}
+
+<style>
+  /* Page Background */
+  body {
+    background: url("{% static 'images/android-chrome-512x512.png' %}")
+      no-repeat center center;
+    background-size: 40%; /* bigger than login form */
+    background-attachment: fixed;
+    background-color: #fffffff2; /* fallback */
+    font-family: Arial, sans-serif;
+  }
+
+  /* Login Card Styling */
+  .login-card {
+    background-color: rgba(255, 255, 255, 0.35); /* transparent */
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.37);
+    backdrop-filter: blur(6px); /* adds nice blur behind card */
+  }
+
+  /* Form heading */
+  .login-card h2 {
+    color: #333;
+    font-weight: bold;
+  }
+</style>
+
 <div class="row justify-content-center my-5">
-  <div class="col-md-5 col-lg-4 p-4 border rounded shadow-sm bg-white">
+  <div class="login-card col-md-5 col-lg-4">
     <h2 class="text-center mb-4 text-secondary">Login</h2>
 
     {% if messages %} {% for message in messages %}
@@ -22,7 +50,6 @@
 
     <form action="{% url 'login' %}" method="POST" novalidate>
       {% csrf_token %}
-
       <div class="mb-3">
         <label
           for="{{ form.username.id_for_label }}"
@@ -76,10 +103,12 @@
         >Create New Account</a
       >
     </div>
+
     <div class="text-center mt-4">
       <p class="mb-2 text-muted">Visit Home Page?</p>
       <a href="{% url 'home' %}" class="btn btn-outline-dark px-4">Home Page</a>
     </div>
   </div>
 </div>
+
 {% endblock content %}
