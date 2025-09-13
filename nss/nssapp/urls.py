@@ -1,9 +1,12 @@
 from django.contrib import admin
 from django.urls import path,include
 from . import views
-
+from django.contrib.auth import views as auth_views
 from django.conf import settings
 from django.conf.urls.static import static
+from django.urls import path
+from .views import CustomPasswordResetView
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     
@@ -37,6 +40,38 @@ urlpatterns = [
     path('add_subject/', views.add_subject, name='add_subject'),
     path('add_category/', views.add_category, name='add_category'),
     path("view-users/", views.view_users, name="view_users"),
+    path(
+        "password_reset/",
+        CustomPasswordResetView.as_view(),
+        name="password_reset",
+    ),
+    path(
+        "password_reset/done/",
+        auth_views.PasswordResetDoneView.as_view(template_name="password_reset_done.html"),
+        name="password_reset_done",
+    ),
+    path(
+        "reset/<uidb64>/<token>/",
+        auth_views.PasswordResetConfirmView.as_view(template_name="password_reset_confirm.html"),
+        name="password_reset_confirm",
+    ),
+    path(
+        "reset/done/",
+        auth_views.PasswordResetCompleteView.as_view(template_name="password_reset_complete.html"),
+        name="password_reset_complete",
+    ),
+    path("password_reset/done/",
+         auth_views.PasswordResetDoneView.as_view(template_name="password_reset_done.html"),
+         name="password_reset_done"),
+    path("reset/<uidb64>/<token>/",
+         auth_views.PasswordResetConfirmView.as_view(template_name="password_reset_confirm.html"),
+         name="password_reset_confirm"),
+    path("reset/done/",
+         auth_views.PasswordResetCompleteView.as_view(template_name="password_reset_complete.html"),
+         name="password_reset_complete"),
+
+
+
    
 #    path('edit_profile/', views.edit_profile, name='edit_profile'),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

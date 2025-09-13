@@ -1675,3 +1675,51 @@ User = get_user_model()
 def view_users(request):
     users = User.objects.all()
     return render(request, "view_users.html", {"users": users})
+
+
+
+    #custom mail for reseet password
+from django.contrib.auth.views import PasswordResetView
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.conf import settings
+from django.contrib.auth import get_user_model
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+
+User = get_user_model()
+
+class CustomPasswordResetView(PasswordResetView):
+    template_name = "password_reset.html"
+    success_url = "/note/password_reset/done/"
+    email_template_name = "emails/password_reset_email.html"
+
+    def form_valid(self, form):
+        email = form.cleaned_data["email"]
+        users = User.objects.filter(email__iexact=email, is_active=True)
+
+        for user in users:
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            token = self.token_generator.make_token(user)
+
+            context = {
+                "user": user,
+                "domain": settings.MY_SITE_DOMAIN,       # e.g. 127.0.0.1:8000
+                "protocol": settings.MY_SITE_PROTOCOL,   # e.g. http
+                "uid": uid,
+                "token": token,
+                "site_name": "MyApp",
+            }
+
+            html_content = render_to_string(self.email_template_name, context)
+
+            msg = EmailMultiAlternatives(
+                subject="Reset Your Password",
+                body="Please view this email in an HTML-compatible client.",  # fallback text
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                to=[user.email],
+            )
+            msg.attach_alternative(html_content, "text/html")
+            msg.send()
+
+        return super().form_valid(form)

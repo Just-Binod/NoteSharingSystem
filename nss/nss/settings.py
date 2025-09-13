@@ -66,6 +66,11 @@ TEMPLATES = [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
+                "django.template.context_processors.csrf",
+                "django.template.context_processors.media",
+                "django.template.context_processors.static",
+                "django.template.context_processors.tz",
+            
                 'django.contrib.messages.context_processors.messages',
                
             ],
@@ -88,7 +93,7 @@ WSGI_APPLICATION = 'nss.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'nss_db',               #  use  schema name here
+        'NAME': 'nss_db',               #  used  schema name here
         'USER': 'root',              #  MySQL username
         'PASSWORD': 'root', #  MySQL password
         'HOST': '127.0.0.1',
@@ -170,3 +175,10 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'dc.aloneboe@gmail.com'
 EMAIL_HOST_PASSWORD = 'dhfs fyjd fdjc wsfu '
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+
+#forgot pass
+
+DEFAULT_FROM_EMAIL = "MyApp <dc.aloneboe@gmail.com>"
+MY_SITE_DOMAIN = "127.0.0.1:8000"   # change to yourdomain.com in production
+MY_SITE_PROTOCOL = "http"           # use "https" in production
