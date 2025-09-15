@@ -3,6 +3,7 @@ from django.contrib.auth.forms import UserCreationForm,AuthenticationForm
 from django.contrib.auth import login,logout
 from datetime import date
 from datetime import datetime
+import time
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from .models import Notes, Subject
@@ -26,7 +27,30 @@ from .forms import CustomUserCreationForm, CustomAuthenticationForm
 
 # Create your views here.
 def nav(request):
-    return render(request,'nav.html')
+    datetime=datetime.datetime.now()
+    h=time.strftime("%H")
+    if h>='0' and h<'12':
+        msg="Good Morning, "
+    elif h>='12' and h<'18':
+        msg="Good Afternoon, "
+    else:
+        msg="Good Evening,"
+    return render(request,'nav.html',{'datetime':datetime,'greet':msg})
+
+
+
+def usernav(request):
+    datetime=datetime.datetime.now()
+    h=time.strftime("%H")
+    if h>='0' and h<'12':
+        msg="Good Morning, "
+    elif h>='12' and h<'18':
+        msg="Good Afternoon, "
+    else:
+        msg="Good Evening,"
+    return render(request,'usernav.html',{'datetime':datetime,'greet':msg})
+
+
 def home(request):
     notes = Notes.objects.all().order_by('upload_date')
     return render(request,'home.html',{'notes': notes})
@@ -244,15 +268,31 @@ def send_activation_email(user, request):
 @login_required
 def dashboard_view(request):
     notes = Notes.objects.all()
+    date=datetime.now()
+    h=time.strftime("%H")
+    if h>='0' and h<'12':
+        msg="Good Morning, "
+    elif h>='12' and h<'18':
+        msg="Good Afternoon, "
+    else:
+        msg="Good Evening,"
     
-    return render(request,'dashboard.html',{'notes':notes})
+    return render(request,'dashboard.html',{'notes':notes,'datetime':date,'greet':msg})
 
 def logout_view(request):
     logout(request)
     return redirect('login')
 
 def profile(request):
-    return render(request,'profile.html')
+    date=datetime.now()
+    h=time.strftime("%H")
+    if h>='0' and h<'12':
+        msg="Good Morning, "
+    elif h>='12' and h<'18':
+        msg="Good Afternoon, "
+    else:
+        msg="Good Evening,"
+    return render(request,'profile.html',{'datetime':date,'greet':msg})
 
 #
 def profile1(request):
@@ -562,6 +602,16 @@ from datetime import datetime
 
 @login_required
 def upload_notes(request):
+    date=datetime.now()
+    h=time.strftime("%H")
+    if h>='0' and h<'12':
+        msg="Good Morning, "
+    elif h>='12' and h<'18':
+        msg="Good Afternoon, "
+    else:
+        msg="Good Evening,"
+    
+   
     subjects = Subject.objects.select_related('category_id').all()
     field_errors = {}
 
@@ -642,6 +692,8 @@ def upload_notes(request):
             })
 
     return render(request, 'upload_notes.html', {
+        'datetime': date,
+        'greet': msg,
         'form_data': {
             'title': '',
             'subject': '',
@@ -1397,8 +1449,16 @@ from .models import Notes
 
 @login_required
 def viewmy_notes(request):
+    date=datetime.now()
+    h=time.strftime("%H")
+    if h>='0' and h<'12':
+        msg="Good Morning, "
+    elif h>='12' and h<'18':
+        msg="Good Afternoon, "
+    else:
+        msg="Good Evening,"
     notes = Notes.objects.filter(user_id=request.user).order_by('upload_date')
-    return render(request, 'viewmy_notes.html', {'notes': notes})
+    return render(request, 'viewmy_notes.html', {'notes': notes,'datetime':date,'greet':msg})
 
 @login_required
 def delete_mynotes(request, id):
@@ -1424,9 +1484,17 @@ def viewall_notes(request):
 #user
 @login_required
 def viewall_notes_user(request):
+    date=datetime.now()
+    h=time.strftime("%H")
+    if h>='0' and h<'12':
+        msg="Good Morning, "
+    elif h>='12' and h<'18':
+        msg="Good Afternoon, "
+    else:
+        msg="Good Evening,"
     # Get all notes ordered by upload date
     notes = Notes.objects.all().order_by('upload_date')
-    return render(request, 'viewall_notes_user.html', {'notes': notes})
+    return render(request, 'viewall_notes_user.html', {'notes': notes,'datetime':date,'greet':msg})
 
     
 
