@@ -63,16 +63,40 @@
               {% endif %}
             </div>
 
-            <!-- Upload Date -->
+            <!-- Upload Date  
             <div class="mb-3">
               <label class="fw-bold">Upload Date*</label>
               <input type="date" class="form-control {% if field_errors.upload_date %}is-invalid{% endif %}" name="upload_date"
-                     value="{{ form_data.upload_date|default:'' }}" required />
+                     value="{{ form_data.upload_date|default:'' }}" required  />
               {% if field_errors.upload_date %}
               <div class="invalid-feedback">Please select a valid date.</div>
               {% endif %}
               <small class="form-text text-muted">Format: YYYY-MM-DD (Today's date is default)</small>
             </div>
+
+            -->
+
+
+            <!-- Upload Date -->
+<div class="mb-3">
+  <label class="fw-bold">Upload Date*</label>
+  <input type="date"
+         class="form-control {% if field_errors.upload_date %}is-invalid{% endif %}"
+         name="upload_date"
+         value="{% now 'Y-m-d' %}"
+         readonly />
+  {% if field_errors.upload_date %}
+  <div class="invalid-feedback">Please select a valid date.</div>
+  {% endif %}
+  <small class="form-text text-muted">Auto-filled with today’s date</small>
+</div>
+
+
+           
+
+
+         
+
 
             <!-- File Upload -->
             <div class="mb-4">
