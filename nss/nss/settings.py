@@ -26,9 +26,20 @@ STATIC_DIR=os.path.join(BASE_DIR, 'static')
 SECRET_KEY = 'django-insecure-6x_u-o3rit2wkdb(1!io-o23*+x$anssdqwv7k8n-d)72*rmfh'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = []
+
+import os
+
+ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
+
+
+# ===================imp=========================
+# In production → set an env variable:
+# export DJANGO_ALLOWED_HOSTS="mydomain.com,www.mydomain.com"
+# ===================imp=========================
+
 
 
 # Application definition

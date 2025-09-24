@@ -8,6 +8,10 @@ from django.urls import path
 from .views import CustomPasswordResetView
 from django.contrib.auth import views as auth_views
 
+from .views import custom_page_not_found
+
+
+
 urlpatterns = [
     
     path('nav/',views.nav,name='nav'),
@@ -82,3 +86,9 @@ urlpatterns = [
    
 #    path('edit_profile/', views.edit_profile, name='edit_profile'),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
+
+
+# outside
+handler404 = custom_page_not_found

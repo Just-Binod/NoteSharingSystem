@@ -1870,3 +1870,10 @@ def upvote_note_admin(request, note_id):
             upvote.delete()  # toggle (remove if already liked)
         return redirect("note_detail_admin", note_id=note.note_id)
     return redirect("login")  # redirect if not logged in
+
+
+    #page not found
+
+def custom_page_not_found(request, exception):
+    return render(request, "404.html", status=404)
+
