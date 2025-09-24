@@ -9,6 +9,7 @@ from .views import CustomPasswordResetView
 from django.contrib.auth import views as auth_views
 
 from .views import custom_page_not_found
+from .views import delete_user
 
 
 
@@ -20,6 +21,7 @@ urlpatterns = [
     path('home/',views.home,name='home'),
     path('register/',views.register_user,name='register'),
     path('login/',views.login_view,name='login'),
+    path('users/delete/<int:user_id>/', delete_user, name='delete_user'),
    path('activate/<uidb64>/<token>/', views.activate, name='activate'),
 
     path('logout/',views.logout_view,name='logout'),

@@ -1745,15 +1745,37 @@ from django.contrib.auth import get_user_model  # Add this import
 
 # Use get_user_model() to get the correct User model
 User = get_user_model()
-
+#view user
 @user_passes_test(lambda u: u.is_superuser)
 def view_users(request):
     users = User.objects.all()
     return render(request, "view_users.html", {"users": users})
 
-
-
-    #custom mail for reseet password
+## delete user
+@user_passes_test(lambda u: u.is_superuser)
+def delete_user(request, user_id):
+    """
+    Delete a user by ID, restricted to superusers.
+    Prevents deletion of the requesting user.
+    """
+    try:
+        user_to_delete = User.objects.get(id=user_id)
+        if user_to_delete == request.user:
+            messages.error(request, "You cannot delete your own account.")
+        elif user_to_delete.is_superuser:
+            messages.error(request, "Cannot delete superuser accounts.")
+        else:
+            username = user_to_delete.username
+            user_to_delete.delete()
+            messages.success(request, f"User {username} deleted successfully.")
+    except User.DoesNotExist:
+        messages.error(request, "User not found.")
+    except Exception as e:
+        logger.error(f"Error deleting user {user_id}: {str(e)}")
+        messages.error(request, "An error occurred while deleting the user.")
+    return redirect('view_users')
+##
+ #custom mail for reseet password
 from django.contrib.auth.views import PasswordResetView
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
