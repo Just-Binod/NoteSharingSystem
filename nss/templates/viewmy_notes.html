@@ -29,6 +29,7 @@
               <th>Date</th>
               <th>File</th>
               <th>Action</th>
+              <th>Details</th>
             </tr>
           </thead>
           <tbody>
@@ -69,6 +70,15 @@
                 {% else %}
                 <span class="text-danger">Invalid Note ID</span>
                 {% endif %}
+              </td>
+              <td>
+                <!--view detaillllllls-->
+                <a
+                  href="{% url 'note_detail' note.note_id %}"
+                  class="btn btn-sm btn-outline-primary rounded-pill"
+                >
+                  View Details
+                </a>
               </td>
             </tr>
             {% endfor %}

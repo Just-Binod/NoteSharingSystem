@@ -71,6 +71,12 @@ urlpatterns = [
          auth_views.PasswordResetCompleteView.as_view(template_name="password_reset_complete.html"),
          name="password_reset_complete"),
 
+    path("note/<int:note_id>/", views.note_detail, name="note_detail"),
+    path("note_admin/<int:note_id>/", views.note_detail_admin, name="note_detail_admin"),
+    path("note/<int:note_id>/upvote/", views.upvote_note, name="upvote_note"),
+    path("note/<int:note_id>/comment/", views.add_comment, name="add_comment"),
+    path("note_admin/<int:note_id>/upvote/", views.upvote_note_admin, name="upvote_note_admin"),
+    path("note_admin/<int:note_id>/comment/", views.add_comment_admin, name="add_comment_admin"),
 
 
    

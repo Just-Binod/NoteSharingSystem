@@ -28,6 +28,7 @@
               <th>Uploaded By</th>
               <th>Date</th>
               <th>File</th>
+              <th>Details</th>
             </tr>
           </thead>
           <tbody>
@@ -54,6 +55,15 @@
                   class="btn btn-primary btn-sm rounded-pill"
                 >
                   <i class="fas fa-download"></i> Download
+                </a>
+              </td>
+              <td>
+                <!--view detaillllllls-->
+                <a
+                  href="{% url 'note_detail' note.note_id %}"
+                  class="btn btn-sm btn-outline-primary rounded-pill"
+                >
+                  View Details
                 </a>
               </td>
             </tr>

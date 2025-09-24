@@ -1791,3 +1791,82 @@ class CustomPasswordResetView(PasswordResetView):
             msg.send()
 
         return super().form_valid(form)
+
+
+#views for upvote as well as comment, also notedetail pageee
+from django.shortcuts import render, get_object_or_404, redirect
+from django.http import JsonResponse
+from .models import Notes, Upvote, Comment
+
+
+def note_detail(request, note_id):
+    note = get_object_or_404(Notes, pk=note_id)
+    comments = note.comments.all().order_by("-created_at")
+    upvotes = note.upvotes.count()
+
+    return render(request, "note_detail.html", {
+        "note": note,
+        "comments": comments,
+        "upvotes": upvotes,
+    })
+
+
+def note_detail_admin(request, note_id):
+    note = get_object_or_404(Notes, pk=note_id)
+    comments = note.comments.all().order_by("-created_at")
+    upvotes = note.upvotes.count()
+
+    return render(request, "note_detail_admin.html", {
+        "note": note,
+        "comments": comments,
+        "upvotes": upvotes,
+    })
+
+
+def upvote_note(request, note_id):
+    note = get_object_or_404(Notes, pk=note_id)
+    user = request.user
+
+    if user.is_authenticated:
+        upvote, created = Upvote.objects.get_or_create(note=note, user=user)
+        if not created:
+            upvote.delete()  # toggle (remove if already liked)
+        return redirect("note_detail", note_id=note.note_id)
+    return redirect("login")  # redirect if not logged in
+
+
+def add_comment(request, note_id):
+    note = get_object_or_404(Notes, pk=note_id)
+    if request.method == "POST":
+        content = request.POST.get("content")
+        if request.user.is_authenticated:
+            Comment.objects.create(note=note, user=request.user, content=content)
+        else:
+            guest_name = request.POST.get("guest_name", "Guest")
+            Comment.objects.create(note=note, guest_name=guest_name, content=content)
+    return redirect("note_detail", note_id=note.note_id)
+
+#for admin
+def add_comment_admin(request, note_id):
+    note = get_object_or_404(Notes, pk=note_id)
+    if request.method == "POST":
+        content = request.POST.get("content")
+        if request.user.is_authenticated:
+            Comment.objects.create(note=note, user=request.user, content=content)
+        else:
+            guest_name = request.POST.get("guest_name", "Guest")
+            Comment.objects.create(note=note, guest_name=guest_name, content=content)
+    return redirect("note_detail_admin", note_id=note.note_id)
+
+
+
+def upvote_note_admin(request, note_id):
+    note = get_object_or_404(Notes, pk=note_id)
+    user = request.user
+
+    if user.is_authenticated:
+        upvote, created = Upvote.objects.get_or_create(note=note, user=user)
+        if not created:
+            upvote.delete()  # toggle (remove if already liked)
+        return redirect("note_detail_admin", note_id=note.note_id)
+    return redirect("login")  # redirect if not logged in

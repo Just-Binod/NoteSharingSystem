@@ -6,7 +6,7 @@
     >
       <h2 class="mb-0"><i class=""></i>All Notes Collection</h2>
       <a
-        href="{% url 'upload_notes' %}"
+        href="{% url 'upload_notes_admin' %}"
         class="btn btn-warning btn-sm rounded-pill fw-bold"
       >
         Add New Note <i class="fas fa-plus"></i>
@@ -27,6 +27,7 @@
               <th>Date</th>
               <th>File</th>
               <th>Action</th>
+              <th>Details</th>
             </tr>
           </thead>
           <tbody>
@@ -67,6 +68,15 @@
                 {% else %}
                 <span class="text-danger">Invalid Note ID</span>
                 {% endif %}
+              </td>
+              <td>
+                <!--view detaillllllls-->
+                <a
+                  href="{% url 'note_detail_admin' note.note_id %}"
+                  class="btn btn-sm btn-outline-primary rounded-pill"
+                >
+                  View Details
+                </a>
               </td>
             </tr>
             {% endfor %}

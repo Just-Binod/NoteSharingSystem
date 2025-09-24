@@ -173,3 +173,32 @@ class Files(models.Model):
     # media folder ko vitra notes nam ko folder in mange.py sectoin ma
     )
     note_id=models.ForeignKey(Notes,on_delete=models.CASCADE)
+
+
+
+
+# for comment and upvote .......yt help
+
+class Upvote(models.Model):
+    note = models.ForeignKey(Notes, on_delete=models.CASCADE, related_name="upvotes")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("note", "user")  # A user can upvote a note only once
+
+    def __str__(self):
+        return f"{self.user.username} upvoted {self.note.title}"
+
+
+class Comment(models.Model):
+    note = models.ForeignKey(Notes, on_delete=models.CASCADE, related_name="comments")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    # For anonymous users
+    guest_name = models.CharField(max_length=100, blank=True, null=True)
+
+    def __str__(self):
+        return f"Comment on {self.note.title} by {self.user or self.guest_name}"

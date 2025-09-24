@@ -1,4 +1,4 @@
-{% extends "usernav.html" %} {% load static %} {% block content %}
+{% extends "adminnav.html" %} {% load static %} {% block content %}
 <div class="container mt-5">
   <div class="card shadow-sm border-0 rounded-3">
     <div class="card-header bg-violet text-black text-center rounded-top">
@@ -21,7 +21,7 @@
       <!-- Upvote -->
       <form
         method="POST"
-        action="{% url 'upvote_note' note.note_id %}"
+        action="{% url 'upvote_note_admin' note.note_id %}"
         class="d-inline"
       >
         {% csrf_token %}
@@ -44,7 +44,7 @@
     </div>
     <div class="card-body">
       <!-- Add Comment Form -->
-      <form method="POST" action="{% url 'add_comment' note.note_id %}">
+      <form method="POST" action="{% url 'add_comment_admin' note.note_id %}">
         {% csrf_token %} {% if user.is_authenticated %}
         <textarea
           name="content"
