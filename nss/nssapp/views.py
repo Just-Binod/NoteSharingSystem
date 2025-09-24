@@ -1697,6 +1697,13 @@ def edit_profile(request):
         username = request.POST.get('username')
         email = request.POST.get('email')
 
+        # Basic validation
+        if not username or not email:
+            messages.error(request, 'Please fill in all fields.')
+            return render(request, 'edit_profile.html', {'user': request.user})
+
+
+
         user = request.user
         user.username = username
         user.email = email

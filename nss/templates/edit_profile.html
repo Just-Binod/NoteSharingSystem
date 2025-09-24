@@ -1,4 +1,6 @@
+
 {% extends "usernav.html" %} {% load static %} {% block content %}
+
 <style>
   :root {
     --teal: #20c997;
@@ -167,9 +169,17 @@
   <div class="profile-header">
     <h2>update Profile</h2>
   </div>
+   
+  
+
   <form action="" method="POST">
     {% csrf_token %}
+
+    
     <div class="profile-detail row align-items-center" style="--order: 1">
+      <div>
+       
+      </div>
     <div class="col-md-4 detail-label">Full Name</div>
     <div class="col-md-8 detail-value"> <input
         type="text"
@@ -211,8 +221,7 @@
   </form>
 
   
-{% endblock %}
-
+{% endblock %} 
 
 
 
