@@ -1496,6 +1496,69 @@ def viewall_notes_user(request):
     notes = Notes.objects.all().order_by('upload_date')
     return render(request, 'viewall_notes_user.html', {'notes': notes,'datetime':date,'greet':msg})
 
+####
+# 
+# from django.shortcuts import render
+# from .models import Notes, Category  # 👈 Import your Category model
+# from django.utils import timezone
+# import time
+
+# def viewall_notes_user(request):
+#     """
+#     This view displays all note categories and allows users to view
+#     notes for each category in a modal pop-up.
+#     """
+#     # --- Greeting Logic (your original code is fine) ---
+#     now = timezone.now()
+#     h = now.strftime("%H")
+#     if '00' <= h < '12':
+#         msg = "Good Morning, "
+#     elif '12' <= h < '18':
+#         msg = "Good Afternoon, "
+#     else:
+#         msg = "Good Evening,"
+
+#     # --- Data Fetching Logic ---
+#     # 1. Get all notes and pre-fetch related subject and category data to avoid extra DB queries.
+#     all_notes = Notes.objects.select_related('subject_id__category_id').all().order_by('-upload_date')
+
+#     # 2. Get a list of category IDs that actually have notes.
+#     #    This prevents displaying empty category cards.
+#     category_ids_with_notes = all_notes.values_list('subject_id__category_id', flat=True).distinct()
+
+#     # 3. Fetch the actual category objects.
+#     categories = Category.objects.filter(id__in=category_ids_with_notes).order_by('category_name')
+
+#     # --- Context to be passed to the template ---
+#     context = {
+#         'notes': all_notes,
+#         'categories': categories,
+#         'datetime': now,
+#         'greet': msg,
+#     }
+    
+#     return render(request, 'viewall_notes_user.html', context)
+# ###
+
+# in nssapp/views.py
+
+# def viewall_notes_user(request):
+#     # ... (the rest of your view code) ...
+    
+#     category_ids_with_notes = all_notes.values_list('subject_id__category_id', flat=True).distinct()
+    
+#     #  FIX: Changed filter from 'id__in' to 'category_id__in'
+#     categories = Category.objects.filter(category_id__in=category_ids_with_notes).order_by('category_name')
+
+#     context = {
+#         'notes': all_notes,
+#         'categories': categories,
+#         'datetime': now,
+#         'greet': msg,
+#         # ... (the rest of your context) ...
+#     }
+    
+#     return render(request, 'viewall_notes_user.html', context)
     
 
 
