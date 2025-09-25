@@ -1482,19 +1482,67 @@ def viewall_notes(request):
     notes = Notes.objects.all().order_by('upload_date')
     return render(request, 'viewall_notes.html', {'notes': notes})
 #user
+from collections import defaultdict
 @login_required
 def viewall_notes_user(request):
-    date=datetime.now()
-    h=time.strftime("%H")
-    if h>='0' and h<'12':
-        msg="Good Morning, "
-    elif h>='12' and h<'18':
-        msg="Good Afternoon, "
+    date = datetime.now()
+    h = time.strftime("%H")
+    if h >= '0' and h < '12':
+        msg = "Good Morning,"
+    elif h >= '12' and h < '18':
+        msg = "Good Afternoon,"
     else:
-        msg="Good Evening,"
+        msg = "Good Evening,"
+
     # Get all notes ordered by upload date
-    notes = Notes.objects.all().order_by('upload_date')
-    return render(request, 'viewall_notes_user.html', {'notes': notes,'datetime':date,'greet':msg})
+    notes = Notes.objects.select_related("subject_id__category_id").order_by("upload_date")
+
+    # Group notes by category
+    categories = defaultdict(list)
+    for note in notes:
+        category = note.subject_id.category_id if note.subject_id and note.subject_id.category_id else None
+        categories[category].append(note)
+
+    # Convert into list of dicts for template
+    grouped_categories = []
+    for category, notes_in_cat in categories.items():
+        grouped_categories.append({
+            "category": category,
+            "notes": notes_in_cat
+        })
+
+    return render(request, "viewall_notes_user.html", {
+        "categories": grouped_categories,
+        "datetime": date,
+        "greet": msg
+    })
+# def viewall_notes_user(request):
+#     date = datetime.now()
+#     h = time.strftime("%H")
+#     if h >= '0' and h < '12':
+#         msg = "Good Morning, "
+#     elif h >= '12' and h < '18':
+#         msg = "Good Afternoon, "
+#     else:
+#         msg = "Good Evening,"
+    
+#     # Get all notes ordered by upload date
+#     notes = Notes.objects.all().order_by('upload_date')
+#     return render(request, 'viewall_notes_user.html', {'notes': notes, 'datetime': date, 'greet': msg})
+
+
+# def viewall_notes_user(request):
+#     date=datetime.now()
+#     h=time.strftime("%H")
+#     if h>='0' and h<'12':
+#         msg="Good Morning, "
+#     elif h>='12' and h<'18':
+#         msg="Good Afternoon, "
+#     else:
+#         msg="Good Evening,"
+#     # Get all notes ordered by upload date
+#     notes = Notes.objects.all().order_by('upload_date')
+#     return render(request, 'viewall_notes_user.html', {'notes': notes,'datetime':date,'greet':msg})
 
 ####
 # 
