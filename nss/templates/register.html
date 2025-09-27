@@ -1,5 +1,202 @@
 {% extends "app.html" %} {% load static %} {% block content %}
 
+<style>
+  /* Make the page take full viewport height */
+  html,
+  body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-size: 40%;
+    background-attachment: fixed;
+    background-color: #fffffff2;
+    font-family: Arial, sans-serif;
+  }
+
+  /* Center the register card vertically and horizontally */
+  .register-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  /* Register Card Styling - matches login page */
+  .register-card {
+    background-color: rgba(255, 255, 255, 0.35);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.37);
+    backdrop-filter: blur(6px);
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  .register-card h2 {
+    color: #333;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+  }
+
+  /* Compact form styling */
+  .form-compact .mb-3 {
+    margin-bottom: 1rem !important;
+  }
+
+  /* Reduce spacing for compact layout */
+  .compact-spacing {
+    margin-bottom: 0.5rem;
+  }
+
+  .compact-alert {
+    margin-bottom: 1rem;
+    padding: 0.5rem 1rem;
+  }
+</style>
+
+<div class="register-container">
+  <div class="register-card">
+    <h2 class="text-center text-secondary">Register</h2>
+
+    {% if messages %} {% for message in messages %}
+    <div
+      class="alert alert-{{ message.tags }} alert-dismissible fade show compact-alert"
+      role="alert"
+    >
+      {{ message }}
+      <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="alert"
+        aria-label="Close"
+      ></button>
+    </div>
+    {% endfor %} {% endif %}
+
+    <form
+      action="{% url 'register' %}"
+      method="POST"
+      novalidate
+      class="form-compact"
+    >
+      {% csrf_token %}
+
+      <!-- Username Field -->
+      <div class="mb-3">
+        <label
+          for="{{ form.username.id_for_label }}"
+          class="form-label fw-semibold"
+          >Username</label
+        >
+        <input
+          type="text"
+          name="{{ form.username.name }}"
+          id="{{ form.username.id_for_label }}"
+          class="form-control {% if form.username.errors %}is-invalid{% endif %}"
+          value="{{ form.username.value|default_if_none:'' }}"
+          placeholder="Enter your username"
+          required
+        />
+        {% if form.username.errors %}
+        <div class="invalid-feedback">
+          {{ form.username.errors.as_text|striptags }}
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Email Field -->
+      <div class="mb-3">
+        <label
+          for="{{ form.email.id_for_label }}"
+          class="form-label fw-semibold"
+          >Email</label
+        >
+        <input
+          type="email"
+          name="{{ form.email.name }}"
+          id="{{ form.email.id_for_label }}"
+          class="form-control {% if form.email.errors %}is-invalid{% endif %}"
+          value="{{ form.email.value|default_if_none:'' }}"
+          placeholder="Enter your email"
+          required
+        />
+        {% if form.email.errors %}
+        <div class="invalid-feedback">
+          {{ form.email.errors.as_text|striptags }}
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Password Fields -->
+      <div class="mb-3">
+        <label
+          for="{{ form.password1.id_for_label }}"
+          class="form-label fw-semibold"
+          >Password</label
+        >
+        <input
+          type="password"
+          name="{{ form.password1.name }}"
+          id="{{ form.password1.id_for_label }}"
+          class="form-control {% if form.password1.errors %}is-invalid{% endif %}"
+          placeholder="Enter your password"
+          required
+        />
+        {% if form.password1.errors %}
+        <div class="invalid-feedback">
+          {{ form.password1.errors.as_text|striptags }}
+        </div>
+        {% endif %}
+      </div>
+
+      <div class="mb-3">
+        <label
+          for="{{ form.password2.id_for_label }}"
+          class="form-label fw-semibold"
+          >Confirm Password</label
+        >
+        <input
+          type="password"
+          name="{{ form.password2.name }}"
+          id="{{ form.password2.id_for_label }}"
+          class="form-control {% if form.password2.errors %}is-invalid{% endif %}"
+          placeholder="Confirm your password"
+          required
+        />
+        {% if form.password2.errors %}
+        <div class="invalid-feedback">
+          {{ form.password2.errors.as_text|striptags }}
+        </div>
+        {% endif %}
+      </div>
+
+      <button type="submit" class="btn btn-dark w-100 fw-bold">Register</button>
+    </form>
+
+    <div class="text-center mt-3">
+      <p class="mb-2 text-muted compact-spacing">
+        Already have an account?
+        <a href="{% url 'login' %}" class="btn btn-outline-dark btn-sm"
+          >Login</a
+        >
+      </p>
+    </div>
+
+    <div class="text-center mt-3">
+      <a href="{% url 'home' %}" class="text-decoration-none"
+        >Visit Home Page?</a
+      >
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+<!---->
+
+{% comment %} {% extends "app.html" %} {% load static %} {% block content %}
+
 <div class="row justify-content-center my-5">
   <div class="col-md-5 col-lg-4 p-4 border rounded shadow-sm bg-white">
     <h2 class="text-center mb-4 text-secondary">Register</h2>
@@ -120,4 +317,4 @@
     </div>
   </div>
 </div>
-{% endblock content %}
+{% endblock content %} {% endcomment %}

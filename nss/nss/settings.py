@@ -53,7 +53,18 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'nssapp',
     'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
 ]
+
+AUTHENTICATION_BACKENDS = [
+    # 'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -63,6 +74,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'nss.urls'
@@ -193,3 +205,68 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 DEFAULT_FROM_EMAIL = "MyApp <dc.aloneboe@gmail.com>"
 MY_SITE_DOMAIN = "127.0.0.1:8000"   # change to yourdomain.com in production
 MY_SITE_PROTOCOL = "http"           # use "https" in production
+
+
+
+# 
+# 
+# social login seting
+
+
+#Social login settings
+
+# SOCIALACCOUNT_PROVIDERS = {
+#     'google': {
+#         'APP': {
+#             'client_id':'348432816403-91ghfpoc20u6ruog0vg73lvsf6ti3hhg.apps.googleusercontent.com',
+#             'secret': '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',
+          
+#         },
+#         'SCOPE': ['profile','email',],
+#          'AUTH_PARAMS': {'access_type': 'online'},
+#         'METHOD': 'oauth2',
+#         'VERIFIED_EMAIL': True,
+#     },
+   
+   
+# }
+
+
+
+# SOCIALACCOUNT_LOGIN_ON_GET = True
+# LOGIN_REDIRECT_URL = 'dashboard/'  # Redirect to dashboard after login
+
+
+# #  IMPORTANT: Skip the intermediate page
+# SOCIALACCOUNT_LOGIN_ON_GET = True  # This bypasses the 3rd-party signup page!
+# SOCIALACCOUNT_AUTO_SIGNUP = True   # Auto-create accounts without intermediate form
+
+# # Optional but recommended
+# ACCOUNT_LOGOUT_ON_GET = True
+# SOCIALACCOUNT_STORE_TOKENS = True
+
+
+# # # Email handling
+# # ACCOUNT_EMAIL_REQUIRED = True
+# # ACCOUNT_EMAIL_VERIFICATION = 'optional'  # or 'none' for no verification
+
+
+# 
+
+# new
+
+# Social login settings - SIMPLIFIED VERSION
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': ['profile', 'email'],
+        'AUTH_PARAMS': {'access_type': 'online'},
+    }
+}
+
+# Remove the APP section from SOCIALACCOUNT_PROVIDERS - configure in admin instead
+SOCIALACCOUNT_LOGIN_ON_GET = True
+SOCIALACCOUNT_AUTO_SIGNUP = True
+ACCOUNT_LOGOUT_ON_GET = True
+SOCIALACCOUNT_STORE_TOKENS = True
+
+LOGIN_REDIRECT_URL = '/note/dashboard/' # Remove trailing slash - use URL name
