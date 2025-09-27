@@ -255,9 +255,36 @@ MY_SITE_PROTOCOL = "http"           # use "https" in production
 
 # new
 
+# import os
+# from dotenv import load_dotenv
+
+# # Load environment variables from .env file
+# load_dotenv()
+
+# # SECURITY WARNING: keep the secret key used in production secret!
+# SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-default-key-for-dev')
+
+# # SECURITY WARNING: don't run with debug turned on in production!
+# DEBUG = os.environ.get('DEBUG', 'True') == 'True'
+
+
+
+
+
+
+
+
+
+
 # Social login settings - SIMPLIFIED VERSION
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
+        # # 
+        # 'APP': {
+        #     'client_id': os.environ.get('GOOGLE_OAUTH_CLIENT_ID', ''),
+        #     'secret': os.environ.get('GOOGLE_OAUTH_CLIENT_SECRET', ''),
+        # },
+        # # 
         'SCOPE': ['profile', 'email'],
         'AUTH_PARAMS': {'access_type': 'online'},
     }
