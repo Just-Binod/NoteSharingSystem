@@ -40,10 +40,12 @@ class UserManager(BaseUserManager):
         
         return self.create_user(username, email, password, **extra_fields)
 
+############################
+
+# models.py - Add to your existing User class
 class User(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=30, blank=True)
     last_name = models.CharField(max_length=150, blank=True)
-
     username = models.CharField(max_length=150, unique=True)
     email = models.EmailField(unique=True)
     role = models.ForeignKey(
@@ -56,6 +58,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     registration_date = models.DateTimeField(default=timezone.now)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+    
+    # Add these simple Google fields
+    google_id = models.CharField(max_length=100, blank=True, null=True, unique=True)
     
     objects = UserManager()
     
@@ -73,7 +78,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     
     def __str__(self):
         return self.username
-    
+
+
+
+
+    ###########################
 
 class Category(models.Model):
     category_id=models.AutoField(primary_key=True)

@@ -18,7 +18,7 @@ STATIC_DIR = os.path.join(BASE_DIR, 'static')
 SECRET_KEY = 'my_secret_key'  # Consider using environment variable in production
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False  # Changed to False for production
+DEBUG = True  # Changed to False for production
 
 # Updated ALLOWED_HOSTS for your PythonAnywhere domain
 ALLOWED_HOSTS = [
@@ -81,10 +81,14 @@ WSGI_APPLICATION = 'nss.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'iwasbinod$default',  # PythonAnywhere database name format
-        'USER': 'iwasbinod',         # Your PythonAnywhere username
-        'PASSWORD': 'nssroot@123',          # Your MySQL password
-        'HOST': 'iwasbinod.mysql.pythonanywhere-services.com',
+        # 'NAME': 'iwasbinod$default',  # PythonAnywhere database name format
+        'NAME':'nss_db',               #  used  schema name here
+        'USER': 'root',
+        'PASSWORD' : 'root',
+        'HOST': '',
+        # 'USER': 'iwasbinod',         # Your PythonAnywhere username
+        # 'PASSWORD': 'nssroot@123',          # Your MySQL password
+        # 'HOST': 'iwasbinod.mysql.pythonanywhere-services.com',
         'PORT': '3306',
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
@@ -112,6 +116,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
+# TIME_ZONE ='Asia/Kathmandu'
 USE_I18N = True
 USE_TZ = True
 
@@ -157,6 +162,33 @@ X_FRAME_OPTIONS = 'DENY'
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 
+
+########################################
+#################################
+
+# settings.py - Add these settings
+# settings.py - Better approach with environment variables
+import os
+
+# Google OAuth2 Configuration
+GOOGLE_OAUTH2_CLIENT_ID = os.environ.get(
+    'GOOGLE_OAUTH2_CLIENT_ID', 
+    '348432816403-91ghfpoc20u6ruog0vg73lvsf6ti3hhg.apps.googleusercontent.com'
+)
+GOOGLE_OAUTH2_CLIENT_SECRET = os.environ.get(
+    'GOOGLE_OAUTH2_CLIENT_SECRET',
+    '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'
+)
+
+# Dynamic settings based on environment
+if DEBUG:
+    GOOGLE_OAUTH2_REDIRECT_URI = 'http://127.0.0.1:8000/note/auth/google/callback/'
+    ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+    print("=== DEVELOPMENT MODE ===")
+else:
+    GOOGLE_OAUTH2_REDIRECT_URI = 'https://iwasbinod.pythonanywhere.com/note/auth/google/callback/'
+    ALLOWED_HOSTS = ['127.0.0.1','iwasbinod.pythonanywhere.com']
+    print("=== PRODUCTION MODE ===")
 
 
 

@@ -2017,3 +2017,151 @@ def upvote_note_admin(request, note_id):
 def custom_page_not_found(request, exception):
     return render(request, "404.html", status=404)
 
+
+####################################
+
+# views.py - Add this temporary debug view
+def debug_callback(request):
+    """Debug view to see callback data"""
+    return HttpResponse(f"""
+    <h1>Callback Debug</h1>
+    <p>GET parameters: {dict(request.GET)}</p>
+    <p>Current user: {request.user}</p>
+    <p>Authenticated: {request.user.is_authenticated}</p>
+    <p><a href="/note/auth/google/">Try Google Login Again</a></p>
+    <p><a href="/note/login/">Back to Login</a></p>
+    """)
+
+
+
+
+ # views.py - Update your Google auth views
+import requests  
+def google_auth(request):
+    """Google OAuth2 initiation - works for both dev and production"""
+    if settings.DEBUG:
+        redirect_uri = 'http://127.0.0.1:8000/note/auth/google/callback/'
+    else:
+        redirect_uri = 'https://iwasbinod.pythonanywhere.com/note/auth/google/callback/'
+    
+    google_auth_url = (
+        f"https://accounts.google.com/o/oauth2/v2/auth?"
+        f"client_id={settings.GOOGLE_OAUTH2_CLIENT_ID}&"
+        f"redirect_uri={redirect_uri}&"
+        f"response_type=code&"
+        f"scope=email%20profile&"
+        f"access_type=online"
+    )
+    return redirect(google_auth_url)
+
+def google_auth_callback(request):
+    """Handle Google callback for both environments"""
+    code = request.GET.get('code')
+    error = request.GET.get('error')
+    
+    if error:
+        messages.error(request, f"Google login failed: {error}")
+        return redirect('login')
+    
+    if not code:
+        messages.error(request, "No authorization code received from Google")
+        return redirect('login')
+    
+    try:
+        # Determine redirect URI based on environment
+        if settings.DEBUG:
+            redirect_uri = 'http://127.0.0.1:8000/note/auth/google/callback/'
+        else:
+            redirect_uri = 'https://iwasbinod.pythonanywhere.com/note/auth/google/callback/'
+        
+        # Exchange authorization code for tokens
+        token_url = "https://oauth2.googleapis.com/token"
+        data = {
+            'code': code,
+            'client_id': settings.GOOGLE_OAUTH2_CLIENT_ID,
+            'client_secret': settings.GOOGLE_OAUTH2_CLIENT_SECRET,
+            'redirect_uri': redirect_uri,
+            'grant_type': 'authorization_code',
+        }
+        
+        response = requests.post(token_url, data=data)
+        token_data = response.json()
+        
+        if 'error' in token_data:
+            error_msg = token_data.get('error_description', token_data['error'])
+            messages.error(request, f"Token exchange failed: {error_msg}")
+            return redirect('login')
+        
+        # Get user info using access token
+        user_info_url = "https://www.googleapis.com/oauth2/v2/userinfo"
+        headers = {'Authorization': f'Bearer {token_data["access_token"]}'}
+        
+        user_info_response = requests.get(user_info_url, headers=headers)
+        user_info = user_info_response.json()
+        
+        # Extract user data
+        email = user_info['email']
+        google_id = user_info['id']
+        first_name = user_info.get('given_name', '')
+        last_name = user_info.get('family_name', '')
+        
+        # Get or create user
+        user = get_or_create_google_user(email, google_id, first_name, last_name)
+        
+        # Log the user in
+        login(request, user)
+        messages.success(request, f"Welcome, {first_name or user.username}!")
+        
+        # Redirect based on user type
+        if user.is_superuser:
+            return redirect('adminpage')
+        else:
+            return redirect('dashboard')
+            
+    except Exception as e:
+        messages.error(request, f"Login failed: {str(e)}")
+        return redirect('login')
+    
+
+# views.py - Add this function
+def get_or_create_google_user(email, google_id, first_name, last_name):
+    """Get or create user from Google data"""
+    try:
+        # Try to find user by Google ID first
+        user = User.objects.get(google_id=google_id)
+        print(f"Found existing user by Google ID: {user.username}")
+        return user
+    except User.DoesNotExist:
+        try:
+            # Try to find by email and link Google account
+            user = User.objects.get(email=email)
+            print(f"Found existing user by email, linking Google ID: {user.username}")
+            user.google_id = google_id
+            user.save()
+            return user
+        except User.DoesNotExist:
+            # Create new user
+            username = email.split('@')[0]
+            # Make username unique
+            counter = 1
+            original_username = username
+            while User.objects.filter(username=username).exists():
+                username = f"{original_username}{counter}"
+                counter += 1
+            
+            print(f"Creating new user: {username}")
+            user = User.objects.create(
+                username=username,
+                email=email,
+                first_name=first_name,
+                last_name=last_name,
+                google_id=google_id,
+                is_active=True
+            )
+            user.set_unusable_password()  # Google users don't need password
+            user.save()
+            return user
+
+
+
+#####################################

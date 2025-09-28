@@ -166,6 +166,26 @@
       <button type="submit" class="btn btn-dark w-100 fw-bold">Login</button>
     </form>
 
+
+      <!-- =========================-->
+
+    <div class="divider">
+      <br>
+
+            <div class="d-flex align-items-center justify-content-center mx-auto my-1 p-1"> <h4>or</h4></div>
+        </div>
+
+    <!-- Simple Google Login Button -->
+    <a href="{% url 'google_login' %}" class="btn-google">
+      <img
+        src="https://developers.google.com/identity/images/g-logo.png"
+        alt="Google"
+      />
+      Continue with Google
+    </a>
+    <br><br>
+
+    <!-------===================================
     <div class="text-center mt-3">
       <p class="mb-2 text-muted compact-spacing">Don't have an account yet?</p>
       <a href="{% url 'register' %}" class="btn btn-outline-dark btn-sm"

@@ -16,6 +16,22 @@ from .views import delete_user
 urlpatterns = [
     
     path('nav/',views.nav,name='nav'),
+
+
+    ##
+    path('auth/google/', views.google_auth, name='google_login'),
+    path('auth/google/callback/', views.google_auth_callback, name='google_callback'),
+
+    path('auth/google/callback/debug/', views.debug_callback, name='debug_callback'),  # Temporary
+
+
+
+
+    ##
+
+
+
+
     path('usernav/',views.usernav,name='usernav'),
     path('',views.home,name='home'),
     path('home/',views.home,name='home'),
