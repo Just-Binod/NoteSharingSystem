@@ -32,7 +32,7 @@ DEBUG = True
 
 import os
 
-ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
+# ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 
 
 # ===================imp=========================
@@ -52,16 +52,16 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'nssapp',
-    'django.contrib.sites',
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'allauth.socialaccount.providers.google',
+    # 'django.contrib.sites',
+    # 'allauth',
+    # 'allauth.account',
+    # 'allauth.socialaccount',
+    # 'allauth.socialaccount.providers.google',
 ]
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend',
+    # 'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
 
@@ -74,7 +74,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'allauth.account.middleware.AccountMiddleware',
+    # 'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'nss.urls'
@@ -203,8 +203,37 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 #forgot pass
 
 DEFAULT_FROM_EMAIL = "MyApp <dc.aloneboe@gmail.com>"
-MY_SITE_DOMAIN = "127.0.0.1:8000"   # change to yourdomain.com in production
-MY_SITE_PROTOCOL = "http"           # use "https" in production
+MY_SITE_DOMAIN = "iwasbinod.pythonanywhere.com"   # change to yourdomain.com in production
+MY_SITE_PROTOCOL = "https"           # use "https" in production
+
+
+
+
+# settings.py - Add these settings
+# settings.py - Better approach with environment variables
+import os
+
+# Google OAuth2 Configuration
+GOOGLE_OAUTH2_CLIENT_ID = os.environ.get(
+    'GOOGLE_OAUTH2_CLIENT_ID', 
+    '348432816403-91ghfpoc20u6ruog0vg73lvsf6ti3hhg.apps.googleusercontent.com'
+)
+GOOGLE_OAUTH2_CLIENT_SECRET = os.environ.get(
+    'GOOGLE_OAUTH2_CLIENT_SECRET',
+    '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'
+)
+
+# Dynamic settings based on environment
+if DEBUG:
+    GOOGLE_OAUTH2_REDIRECT_URI = 'http://127.0.0.1:8000/note/auth/google/callback/'
+    ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+    print("=== DEVELOPMENT MODE ===")
+else:
+    GOOGLE_OAUTH2_REDIRECT_URI = 'https://iwasbinod.pythonanywhere.com/note/auth/google/callback/'
+    ALLOWED_HOSTS = ['iwasbinod.pythonanywhere.com']
+    print("=== PRODUCTION MODE ===")
+
+
 
 
 
@@ -276,24 +305,24 @@ MY_SITE_PROTOCOL = "http"           # use "https" in production
 
 
 
-# Social login settings - SIMPLIFIED VERSION
-SOCIALACCOUNT_PROVIDERS = {
-    'google': {
-        # # 
-        # 'APP': {
-        #     'client_id': os.environ.get('GOOGLE_OAUTH_CLIENT_ID', ''),
-        #     'secret': os.environ.get('GOOGLE_OAUTH_CLIENT_SECRET', ''),
-        # },
-        # # 
-        'SCOPE': ['profile', 'email'],
-        'AUTH_PARAMS': {'access_type': 'online'},
-    }
-}
+# # Social login settings - SIMPLIFIED VERSION
+# SOCIALACCOUNT_PROVIDERS = {
+#     'google': {
+#         # # 
+#         # 'APP': {
+#         #     'client_id': os.environ.get('GOOGLE_OAUTH_CLIENT_ID', ''),
+#         #     'secret': os.environ.get('GOOGLE_OAUTH_CLIENT_SECRET', ''),
+#         # },
+#         # # 
+#         'SCOPE': ['profile', 'email'],
+#         'AUTH_PARAMS': {'access_type': 'online'},
+#     }
+# }
 
-# Remove the APP section from SOCIALACCOUNT_PROVIDERS - configure in admin instead
-SOCIALACCOUNT_LOGIN_ON_GET = True
-SOCIALACCOUNT_AUTO_SIGNUP = True
-ACCOUNT_LOGOUT_ON_GET = True
-SOCIALACCOUNT_STORE_TOKENS = True
+# # Remove the APP section from SOCIALACCOUNT_PROVIDERS - configure in admin instead
+# SOCIALACCOUNT_LOGIN_ON_GET = True
+# SOCIALACCOUNT_AUTO_SIGNUP = True
+# ACCOUNT_LOGOUT_ON_GET = True
+# SOCIALACCOUNT_STORE_TOKENS = True
 
-LOGIN_REDIRECT_URL = '/note/dashboard/' # Remove trailing slash - use URL name
+# LOGIN_REDIRECT_URL = '/note/dashboard/' # Remove trailing slash - use URL name

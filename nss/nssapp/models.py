@@ -5,6 +5,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 
 
+
 class Role(models.Model):
     name = models.CharField(max_length=50, unique=True)
     is_admin_role = models.BooleanField(default=False)
@@ -40,10 +41,48 @@ class UserManager(BaseUserManager):
         
         return self.create_user(username, email, password, **extra_fields)
 
+# class User(AbstractBaseUser, PermissionsMixin):
+#     first_name = models.CharField(max_length=30, blank=True)
+#     last_name = models.CharField(max_length=150, blank=True)
+
+#     username = models.CharField(max_length=150, unique=True)
+#     email = models.EmailField(unique=True)
+#     role = models.ForeignKey(
+#         Role,
+#         on_delete=models.CASCADE,
+#         null=True,
+#         blank=True,
+#         limit_choices_to={'is_admin_role': False}
+#     )
+#     registration_date = models.DateTimeField(default=timezone.now)
+#     is_active = models.BooleanField(default=True)
+#     is_staff = models.BooleanField(default=False)
+    
+#     objects = UserManager()
+    
+#     USERNAME_FIELD = 'username'
+#     REQUIRED_FIELDS = ['email']
+    
+#     def save(self, *args, **kwargs):
+#         if not self.pk and not self.role:
+#             user_role, created = Role.objects.get_or_create(
+#                 name='User',
+#                 defaults={'is_admin_role': False}
+#             )
+#             self.role = user_role
+#         super().save(*args, **kwargs)
+    
+#     def __str__(self):
+#         return self.username
+    
+
+
+
+#
+# models.py - Add to your existing User class
 class User(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=30, blank=True)
     last_name = models.CharField(max_length=150, blank=True)
-
     username = models.CharField(max_length=150, unique=True)
     email = models.EmailField(unique=True)
     role = models.ForeignKey(
@@ -56,6 +95,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     registration_date = models.DateTimeField(default=timezone.now)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+    
+    # Add these simple Google fields
+    google_id = models.CharField(max_length=100, blank=True, null=True, unique=True)
     
     objects = UserManager()
     
@@ -73,7 +115,15 @@ class User(AbstractBaseUser, PermissionsMixin):
     
     def __str__(self):
         return self.username
-    
+
+#
+
+
+
+
+
+
+
 
 class Category(models.Model):
     category_id=models.AutoField(primary_key=True)
@@ -202,3 +252,7 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"Comment on {self.note.title} by {self.user or self.guest_name}"
+
+
+
+

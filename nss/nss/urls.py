@@ -23,5 +23,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('',views.home,name='home'),
     path('note/', include('nssapp.urls')),
-    path('accounts/', include('allauth.urls')),#all-auth---google login
+    # path('accounts/', include('allauth.urls')),#all-auth---google login
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
