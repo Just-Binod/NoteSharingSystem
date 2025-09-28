@@ -27,7 +27,11 @@ STATIC_DIR=os.path.join(BASE_DIR, 'static')
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
+<<<<<<< HEAD
 SECRET_KEY = 'my_secret_key'
+=======
+
+>>>>>>> c8de42a91ef09105f5e7c3d3fe1c066b6c22f910
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -300,6 +304,7 @@ MY_SITE_PROTOCOL = "http"           # use "https" in production
 # ACCOUNT_LOGOUT_ON_GET = True
 # SOCIALACCOUNT_STORE_TOKENS = True
 
+<<<<<<< HEAD
 # LOGIN_REDIRECT_URL = '/note/dashboard/' # Remove trailing slash - use URL name
 
 
@@ -895,3 +900,6 @@ MY_SITE_PROTOCOL = "http"           # use "https" in production
 # SOCIALACCOUNT_STORE_TOKENS = True
 
 # LOGIN_REDIRECT_URL = '/note/dashboard/' # Remove trailing slash - use URL name
+=======
+LOGIN_REDIRECT_URL = '/note/dashboard/' # Remove trailing slash - use URL name
+>>>>>>> c8de42a91ef09105f5e7c3d3fe1c066b6c22f910
