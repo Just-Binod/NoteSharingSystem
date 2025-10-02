@@ -12,7 +12,7 @@ from mimetypes import guess_type
 from .models import Notes, Subject, Category  # make sure these are imported
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
-
+from django.contrib.admin.views.decorators import staff_member_required
 from .models import *
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib.auth import get_user_model
@@ -223,7 +223,7 @@ def login_view(request):
     return render(request, 'login.html', {'form': form})
 
 ###
-
+@staff_member_required
 def adminpage(request):
     return render(request,'adminpage.html')
 
@@ -283,6 +283,7 @@ def logout_view(request):
     logout(request)
     return redirect('login')
 
+@login_required
 def profile(request):
     date=datetime.now()
     h=time.strftime("%H")
@@ -295,6 +296,8 @@ def profile(request):
     return render(request,'profile.html',{'datetime':date,'greet':msg})
 
 #
+@login_required
+@staff_member_required
 def profile1(request):
     return render(request,'profile1.html')
 
@@ -709,6 +712,7 @@ def upload_notes(request):
 
 
 @login_required
+@staff_member_required
 def upload_notes_admin(request):
     subjects = Subject.objects.select_related('category_id').all()
     field_errors = {}
@@ -1785,6 +1789,7 @@ def download_note(request, pk):  # Changed parameter name to be generic
 
 # viewmy_notes_admin
 @login_required
+@staff_member_required
 def viewmy_notes_admin(request):
     notes = Notes.objects.filter(user_id=request.user).order_by('upload_date')
     return render(request, 'viewmy_notes_admin.html', {'notes': notes})
@@ -1793,6 +1798,7 @@ def viewmy_notes_admin(request):
 
 #admin
 @login_required
+@staff_member_required
 def delete_mynotes_admin(request, id):
     if not request.user.is_authenticated:
         return redirect('login')
@@ -1827,6 +1833,7 @@ def edit_profile(request):
 
 
 @login_required
+@staff_member_required
 def edit_profile1(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -1857,12 +1864,15 @@ from django.contrib.auth import get_user_model  # Add this import
 # Use get_user_model() to get the correct User model
 User = get_user_model()
 #view user
+@login_required
+@staff_member_required
 @user_passes_test(lambda u: u.is_superuser)
 def view_users(request):
     users = User.objects.all()
     return render(request, "view_users.html", {"users": users})
 
 ## delete user
+@staff_member_required
 @user_passes_test(lambda u: u.is_superuser)
 def delete_user(request, user_id):
     """
@@ -1938,7 +1948,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse
 from .models import Notes, Upvote, Comment
 
-
+@login_required
 def note_detail(request, note_id):
     note = get_object_or_404(Notes, pk=note_id)
     comments = note.comments.all().order_by("-created_at")
@@ -1950,7 +1960,7 @@ def note_detail(request, note_id):
         "upvotes": upvotes,
     })
 
-
+@staff_member_required
 def note_detail_admin(request, note_id):
     note = get_object_or_404(Notes, pk=note_id)
     comments = note.comments.all().order_by("-created_at")
@@ -1962,7 +1972,7 @@ def note_detail_admin(request, note_id):
         "upvotes": upvotes,
     })
 
-
+@login_required
 def upvote_note(request, note_id):
     note = get_object_or_404(Notes, pk=note_id)
     user = request.user
@@ -1974,7 +1984,7 @@ def upvote_note(request, note_id):
         return redirect("note_detail", note_id=note.note_id)
     return redirect("login")  # redirect if not logged in
 
-
+@login_required
 def add_comment(request, note_id):
     note = get_object_or_404(Notes, pk=note_id)
     if request.method == "POST":
@@ -1987,6 +1997,8 @@ def add_comment(request, note_id):
     return redirect("note_detail", note_id=note.note_id)
 
 #for admin
+@login_required
+@staff_member_required
 def add_comment_admin(request, note_id):
     note = get_object_or_404(Notes, pk=note_id)
     if request.method == "POST":
@@ -1999,7 +2011,8 @@ def add_comment_admin(request, note_id):
     return redirect("note_detail_admin", note_id=note.note_id)
 
 
-
+@login_required
+@staff_member_required
 def upvote_note_admin(request, note_id):
     note = get_object_or_404(Notes, pk=note_id)
     user = request.user

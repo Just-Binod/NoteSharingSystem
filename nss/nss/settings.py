@@ -18,7 +18,7 @@ STATIC_DIR = os.path.join(BASE_DIR, 'static')
 SECRET_KEY = 'my_secret_key'  # Consider using environment variable in production
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True  # Changed to False for production
+DEBUG = False  # Changed to False for production
 
 # Updated ALLOWED_HOSTS for your PythonAnywhere domain
 ALLOWED_HOSTS = [
@@ -115,10 +115,16 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'UTC'    #comment gareko vyo
 # TIME_ZONE ='Asia/Kathmandu'
 USE_I18N = True
 USE_TZ = True
+
+###added
+# TIME_ZONE = 'Asia/Kathmandu'
+# USE_L10N = True
+####
+
 
 # Static files configuration for PythonAnywhere
 STATIC_URL = '/static/'

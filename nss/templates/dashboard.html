@@ -1,6 +1,46 @@
 {% extends "usernav.html" %} {% load static %} {% block content %}
 <div class="container mt-5">
-  <!-- Main Header Card -->
+  <!-- Welcome Message (Bootstrap Toast) -->
+  {% if messages %}
+  <div
+    class="toast-container position-fixed top-0 end-0 p-3"
+    style="z-index: 1055"
+  >
+    {% for message in messages %}
+    <div
+      class="toast welcome-toast fade show"
+      role="alert"
+      aria-live="assertive"
+      aria-atomic="true"
+      data-bs-autohide="true"
+      data-bs-delay="5000"
+      style="animation: slideInRight 0.5s ease-out"
+    >
+      <div class="toast-header bg-{{ message.tags }} text-dark">
+        <i
+          class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}exclamation-circle{% else %}info-circle{% endif %} me-2"
+        ></i>
+        <strong class="me-auto">
+          {% if message.tags == 'success' %}Login Success {% else %}Info
+          <!---->
+          {% endif %}
+          <!---->
+        </strong>
+        <small class="text-muted">Just now</small>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="toast"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="toast-body">{{ message }}</div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- Rest code (Main Header Card, Notes Grid, Pagination, Login Modal) remains unchanged -->
   <div
     class="card border-0 shadow-sm rounded-3 mb-4"
     style="animation: fadeIn 0.8s ease-out"
@@ -24,7 +64,6 @@
           value="{{ request.GET.title }}"
           style="border: 1px solid #d1d5db; padding: 0.5rem 1rem"
         />
-
         <button
           class="btn btn-violet rounded-3 px-4 py-2"
           type="submit"
@@ -45,7 +84,6 @@
       style="animation: slideIn 0.6s ease-out; animation-delay: calc(0.1s * {{ forloop.counter0 }});"
     >
       <div class="card h-100 border-0 shadow-sm rounded-3 note-card">
-        <!-- Card Header -->
         <div class="card-header bg-white border-0 pb-0">
           <div class="d-flex justify-content-between align-items-start">
             <h5 class="card-title mb-1 text-violet">{{ note.title }}</h5>
@@ -55,8 +93,6 @@
             <i class="fas fa-user me-1"></i>{{ note.user_id.username }}
           </p>
         </div>
-
-        <!-- Card Body -->
         <div class="card-body pt-2">
           <p class="card-text text-muted mb-3">
             {{ note.description|truncatechars:120 }}
@@ -70,8 +106,6 @@
             <span>{{ note.upload_date|date:"M d, Y" }}</span>
           </div>
         </div>
-
-        <!-- Card Footer -->
         <div
           class="card-footer bg-white border-0 d-flex justify-content-between align-items-center pt-0"
         >
@@ -84,13 +118,12 @@
             class="btn btn-sm btn-violet rounded-pill px-3"
           >
             <i class="fas fa-download me-1"></i>Download
-            <!--view detaillllllls-->
-            <a
-              href="{% url 'note_detail' note.note_id %}"
-              class="btn btn-sm btn-outline-primary rounded-pill"
-            >
-              View Details
-            </a>
+          </a>
+          <a
+            href="{% url 'note_detail' note.note_id %}"
+            class="btn btn-sm btn-outline-primary rounded-pill"
+          >
+            View Details
           </a>
           {% else %}
           <button
@@ -147,7 +180,6 @@
     </ul>
   </nav>
   {% endif %} {% else %}
-  <!-- Empty State -->
   <div
     class="card border-0 shadow-sm rounded-3 mt-4"
     style="animation: fadeIn 0.8s ease-out"
@@ -219,6 +251,26 @@
   </div>
 </div>
 
+<!-- JavaScript for Toast Initialization -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const toasts = document.querySelectorAll(".welcome-toast");
+    toasts.forEach((toast) => {
+      const bsToast = new bootstrap.Toast(toast, {
+        autohide: true,
+        delay: 5000,
+      });
+      bsToast.show();
+      toast.addEventListener("hidden.bs.toast", () => {
+        toast.style.animation = "slideOutRight 0.5s ease-out forwards";
+        setTimeout(() => {
+          toast.remove();
+        }, 500); // Match animation duration
+      });
+    });
+  });
+</script>
+
 <style>
   :root {
     --violet: #7c3aed;
@@ -229,6 +281,8 @@
     --text-muted: #6b7280;
     --bg-light: #f9fafb;
   }
+
+  /* Existing styles remain unchanged */
   .card-header.bg-violet {
     background-color: var(--violet) !important;
   }
@@ -315,6 +369,72 @@
     color: #fff;
     border: none;
   }
+
+  /* Toast-specific styles */
+  .toast-container {
+    z-index: 1055; /* Ensure toasts appear above other elements */
+  }
+  .welcome-toast {
+    min-width: 300px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-left: 4px solid;
+  }
+  .welcome-toast.bg-success {
+    border-left-color: var(--amber);
+  }
+  .welcome-toast.bg-error {
+    border-left-color: #ef4444;
+  }
+  .welcome-toast.bg-info {
+    border-left-color: var(--violet);
+  }
+  .toast-header.bg-success {
+    background-color: #0c830cff !important;
+    color: var(--text-dark);
+  }
+  .toast-header.bg-error {
+    background-color: #fee2e2 !important;
+    color: var(--text-dark);
+  }
+  .toast-header.bg-info {
+    background-color: #ede9fe !important;
+    color: var(--text-dark);
+  }
+  .welcome-toast .btn-close {
+    transition: transform 0.2s ease;
+  }
+  .welcome-toast .btn-close:hover {
+    transform: scale(1.2);
+  }
+  .toast-body {
+    font-weight: 500;
+    color: var(--text-dark);
+  }
+
+  /* Toast animations */
+  @keyframes slideInRight {
+    from {
+      opacity: 0;
+      transform: translateX(100%);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  @keyframes slideOutRight {
+    from {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateX(100%);
+    }
+  }
+
+  /* Existing animations */
   @keyframes fadeIn {
     from {
       opacity: 0;
