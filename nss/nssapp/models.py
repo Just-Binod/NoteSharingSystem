@@ -255,4 +255,32 @@ class Comment(models.Model):
 
 
 
+# exclusive notes and purchase tracking
+# Add to your existing models.py
 
+class ExclusiveNote(models.Model):
+    note_id = models.AutoField(primary_key=True)
+    title = models.CharField(max_length=100)
+    description = models.TextField()
+    notes_file = models.FileField(upload_to='exclusive_notes/')
+    upload_date = models.DateTimeField(auto_now_add=True)
+    user_id = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    subject_id = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    is_active = models.BooleanField(default=True)
+    
+    def __str__(self):
+        return f"{self.title} - ${self.price}"
+
+class NotePurchase(models.Model):
+    purchase_id = models.AutoField(primary_key=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    note = models.ForeignKey(ExclusiveNote, on_delete=models.CASCADE)
+    purchase_date = models.DateTimeField(auto_now_add=True)
+    amount_paid = models.DecimalField(max_digits=10, decimal_places=2)
+    
+    class Meta:
+        unique_together = ('user', 'note')  # Prevent duplicate purchases
+    
+    def __str__(self):
+        return f"{self.user.username} purchased {self.note.title}"

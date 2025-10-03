@@ -1,0 +1,87 @@
+{% extends "adminnav.html" %} {% load static %} {% block content %}
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-12">
+      <div class="card shadow-sm">
+        <div
+          class="card-header bg-primary text-white d-flex justify-content-between align-items-center"
+        >
+          <h3 class="mb-0">
+            <i class="fas fa-crown me-2"></i>Exclusive Notes Management
+          </h3>
+          <div>
+            <a
+              href="{% url 'upload_exclusive_note' %}"
+              class="btn btn-light btn-sm me-2"
+            >
+              <i class="fas fa-plus me-1"></i>Upload Note
+            </a>
+            <a
+              href="{% url 'view_purchase_details' %}"
+              class="btn btn-warning btn-sm"
+            >
+              <i class="fas fa-chart-bar me-1"></i>View Purchases
+            </a>
+          </div>
+        </div>
+        <div class="card-body">
+          {% if notes %}
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Subject</th>
+                  <th>Price</th>
+                  <th>Upload Date</th>
+                  <th>Uploaded By</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for note in notes %}
+                <tr>
+                  <td>{{ note.title }}</td>
+                  <td>{{ note.subject_id.subject_name }}</td>
+                  <td class="text-success">${{ note.price }}</td>
+                  <td>{{ note.upload_date|date:"M d, Y" }}</td>
+                  <td>{{ note.user_id.username }}</td>
+                  <td>
+                    {% if note.is_active %}
+                    <span class="badge bg-success">Active</span>
+                    {% else %}
+                    <span class="badge bg-danger">Inactive</span>
+                    {% endif %}
+                  </td>
+                  <td>
+                    <a
+                      href="{% url 'download_exclusive_note' note.note_id %}"
+                      class="btn btn-sm btn-outline-primary"
+                    >
+                      <i class="fas fa-download"></i>
+                    </a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <div class="text-center py-4">
+            <i class="fas fa-crown fa-3x text-muted mb-3"></i>
+            <h4>No Exclusive Notes</h4>
+            <p class="text-muted">
+              Upload your first exclusive note to get started!
+            </p>
+            <a href="{% url 'upload_exclusive_note' %}" class="btn btn-primary">
+              <i class="fas fa-plus me-1"></i>Upload First Note
+            </a>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

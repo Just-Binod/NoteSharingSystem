@@ -41,3 +41,23 @@ class CustomAuthenticationForm(AuthenticationForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+###################################
+##################################
+#################################
+
+# exclusive
+from django import forms
+from .models import ExclusiveNote, Subject
+
+class ExclusiveNoteForm(forms.ModelForm):
+    class Meta:
+        model = ExclusiveNote
+        fields = ['title', 'description', 'subject_id', 'notes_file', 'price']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
+            'subject_id': forms.Select(attrs={'class': 'form-control'}),
+            'notes_file': forms.FileInput(attrs={'class': 'form-control'}),
+            'price': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01', 'min': '0'}),
+        }

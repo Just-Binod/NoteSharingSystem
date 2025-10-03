@@ -10,7 +10,9 @@ from django.contrib.auth import views as auth_views
 
 from .views import custom_page_not_found
 from .views import delete_user
-
+##
+from  nssapp import views as exclusive_views
+##
 
 
 urlpatterns = [
@@ -94,6 +96,20 @@ urlpatterns = [
     path("note/<int:note_id>/comment/", views.add_comment, name="add_comment"),
     path("note_admin/<int:note_id>/upvote/", views.upvote_note_admin, name="upvote_note_admin"),
     path("note_admin/<int:note_id>/comment/", views.add_comment_admin, name="add_comment_admin"),
+
+
+    # exclusive
+    # User exclusive notes URLs
+    path('exclusive-notes/', exclusive_views.exclusive_notes_list, name='exclusive_notes_list'),
+    path('purchase-note/<int:note_id>/', exclusive_views.purchase_note, name='purchase_note'),
+    path('download-exclusive-note/<int:note_id>/', exclusive_views.download_exclusive_note, name='download_exclusive_note'),
+    
+    # Admin exclusive notes URLs
+    path('admin/exclusive-notes/', exclusive_views.admin_exclusive_notes, name='admin_exclusive_notes'),
+    path('admin/upload-exclusive-note/', exclusive_views.upload_exclusive_note, name='upload_exclusive_note'),
+    path('admin/purchase-details/', exclusive_views.view_purchase_details, name='view_purchase_details'),
+
+
 
 
    

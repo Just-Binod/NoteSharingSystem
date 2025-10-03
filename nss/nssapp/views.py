@@ -2278,3 +2278,111 @@ def get_or_create_google_user(email, google_id, first_name, last_name):
             user.save()
             return user
 
+
+
+#####################################################################################
+######################################################################################
+########################################################################################
+# exclusive
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib import messages
+from django.http import HttpResponseForbidden, FileResponse
+from django.db.models import Q
+from .models import ExclusiveNote, NotePurchase, User
+from decimal import Decimal
+
+def is_admin(user):
+    return user.is_authenticated and user.role and user.role.is_admin_role
+
+# User Views
+@login_required
+def exclusive_notes_list(request):
+    notes = ExclusiveNote.objects.filter(is_active=True)
+    
+    # Check which notes the user has purchased
+    purchased_notes = NotePurchase.objects.filter(user=request.user).values_list('note_id', flat=True)
+    
+    # Create a list of purchased note IDs for the template
+    purchased_note_ids = list(purchased_notes)
+    
+    context = {
+        'notes': notes,
+        'purchased_note_ids': purchased_note_ids
+    }
+    
+    return render(request, 'exclusive_notes_list.html', context)
+
+@login_required
+def purchase_note(request, note_id):
+    note = get_object_or_404(ExclusiveNote, note_id=note_id, is_active=True)
+    
+    # Check if user already purchased this note
+    if NotePurchase.objects.filter(user=request.user, note=note).exists():
+        messages.warning(request, 'You have already purchased this note!')
+        return redirect('exclusive_notes_list')
+    
+    # In a real application, you would integrate with a payment gateway here
+    # For now, we'll simulate the purchase
+    
+    purchase = NotePurchase.objects.create(
+        user=request.user,
+        note=note,
+        amount_paid=note.price
+    )
+    
+    messages.success(request, f'Successfully purchased "{note.title}" for ${note.price}!')
+    return redirect('exclusive_notes_list')
+
+@login_required
+def download_exclusive_note(request, note_id):
+    note = get_object_or_404(ExclusiveNote, note_id=note_id)
+    
+    # Check if user purchased this note or is admin
+    if not NotePurchase.objects.filter(user=request.user, note=note).exists() and not is_admin(request.user):
+        messages.error(request, 'You need to purchase this note before downloading!')
+        return redirect('exclusive_notes_list')
+    
+    # Serve the file for download
+    response = FileResponse(note.notes_file.open(), as_attachment=True)
+    response['Content-Disposition'] = f'attachment; filename="{note.notes_file.name}"'
+    return response
+
+# Admin Views
+@login_required
+@user_passes_test(is_admin)
+def admin_exclusive_notes(request):
+    notes = ExclusiveNote.objects.all().order_by('-upload_date')
+    return render(request, 'admin_exclusive_notes.html', {'notes': notes})
+
+@login_required
+@user_passes_test(is_admin)
+def upload_exclusive_note(request):
+    from .forms import ExclusiveNoteForm  # We'll create this form next
+    
+    if request.method == 'POST':
+        form = ExclusiveNoteForm(request.POST, request.FILES)
+        if form.is_valid():
+            note = form.save(commit=False)
+            note.user_id = request.user
+            note.save()
+            messages.success(request, 'Exclusive note uploaded successfully!')
+            return redirect('admin_exclusive_notes')
+    else:
+        form = ExclusiveNoteForm()
+    
+    return render(request, 'upload_exclusive_note.html', {'form': form})
+
+@login_required
+@user_passes_test(is_admin)
+def view_purchase_details(request):
+    purchases = NotePurchase.objects.all().order_by('-purchase_date')
+    
+    # Calculate total revenue
+    total_revenue = sum(purchase.amount_paid for purchase in purchases)
+    
+    return render(request, 'purchase_details.html', {
+        'purchases': purchases,
+        'total_revenue': total_revenue
+    })
