@@ -1,4 +1,315 @@
-{% extends "app.html" %} {% load static %}
+{% extends "app.html" %} {% load static %} {% block content %}
+
+<style>
+  /* General page styling */
+  html,
+  body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: #f7f9fc;
+    font-family: "Inter", Arial, sans-serif;
+    line-height: 1.5;
+  }
+
+  /* Center the login card */
+  .login-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  /* Login card styling */
+  .login-card {
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    width: 100%;
+    max-width: 450px;
+    margin: 0 auto;
+    transition: transform 0.2s ease;
+  }
+
+  .login-card:hover {
+    transform: translateY(-2px);
+  }
+
+  .login-card h2 {
+    color: #1a202c;
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+
+  /* Form styling */
+  .form-compact .mb-3 {
+    margin-bottom: 1.25rem !important;
+  }
+
+  .form-compact .form-label {
+    color: #2d3748;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  .form-compact .form-control {
+    border-radius: 8px;
+    padding: 12px;
+    border: 1px solid #e2e8f0;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .form-compact .form-control:focus {
+    border-color: #3182ce;
+    box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+    outline: none;
+  }
+
+  .form-compact .is-invalid {
+    border-color: #e53e3e;
+  }
+
+  .form-compact .invalid-feedback {
+    font-size: 0.85rem;
+    color: #e53e3e;
+  }
+
+  /* Google Button */
+  .btn-google {
+    background-color: #ffffff;
+    color: #4a5568;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 12px;
+    width: 100%;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+  }
+
+  .btn-google:hover,
+  .btn-google:focus {
+    background-color: #edf2f7;
+    transform: translateY(-1px);
+  }
+
+  .btn-google img {
+    width: 20px;
+    height: 20px;
+  }
+
+  /* Primary Button */
+  .btn-primary {
+    background-color: #3182ce;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    width: 100%;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+  }
+
+  .btn-primary:hover,
+  .btn-primary:focus {
+    background-color: #2b6cb0;
+    transform: translateY(-1px);
+  }
+
+  .btn-primary:disabled {
+    background-color: #a0aec0;
+    cursor: not-allowed;
+  }
+
+  /* Divider */
+  .divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 1.5rem 0;
+  }
+
+  .divider h4 {
+    font-size: 0.9rem;
+    color: #718096;
+    margin: 0;
+  }
+
+  /* Alerts */
+  .compact-alert {
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    font-size: 0.85rem;
+    border-radius: 6px;
+  }
+
+  /* Links */
+  .link-primary {
+    color: #3182ce;
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .link-primary:hover {
+    text-decoration: underline;
+  }
+
+  /* Responsive Design */
+  @media (max-width: 576px) {
+    .login-card {
+      padding: 20px;
+      max-width: 100%;
+    }
+
+    .login-card h2 {
+      font-size: 1.5rem;
+    }
+
+    .btn-google,
+    .btn-primary {
+      font-size: 0.9rem;
+      padding: 10px;
+    }
+  }
+</style>
+
+<div class="login-container" role="main">
+  <div class="login-card">
+    <h2>Login</h2>
+
+    {% if messages %} {% for message in messages %}
+    <div
+      class="alert alert-{{ message.tags }} alert-dismissible fade show compact-alert"
+      role="alert"
+    >
+      {{ message }}
+      <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="alert"
+        aria-label="Close"
+      ></button>
+    </div>
+    {% endfor %} {% endif %} {% if form.non_field_errors %}
+    <div class="alert alert-danger compact-alert" role="alert">
+      {{ form.non_field_errors }}
+    </div>
+    {% endif %}
+
+    <!-- Google Login Button -->
+    <a
+      href="{% url 'google_login' %}"
+      class="btn-google"
+      aria-label="Login with Google"
+    >
+      <img
+        src="https://developers.google.com/identity/images/g-logo.png"
+        alt="Google logo"
+      />
+      Continue with Google
+    </a>
+
+    <!-- Divider -->
+    <div class="divider">
+      <h4>or</h4>
+    </div>
+
+    <!-- Login Form -->
+    <form
+      action="{% url 'login' %}"
+      method="POST"
+      novalidate
+      class="form-compact"
+      id="login-form"
+    >
+      {% csrf_token %}
+      <div class="mb-3">
+        <label for="{{ form.username.id_for_label }}" class="form-label"
+          >Username</label
+        >
+        <input
+          type="text"
+          name="{{ form.username.name }}"
+          id="{{ form.username.id_for_label }}"
+          class="form-control {% if form.username.errors %}is-invalid{% endif %}"
+          value="{{ form.username.value|default_if_none:'' }}"
+          placeholder="Enter your username"
+          required
+          autofocus
+          aria-describedby="username-error"
+        />
+        {% if form.username.errors %}
+        <div id="username-error" class="invalid-feedback">
+          {{ form.username.errors.0 }}
+        </div>
+        {% endif %}
+      </div>
+
+      <div class="mb-3">
+        <label for="{{ form.password.id_for_label }}" class="form-label"
+          >Password</label
+        >
+        <input
+          type="password"
+          name="{{ form.password.name }}"
+          id="{{ form.password.id_for_label }}"
+          class="form-control {% if form.password.errors %}is-invalid{% endif %}"
+          placeholder="Enter your password"
+          required
+          aria-describedby="password-error"
+        />
+        {% if form.password.errors %}
+        <div id="password-error" class="invalid-feedback">
+          {{ form.password.errors.0 }}
+        </div>
+        {% endif %}
+      </div>
+
+      <div class="text-end mb-3">
+        <a href="{% url 'password_reset' %}" class="link-primary"
+          >Forgot password?</a
+        >
+      </div>
+
+      <button type="submit" class="btn btn-primary" id="login-btn">
+        Login
+      </button>
+    </form>
+
+    <div class="text-center mt-4">
+      <p class="text-muted">
+        Don't have an account?
+        <a href="{% url 'register' %}" class="link-primary"
+          >Create New Account</a
+        >
+      </p>
+      <p class="text-muted">
+        <a href="{% url 'home' %}" class="link-primary">Visit Home Page</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Add loading state to the login button
+  document.getElementById("login-form").addEventListener("submit", function () {
+    const loginBtn = document.getElementById("login-btn");
+    loginBtn.disabled = true;
+    loginBtn.textContent = "Logging in...";
+  });
+</script>
+
+{% endblock content %} {% comment %} {% extends "app.html" %} {% load static %}
 <!---->
 {% block content %}
 
@@ -111,6 +422,24 @@
     </div>
     {% endif %}
 
+    <!-- Simple Google Login Button -->
+    <a href="{% url 'google_login' %}" class="btn-google">
+      <img
+        src="https://developers.google.com/identity/images/g-logo.png"
+        alt="Google"
+      />
+      Continue with Google
+    </a>
+    <div class="divider">
+      <br />
+
+      <div
+        class="d-flex align-items-center justify-content-center mx-auto my-1 p-1"
+      >
+        <h4>or</h4>
+      </div>
+    </div>
+
     <!-- Regular Login Form -->
     <form
       action="{% url 'login' %}"
@@ -157,7 +486,7 @@
         {% endif %}
       </div>
 
-      <div class="text-end mb-3">
+      <div class="text-end mb-1">
         <a href="{% url 'password_reset' %}" class="text-decoration-none"
           >Forgot password?</a
         >
@@ -166,31 +495,15 @@
       <button type="submit" class="btn btn-dark w-100 fw-bold">Login</button>
     </form>
 
+    <!-- =========================-->
 
-      <!-- =========================-->
-
-    <div class="divider">
-      <br>
-
-            <div class="d-flex align-items-center justify-content-center mx-auto my-1 p-1"> <h4>or</h4></div>
-        </div>
-
-    <!-- Simple Google Login Button -->
-    <a href="{% url 'google_login' %}" class="btn-google">
-      <img
-        src="https://developers.google.com/identity/images/g-logo.png"
-        alt="Google"
-      />
-      Continue with Google
-    </a>
-    <br><br>
-
-    <!-------===================================
     <div class="text-center mt-3">
-      <p class="mb-2 text-muted compact-spacing">Don't have an account yet?</p>
-      <a href="{% url 'register' %}" class="btn btn-outline-dark btn-sm"
-        >Create New Account</a
-      >
+      <p class="mb-2 text-muted compact-spacing">
+        Don't have an account yet?
+        <a href="{% url 'register' %}" class="btn btn-outline-dark btn-sm"
+          >Create New Account</a
+        >
+      </p>
     </div>
 
     <div class="text-center mt-3">
@@ -201,4 +514,4 @@
   </div>
 </div>
 
-{% endblock content %}
+{% endblock content %} {% endcomment %}
