@@ -2178,3 +2178,310 @@ def get_or_create_google_user(email, google_id, first_name, last_name):
 
 
 #####################################
+
+
+
+#####################################################################################
+######################################################################################
+########################################################################################
+# exclusive
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib import messages
+from django.http import HttpResponseForbidden, FileResponse
+from django.db.models import Q
+from .models import ExclusiveNote, NotePurchase, User
+from decimal import Decimal
+
+def is_admin(user):
+    return user.is_authenticated and user.role and user.role.is_admin_role
+
+# User Views
+@login_required
+def exclusive_notes_list(request):
+    notes = ExclusiveNote.objects.filter(is_active=True)
+    
+    # Check which notes the user has purchased
+    purchased_notes = NotePurchase.objects.filter(user=request.user).values_list('note_id', flat=True)
+    
+    # Create a list of purchased note IDs for the template
+    purchased_note_ids = list(purchased_notes)
+    
+    context = {
+        'notes': notes,
+        'purchased_note_ids': purchased_note_ids
+    }
+    
+    return render(request, 'exclusive_notes_list.html', context)
+
+@login_required
+def purchase_note(request, note_id):
+    note = get_object_or_404(ExclusiveNote, note_id=note_id, is_active=True)
+    
+    # Check if user already purchased this note
+    if NotePurchase.objects.filter(user=request.user, note=note).exists():
+        messages.warning(request, 'You have already purchased this note!')
+        return redirect('exclusive_notes_list')
+    
+    # In a real application, you would integrate with a payment gateway here
+    # For now, we'll simulate the purchase
+    
+    purchase = NotePurchase.objects.create(
+        user=request.user,
+        note=note,
+        amount_paid=note.price
+    )
+    
+    messages.success(request, f'Successfully purchased "{note.title}" for ${note.price}!')
+    return redirect('exclusive_notes_list')
+
+@login_required
+def download_exclusive_note(request, note_id):
+    note = get_object_or_404(ExclusiveNote, note_id=note_id)
+    
+    # Check if user purchased this note or is admin
+    if not NotePurchase.objects.filter(user=request.user, note=note).exists() and not is_admin(request.user):
+        messages.error(request, 'You need to purchase this note before downloading!')
+        return redirect('exclusive_notes_list')
+    
+    # Serve the file for download
+    response = FileResponse(note.notes_file.open(), as_attachment=True)
+    response['Content-Disposition'] = f'attachment; filename="{note.notes_file.name}"'
+    return response
+
+# Admin Views
+@login_required
+@staff_member_required
+# @user_passes_test(is_admin)
+def admin_exclusive_notes(request):
+    notes = ExclusiveNote.objects.all().order_by('-upload_date')
+    return render(request, 'admin_exclusive_notes.html', {'notes': notes})
+
+@login_required
+@staff_member_required
+def upload_exclusive_note(request):
+    from .forms import ExclusiveNoteForm  # We'll create this form next
+    
+    if request.method == 'POST':
+        form = ExclusiveNoteForm(request.POST, request.FILES)
+        if form.is_valid():
+            note = form.save(commit=False)
+            note.user_id = request.user
+            note.save()
+            messages.success(request, 'Exclusive note uploaded successfully!')
+            return redirect('admin_exclusive_notes')
+    else:
+        form = ExclusiveNoteForm()
+    
+    return render(request, 'upload_exclusive_note.html', {'form': form})
+
+
+
+
+@login_required
+@staff_member_required
+def view_purchase_details(request):
+    purchases = NotePurchase.objects.all().order_by('-purchase_date')
+    
+    # Calculate total revenue from completed purchases only
+    total_revenue = sum(
+        purchase.amount_paid for purchase in purchases 
+        if purchase.payment_status == 'COMPLETED'
+    )
+    
+    return render(request, 'purchase_details.html', {
+        'purchases': purchases,
+        'total_revenue': total_revenue
+    })
+
+
+
+##esewa 
+
+
+# Add these imports at the top
+import uuid
+import hmac
+import hashlib
+import base64
+import json
+import requests
+from django.views import View
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+
+# eSewa Configuration
+ESEWA_MERCHANT_ID = "EPAYTEST"
+ESEWA_SECRET_KEY = "8gBm/:&EnhH.1/q"
+ESEWA_BASE_URL = "https://rc-epay.esewa.com.np"  # For testing
+
+
+@login_required
+def purchase_note(request, note_id):
+    note = get_object_or_404(ExclusiveNote, note_id=note_id, is_active=True)
+    
+    # Check if user already has any purchase record for this note (including failed ones)
+    existing_purchase = NotePurchase.objects.filter(
+        user=request.user, 
+        note=note
+    ).first()
+    
+    if existing_purchase:
+        if existing_purchase.payment_status == 'COMPLETED':
+            messages.warning(request, 'You have already purchased this note!')
+            return redirect('exclusive_notes_list')
+        else:
+            # If there's a pending or failed purchase, update it instead of creating new
+            existing_purchase.amount_paid = note.price
+            existing_purchase.payment_status = 'PENDING'
+            existing_purchase.save()
+            
+            # Redirect to eSewa payment with existing purchase
+            return redirect('esewa_payment', purchase_id=existing_purchase.purchase_id)
+    
+    # Create a new pending purchase record only if no existing record
+    purchase = NotePurchase.objects.create(
+        user=request.user,
+        note=note,
+        amount_paid=note.price,
+        payment_status='PENDING'
+    )
+    
+    # Redirect to eSewa payment
+    return redirect('esewa_payment', purchase_id=purchase.purchase_id)
+
+
+
+# eSewa Payment View
+class EsewaView(View):
+    def get(self, request, purchase_id, *args, **kwargs):
+        purchase = get_object_or_404(NotePurchase, purchase_id=purchase_id, user=request.user)
+        
+        if purchase.payment_status == 'COMPLETED':
+            messages.success(request, 'Payment already completed!')
+            return redirect('exclusive_notes_list')
+        
+        # Generate unique transaction UUID
+        transaction_uuid = str(uuid.uuid4())
+        purchase.esewa_transaction_uuid = transaction_uuid
+        purchase.save()
+        
+        # Prepare data for signature
+        amount = str(float(purchase.amount_paid))
+        tax_amount = "0"
+        product_service_charge = "0"
+        product_delivery_charge = "0"
+        total_amount = str(float(amount) + float(tax_amount) + float(product_service_charge) + float(product_delivery_charge))
+        
+        # Create signature
+        data_to_sign = f"total_amount={total_amount},transaction_uuid={transaction_uuid},product_code={ESEWA_MERCHANT_ID}"
+        signature = hmac.new(
+            ESEWA_SECRET_KEY.encode('utf-8'),
+            data_to_sign.encode('utf-8'),
+            hashlib.sha256
+        ).digest()
+        signature_base64 = base64.b64encode(signature).decode('utf-8')
+        
+        data = {
+            "amount": amount,
+            "tax_amount": tax_amount,
+            "product_service_charge": product_service_charge,
+            "product_delivery_charge": product_delivery_charge,
+            "total_amount": total_amount,
+            "transaction_uuid": transaction_uuid,
+            "product_code": ESEWA_MERCHANT_ID,
+            "success_url": request.build_absolute_uri(f'/note/esewa-verify/{purchase.purchase_id}/'),
+            "failure_url": request.build_absolute_uri(f'/note/esewa-verify/{purchase.purchase_id}/'),
+            "signed_field_names": "total_amount,transaction_uuid,product_code",
+            "signature": signature_base64,
+            "purchase_id": purchase.purchase_id,
+            "note_title": purchase.note.title,
+        }
+        
+        return render(request, "esewa_payment.html", {"data": data})
+
+# eSewa Verification View
+@login_required
+def esewa_verify(request, purchase_id):
+    if request.method == 'GET':
+        try:
+            data = request.GET.get('data')
+            purchase = get_object_or_404(NotePurchase, purchase_id=purchase_id, user=request.user)
+            
+            if not data:
+                messages.error(request, 'Payment verification failed: No data received')
+                return redirect('exclusive_notes_list')
+            
+            # Decode the response data
+            decoded_data = base64.b64decode(data).decode('utf-8')
+            map_data = json.loads(decoded_data)
+            
+            if map_data.get('status') == 'COMPLETE':
+                # Verify the transaction with eSewa
+                verification_data = {
+                    'product_code': ESEWA_MERCHANT_ID,
+                    'total_amount': str(float(purchase.amount_paid)),
+                    'transaction_uuid': purchase.esewa_transaction_uuid
+                }
+                
+                # In production, you should verify with eSewa's verification API
+                # For testing, we'll assume it's successful
+                
+                purchase.payment_status = 'COMPLETED'
+                purchase.esewa_transaction_code = map_data.get('transaction_code', '')
+                purchase.save()
+                
+                messages.success(request, f'Successfully purchased "{purchase.note.title}"! You can now download the note.')
+                return redirect('exclusive_notes_list')
+            else:
+                purchase.payment_status = 'FAILED'
+                purchase.save()
+                messages.error(request, 'Payment failed! Please try again.')
+                return redirect('exclusive_notes_list')
+                
+        except Exception as e:
+            messages.error(request, f'Payment verification error: {str(e)}')
+            return redirect('exclusive_notes_list')
+
+# Update the download view to check payment status
+@login_required
+def download_exclusive_note(request, note_id):
+    note = get_object_or_404(ExclusiveNote, note_id=note_id)
+    
+    # Check if user purchased this note or is admin
+    has_purchased = NotePurchase.objects.filter(
+        user=request.user, 
+        note=note, 
+        payment_status='COMPLETED'
+    ).exists()
+    
+    if not has_purchased and not is_admin(request.user):
+        messages.error(request, 'You need to purchase this note before downloading!')
+        return redirect('exclusive_notes_list')
+    
+    # Serve the file for download
+    response = FileResponse(note.notes_file.open(), as_attachment=True)
+    response['Content-Disposition'] = f'attachment; filename="{note.notes_file.name}"'
+    return response
+
+# Update the exclusive_notes_list view
+@login_required
+def exclusive_notes_list(request):
+    notes = ExclusiveNote.objects.filter(is_active=True)
+    
+    # Check which notes the user has purchased (only completed payments)
+    purchased_notes = NotePurchase.objects.filter(
+        user=request.user, 
+        payment_status='COMPLETED'
+    ).values_list('note_id', flat=True)
+    
+    # Create a list of purchased note IDs for the template
+    purchased_note_ids = list(purchased_notes)
+    
+    context = {
+        'notes': notes,
+        'purchased_note_ids': purchased_note_ids
+    }
+    
+    return render(request, 'exclusive_notes_list.html', context)

@@ -1,0 +1,96 @@
+{% extends "usernav.html" %} {% load static %} {% block content %}
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-12">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h3 class="mb-0"><i class="fas me-2"></i>Exclusive Notes</h3>
+        </div>
+        <div class="card-body">
+          <!---->
+          {% if messages %} {% for message in messages %}
+          <div
+            class="alert alert-{{ message.tags }} alert-dismissible fade show compact-alert"
+            role="alert"
+          >
+            {{ message }}
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="alert"
+              aria-label="Close"
+            ></button>
+          </div>
+          {% endfor %} {% endif %} {% if form.non_field_errors %}
+          <div class="alert alert-danger compact-alert">
+            {{ form.non_field_errors }}
+          </div>
+          {% endif %}
+
+          <!---->
+
+          {% if notes %}
+          <div class="row">
+            {% for note in notes %}
+            <div class="col-md-6 col-lg-4 mb-4">
+              <div class="card h-100 border-0 shadow-sm">
+                <div class="card-header bg-light">
+                  <h5 class="card-title mb-0">{{ note.title }}</h5>
+                  <small class="text-muted"
+                    >By {{ note.user_id.username }}</small
+                  >
+                </div>
+                <div class="card-body">
+                  <p class="card-text">
+                    {{ note.description|truncatechars:100 }}
+                  </p>
+                  <div class="mb-2">
+                    <strong class="text-success">Rs. {{ note.price }}</strong>
+                  </div>
+                  <div class="mb-2">
+                    <small class="text-muted">
+                      <i class="fas fa-book me-1"></i>
+                      SUBJECT: {{ note.subject_id.subject_name }}
+                    </small>
+                  </div>
+                  <div class="mb-2">
+                    <small class="text-muted">
+                      <i class="fas fa-calendar me-1"></i>
+                      {{ note.upload_date|date:"M d, Y" }}
+                    </small>
+                  </div>
+                </div>
+                <div class="card-footer bg-white">
+                  {% if note.note_id in purchased_note_ids %}
+                  <a
+                    href="{% url 'download_exclusive_note' note.note_id %}"
+                    class="btn btn-success btn-sm w-100"
+                  >
+                    <i class="fas fa-download me-1"></i>Download
+                  </a>
+                  {% else %}
+                  <a
+                    href="{% url 'purchase_note' note.note_id %}"
+                    class="btn btn-primary btn-sm w-100"
+                  >
+                    <i class="fas fa-shopping-cart me-1"></i>Purchase Now
+                  </a>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
+          <div class="text-center py-4">
+            <i class="fas fa-crown fa-3x text-muted mb-3"></i>
+            <h4>No Exclusive Notes Available</h4>
+            <p class="text-muted">Check back later for premium notes!</p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

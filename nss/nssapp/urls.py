@@ -10,7 +10,8 @@ from django.contrib.auth import views as auth_views
 
 from .views import custom_page_not_found
 from .views import delete_user
-
+from  nssapp import views as exclusive_views
+##
 
 
 urlpatterns = [
@@ -65,7 +66,7 @@ urlpatterns = [
     path('add_subject/', views.add_subject, name='add_subject'),
     path('add_category/', views.add_category, name='add_category'),
     path("view-users/", views.view_users, name="view_users"),
-    path(
+     path(
         "password_reset/",
         CustomPasswordResetView.as_view(),
         name="password_reset",
@@ -85,15 +86,7 @@ urlpatterns = [
         auth_views.PasswordResetCompleteView.as_view(template_name="password_reset_complete.html"),
         name="password_reset_complete",
     ),
-    path("password_reset/done/",
-         auth_views.PasswordResetDoneView.as_view(template_name="password_reset_done.html"),
-         name="password_reset_done"),
-    path("reset/<uidb64>/<token>/",
-         auth_views.PasswordResetConfirmView.as_view(template_name="password_reset_confirm.html"),
-         name="password_reset_confirm"),
-    path("reset/done/",
-         auth_views.PasswordResetCompleteView.as_view(template_name="password_reset_complete.html"),
-         name="password_reset_complete"),
+
 
     path("note/<int:note_id>/", views.note_detail, name="note_detail"),
     path("note_admin/<int:note_id>/", views.note_detail_admin, name="note_detail_admin"),
@@ -101,6 +94,25 @@ urlpatterns = [
     path("note/<int:note_id>/comment/", views.add_comment, name="add_comment"),
     path("note_admin/<int:note_id>/upvote/", views.upvote_note_admin, name="upvote_note_admin"),
     path("note_admin/<int:note_id>/comment/", views.add_comment_admin, name="add_comment_admin"),
+
+
+     # exclusive
+    # User exclusive notes URLs
+    path('exclusive-notes/', exclusive_views.exclusive_notes_list, name='exclusive_notes_list'),
+    path('purchase-note/<int:note_id>/', exclusive_views.purchase_note, name='purchase_note'),
+    path('download-exclusive-note/<int:note_id>/', exclusive_views.download_exclusive_note, name='download_exclusive_note'),
+    
+    # Admin exclusive notes URLs
+    path('admin/exclusive-notes/', exclusive_views.admin_exclusive_notes, name='admin_exclusive_notes'),
+    path('admin/upload-exclusive-note/', exclusive_views.upload_exclusive_note, name='upload_exclusive_note'),
+    path('admin/purchase-details/', exclusive_views.view_purchase_details, name='view_purchase_details'),
+    # eSewa Payment URLs
+    path('purchase-note/<int:note_id>/', exclusive_views.purchase_note, name='purchase_note'),
+    path('esewa-payment/<int:purchase_id>/', exclusive_views.EsewaView.as_view(), name='esewa_payment'),
+    path('esewa-verify/<int:purchase_id>/', exclusive_views.esewa_verify, name='esewa_verify'),
+
+
+
 
 
    
