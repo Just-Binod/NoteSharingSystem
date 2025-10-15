@@ -284,3 +284,31 @@ class NotePurchase(models.Model):
     
     def __str__(self):
         return f"{self.user.username} purchased {self.note.title}"
+
+
+####eseway payment model
+# Add to your existing models.py
+
+class NotePurchase(models.Model):
+    purchase_id = models.AutoField(primary_key=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    note = models.ForeignKey(ExclusiveNote, on_delete=models.CASCADE)
+    purchase_date = models.DateTimeField(auto_now_add=True)
+    amount_paid = models.DecimalField(max_digits=10, decimal_places=2)
+    payment_status = models.CharField(
+        max_length=20,
+        choices=[
+            ('PENDING', 'Pending'),
+            ('COMPLETED', 'Completed'),
+            ('FAILED', 'Failed')
+        ],
+        default='PENDING'
+    )
+    esewa_transaction_uuid = models.CharField(max_length=100, blank=True, null=True)
+    esewa_transaction_code = models.CharField(max_length=100, blank=True, null=True)
+    
+    class Meta:
+        unique_together = ('user', 'note')  # Prevent duplicate purchases
+    
+    def __str__(self):
+        return f"{self.user.username} purchased {self.note.title}"

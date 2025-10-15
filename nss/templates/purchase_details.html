@@ -14,7 +14,7 @@
               <div class="card bg-success text-white">
                 <div class="card-body text-center">
                   <h4>Total Revenue</h4>
-                  <h2>${{ total_revenue }}</h2>
+                  <h2>Rs.{{ total_revenue }}</h2>
                 </div>
               </div>
             </div>
@@ -37,6 +37,7 @@
                   <th>User</th>
                   <th>Note Title</th>
                   <th>Amount Paid</th>
+                  <th>Payment Status</th>
                   <th>Purchase Date</th>
                 </tr>
               </thead>
@@ -46,7 +47,16 @@
                   <td>#{{ purchase.purchase_id }}</td>
                   <td>{{ purchase.user.username }}</td>
                   <td>{{ purchase.note.title }}</td>
-                  <td class="text-success">${{ purchase.amount_paid }}</td>
+                  <td class="text-success">Rs.{{ purchase.amount_paid }}</td>
+                  <td>
+                    {% if purchase.payment_status == 'COMPLETED' %}
+                    <span class="badge bg-success">Completed</span>
+                    {% elif purchase.payment_status == 'PENDING' %}
+                    <span class="badge bg-warning">Pending</span>
+                    {% else %}
+                    <span class="badge bg-danger">Failed</span>
+                    {% endif %}
+                  </td>
                   <td>{{ purchase.purchase_date|date:"M d, Y H:i" }}</td>
                 </tr>
                 {% endfor %}

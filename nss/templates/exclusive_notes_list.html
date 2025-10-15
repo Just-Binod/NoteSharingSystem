@@ -4,9 +4,31 @@
     <div class="col-12">
       <div class="card shadow-sm">
         <div class="card-header bg-primary text-white">
-          <h3 class="mb-0"><i class="fas fa-crown me-2"></i>Exclusive Notes</h3>
+          <h3 class="mb-0"><i class="fas me-2"></i>Exclusive Notes</h3>
         </div>
         <div class="card-body">
+          <!---->
+          {% if messages %} {% for message in messages %}
+          <div
+            class="alert alert-{{ message.tags }} alert-dismissible fade show compact-alert"
+            role="alert"
+          >
+            {{ message }}
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="alert"
+              aria-label="Close"
+            ></button>
+          </div>
+          {% endfor %} {% endif %} {% if form.non_field_errors %}
+          <div class="alert alert-danger compact-alert">
+            {{ form.non_field_errors }}
+          </div>
+          {% endif %}
+
+          <!---->
+
           {% if notes %}
           <div class="row">
             {% for note in notes %}
@@ -23,22 +45,18 @@
                     {{ note.description|truncatechars:100 }}
                   </p>
                   <div class="mb-2">
-                    <strong class="text-success">${{ note.price }}</strong>
+                    <strong class="text-success">Rs. {{ note.price }}</strong>
                   </div>
                   <div class="mb-2">
                     <small class="text-muted">
                       <i class="fas fa-book me-1"></i>
-                      <!---->
                       SUBJECT: {{ note.subject_id.subject_name }}
-                      <!---->
                     </small>
                   </div>
                   <div class="mb-2">
                     <small class="text-muted">
                       <i class="fas fa-calendar me-1"></i>
-                      <!---->
                       {{ note.upload_date|date:"M d, Y" }}
-                      <!---->
                     </small>
                   </div>
                 </div>
@@ -54,9 +72,8 @@
                   <a
                     href="{% url 'purchase_note' note.note_id %}"
                     class="btn btn-primary btn-sm w-100"
-                    onclick="return confirm('Are you sure you want to purchase this note for ${{ note.price }}?')"
                   >
-                    <i class="fas fa-shopping-cart me-1"></i>Purchase
+                    <i class="fas fa-shopping-cart me-1"></i>Purchase Now
                   </a>
                   {% endif %}
                 </div>

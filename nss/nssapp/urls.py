@@ -8,11 +8,14 @@ from django.urls import path
 from .views import CustomPasswordResetView
 from django.contrib.auth import views as auth_views
 
+
+
 from .views import custom_page_not_found
 from .views import delete_user
 ##
 from  nssapp import views as exclusive_views
 ##
+# from . import views as exclusive_views
 
 
 urlpatterns = [
@@ -108,6 +111,10 @@ urlpatterns = [
     path('admin/exclusive-notes/', exclusive_views.admin_exclusive_notes, name='admin_exclusive_notes'),
     path('admin/upload-exclusive-note/', exclusive_views.upload_exclusive_note, name='upload_exclusive_note'),
     path('admin/purchase-details/', exclusive_views.view_purchase_details, name='view_purchase_details'),
+    # eSewa Payment URLs
+    path('purchase-note/<int:note_id>/', exclusive_views.purchase_note, name='purchase_note'),
+    path('esewa-payment/<int:purchase_id>/', exclusive_views.EsewaView.as_view(), name='esewa_payment'),
+    path('esewa-verify/<int:purchase_id>/', exclusive_views.esewa_verify, name='esewa_verify'),
 
 
 

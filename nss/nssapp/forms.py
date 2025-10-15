@@ -47,7 +47,7 @@ class CustomAuthenticationForm(AuthenticationForm):
 #################################
 
 # exclusive
-from django import forms
+
 from .models import ExclusiveNote, Subject
 
 class ExclusiveNoteForm(forms.ModelForm):
@@ -60,4 +60,19 @@ class ExclusiveNoteForm(forms.ModelForm):
             'subject_id': forms.Select(attrs={'class': 'form-control'}),
             'notes_file': forms.FileInput(attrs={'class': 'form-control'}),
             'price': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01', 'min': '0'}),
+        }
+
+
+##esewa
+# forms.py
+# from django import forms
+from .models import ExclusiveNote
+
+class ExclusiveNoteForm(forms.ModelForm):
+    class Meta:
+        model = ExclusiveNote
+        fields = ['title', 'description', 'notes_file', 'subject_id', 'price']
+        widgets = {
+            'description': forms.Textarea(attrs={'rows': 4}),
+            'price': forms.NumberInput(attrs={'min': '0', 'step': '0.01'}),
         }

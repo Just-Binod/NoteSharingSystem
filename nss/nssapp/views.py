@@ -6,13 +6,13 @@ from datetime import datetime
 import time
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from .models import Notes, Subject
+from .models import *
 from mimetypes import guess_type
 
 from .models import Notes, Subject, Category  # make sure these are imported
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
-
+from django.contrib.admin.views.decorators import staff_member_required
 from .models import *
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib.auth import get_user_model
@@ -298,103 +298,12 @@ def profile(request):
 def profile1(request):
     return render(request,'profile1.html')
 
-# from django.shortcuts import render, redirect, get_object_or_404
-# from .forms import NotesForm
-# from .models import Notes
-# from django.contrib.auth.decorators import login_required
-# #
-# @login_required
-# def create_note(request):
-#     if request.method == 'POST':
-#         form = NotesForm(request.POST, request.FILES, user=request.user)
-#         if form.is_valid():
-#             note = form.save(commit=False)
-#             note.user_id = request.user  # Set the user
-#             note.save()
-#             return redirect('note_detail', note_id=note.note_id)
-#     else:
-#         form = NotesForm(user=request.user)
-    
-#     return render(request, 'create_note.html', {'form': form})
 
-# @login_required
-# def note_detail(request, note_id):
-#     note = get_object_or_404(Notes, note_id=note_id)
-#     return render(request, 'note_detail.html', {'note': note})
-
-# @login_required
-# def note_list(request):
-#     notes = Notes.objects.filter(user_id=request.user)
-#     return render(request, 'note_list.html', {'notes': notes})
-
-# #
-# from django.shortcuts import render, redirect
-# from .models import Notes, Subject
-# from django.contrib.auth.decorators import login_required
-
-# @login_required
-# def upload_notes(request):
-#     subjects = Subject.objects.all()  # Get all subjects for the dropdown
-    
-#     if request.method == 'POST':
-#         try:
-#             # Get form data
-#             title = request.POST['title']
-#             subject_id = request.POST['subject_id']
-#             description = request.POST['description']
-#             notes_file = request.FILES.get('notes_file')
-            
-#             # Create new note
-#             note = Notes(
-#                 title=title,
-#                 description=description,
-#                 notes_file=notes_file,
-#                 user_id=request.user,
-#                 subject_id_id=subject_id
-#             )
-#             note.save()
-            
-#             return render(request, 'upload_notes.html', {
-#                 'subjects': subjects,
-#                 'error': 'no'
-#             })
-            
-#         except Exception as e:
-#             print(e)
-#             return render(request, 'upload_notes.html', {
-#                 'subjects': subjects,
-#                 'error': 'yes'
-#             })
-    
-#     return render(request, 'upload_notes.html', {
-#         'subjects': subjects
-#     })
 
 from django.shortcuts import render, redirect
 from .models import Notes, Subject
 from django.contrib.auth.decorators import login_required
 
-# @login_required    
-# def upload_notes(request):
-#     if not request.user.is_authenticated:
-#         return redirect('login')
-#     error=" "
-#     if request.method=="POST":
-#         b=request.POST['branch']
-#         s=request.POST['subject']
-#         n=request.FILES['notesfile']
-#         f=request.POST['filetype']
-#         d=request.POST['description']
-#         u=User.objects.filter(username=request.user.username).first()
-#         try:
-#             user=Notes.objects.create(user=u,uploadingdate=date.today(),branch=b,subject=s,notesfile=n,filetype=f,description=d,status='pending')
-#             error="no"
-#         except:
-#             error="yes"
-#     d={'error':error}
-#     return render(request,'upload_notes.html',d)
-
-# views.py
 
 
 
@@ -406,191 +315,7 @@ from django.contrib.auth.decorators import login_required
 from datetime import date, datetime
 from .models import Category, Subject, Notes
 
-# @login_required
-# def upload_notes(request):
-#     if request.method == 'POST':
-#         try:
-#             title = request.POST['title']
-#             category = request.POST.get('category')
-#             subject_name = request.POST['subject_name']
-#             description = request.POST['description']
-#             notes_file = request.FILES['notes_file']
-#             upload_date_str = request.POST.get('upload_date')
 
-#             # Validate file type
-#             allowed_types = ['application/pdf', 'image/jpeg', 'image/png']
-#             if notes_file.content_type not in allowed_types:
-#                 return render(request, 'upload_notes.html', {
-#                     'error': 'yes',
-#                     'error_message': 'Only PDF, JPG, and PNG files are allowed',
-#                     'form_data': request.POST,  # Preserve form data
-#                 })
-
-#             # Validate upload date
-#             try:
-#                 upload_date = datetime.strptime(upload_date_str, '%Y-%m-%d').date()
-#                 if upload_date > datetime.now().date():
-#                     return render(request, 'upload_notes.html', {
-#                         'error': 'yes',
-#                         'error_message': 'Date cannot be in the future',
-#                         'form_data': request.POST,  # Preserve form data
-#                     })
-#             except (ValueError, TypeError):
-#                 return render(request, 'upload_notes.html', {
-#                     'error': 'yes',
-#                     'error_message': 'Invalid date format',
-#                     'form_data': request.POST,  # Preserve form data
-#                 })
-
-#             # Create or get default category
-#             default_category, _ = Category.objects.get_or_create(
-#                 category_name='General',
-#                 defaults={'category_code': 'GEN'}
-#             )
-
-#             # Create or get subject with the required category
-#             subject, _ = Subject.objects.get_or_create(
-#                 subject_name=subject_name,
-#                 defaults={'category_id': default_category}
-#             )
-
-#             # Create the note
-#             note = Notes(
-#                 title=title,
-#                 category=category,
-#                 description=description,
-#                 notes_file=notes_file,
-#                 user_id=request.user,
-#                 subject_id=subject,
-#                 upload_date=upload_date
-#             )
-#             note.save()
-
-#             return render(request, 'upload_notes.html', {'success': True})
-
-#         except Exception as e:
-#             return render(request, 'upload_notes.html', {
-#                 'error': 'yes',
-#                 'error_message': str(e),
-#                 'form_data': request.POST,  # Preserve form data
-#             })
-
-#     # For GET requests, set default form data with today's date
-#     form_data = {
-#         'title': '',
-#         'category': '',
-#         'subject_name': '',
-#         'description': '',
-#         'upload_date': date.today().isoformat(),  # Sets to 2025-06-16
-#     }
-#     return render(request, 'upload_notes.html', {'form_data': form_data})
-# #
-
-#
-# Add this to the top if not already present
-
-
-
-
-#upload note for user
-
-# ##
-# @login_required
-# def upload_notes(request):
-#     subjects = Subject.objects.select_related('category_id').all()
-    
-#     if request.method == 'POST':
-#         form_data = {
-#             'title': request.POST.get('title'),
-#             'subject': request.POST.get('subject'),  # Should be subject ID
-#             'description': request.POST.get('description'),
-#             'upload_date': request.POST.get('upload_date'),
-#         }
-        
-#         try:
-#             # Validate required fields
-#             if not all([form_data['title'], form_data['subject'], form_data['description']]):
-#                 raise ValueError("All required fields must be filled")
-            
-#             # Get subject instance
-#             try:
-#                 subject = Subject.objects.get(pk=form_data['subject'])
-#             except Subject.DoesNotExist:
-#                 raise ValueError("Selected subject does not exist")
-            
-#             # Handle file upload
-#             if 'notes_file' not in request.FILES:
-#                 raise ValueError("No file was uploaded")
-            
-#             notes_file = request.FILES['notes_file']
-            
-#             # Validate file type
-#             allowed_types = [
-#                 'application/pdf',
-#                 'image/jpeg',
-#                 'image/png',
-#                 'application/msword',
-#                 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-#             ]
-            
-#             if notes_file.content_type not in allowed_types:
-#                 raise ValueError("Only PDF, JPG, PNG, DOC, and DOCX files are allowed")
-            
-#             # Validate upload date
-#             try:
-#                 upload_date = datetime.strptime(form_data['upload_date'], '%Y-%m-%d').date()
-#                 if upload_date > timezone.now().date():
-#                     raise ValueError("Date cannot be in the future")
-#             except (ValueError, TypeError):
-#                 raise ValueError("Invalid date format")
-            
-#             # Create and save note
-#             note = Notes(
-#                 title=form_data['title'],
-#                 subject_id=subject,
-#                 description=form_data['description'],
-#                 notes_file=notes_file,
-#                 user_id=request.user,
-#                 upload_date=upload_date
-#             )
-#             note.save()
-            
-#             messages.success(request, "Notes uploaded successfully!")
-#             return redirect('view_notes')  # Redirect to notes listing
-            
-#         except Exception as e:
-#             messages.error(request, str(e))
-#             return render(request, 'upload_notes.html', {
-#                 'form_data': form_data,
-#                 'subjects': subjects,
-#                 'field_errors': {
-#                     'title': not form_data.get('title'),
-#                     'subject': not form_data.get('subject'),
-#                     'description': not form_data.get('description'),
-#                 }
-#             })
-    
-#     # GET request - show empty form
-#     return render(request, 'upload_notes.html', {
-#         'form_data': {
-#             'title': '',
-#             'subject': '',
-#             'description': '',
-#             'upload_date': timezone.now().date().isoformat(),
-#         },
-#         'subjects': subjects
-#     })
-# ##
-
-
-
-
-
-
-
-#
-# 
-# 
 # 
 # 
 from django.shortcuts import render, redirect
@@ -805,456 +530,6 @@ def upload_notes_admin(request):
 
 
 
-
-
-
-
-
-# from django.shortcuts import render, redirect
-# from django.contrib import messages
-# from django.utils import timezone
-# from django.contrib.auth.decorators import login_required
-# from .models import Subject, Notes  # adjust import as needed
-# from datetime import datetime
-
-# @login_required
-# def upload_notes(request):
-#     subjects = Subject.objects.select_related('category_id').all()
-#     field_errors = {}
-
-#     if request.method == 'POST':
-#         form_data = {
-#             'title': request.POST.get('title', '').strip(),
-#             'subject': request.POST.get('subject', '').strip(),
-#             'description': request.POST.get('description', '').strip(),
-#             'upload_date': request.POST.get('upload_date', '').strip(),
-#         }
-
-#         try:
-#             # Validate required fields
-#             if not form_data['title']:
-#                 field_errors['title'] = True
-#                 raise ValueError("Title is required")
-#             if not form_data['subject']:
-#                 field_errors['subject'] = True
-#                 raise ValueError("Subject is required")
-#             if not form_data['description']:
-#                 field_errors['description'] = True
-#                 raise ValueError("Description is required")
-
-#             # Validate upload date
-#             try:
-#                 upload_date = datetime.strptime(form_data['upload_date'], '%Y-%m-%d').date()
-#                 if upload_date > timezone.now().date():
-#                     field_errors['upload_date'] = True
-#                     raise ValueError("Date cannot be in the future")
-#             except (ValueError, TypeError):
-#                 field_errors['upload_date'] = True
-#                 raise ValueError("Invalid date format")
-
-#             # Validate and get Subject
-#             try:
-#                 subject_id = int(form_data['subject'])
-#                 subject = Subject.objects.get(pk=subject_id)
-#             except (Subject.DoesNotExist, ValueError, TypeError):
-#                 field_errors['subject'] = True
-#                 raise ValueError("Invalid subject selected")
-
-            
-
-#             # Validate file
-#             if 'notes_file' not in request.FILES:
-#                 field_errors['notes_file'] = True
-#                 raise ValueError("No file uploaded")
-
-#             notes_file = request.FILES['notes_file']
-#             allowed_types = [
-#                 'application/pdf',
-#                 'image/jpeg',
-#                 'image/png',
-#                 'application/msword',
-#                 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-#             ]
-#             if notes_file.content_type not in allowed_types:
-#                 field_errors['notes_file'] = True
-#                 raise ValueError("Only PDF, JPG, PNG, DOC, and DOCX files are allowed")
-
-#             if notes_file.size > 10 * 1024 * 1024:
-#                 field_errors['notes_file'] = True
-#                 raise ValueError("File size exceeds 10MB limit")
-
-#             # Save the note
-#             note = Notes(
-#                 title=form_data['title'],
-#                 subject_id=subject,
-#                 description=form_data['description'],
-#                 notes_file=notes_file,
-#                 user_id=request.user,
-#                 upload_date=upload_date
-#             )
-#             note.save()
-
-#             messages.success(request, "Notes uploaded successfully!")
-#             return redirect('view_notes')
-
-#         except Exception as e:
-#             messages.error(request, str(e))
-#             return render(request, 'upload_notes.html', {
-#                 'form_data': form_data,
-#                 'subjects': subjects,
-#                 'field_errors': field_errors
-#             })
-
-#     else:
-#         # GET request
-#         return render(request, 'upload_notes.html', {
-#             'form_data': {
-#                 'title': '',
-#                 'subject': '',
-#                 'description': '',
-#                 'upload_date': timezone.now().date().isoformat()
-#             },
-#             'subjects': subjects,
-#             'field_errors': {}  # Ensure field_errors is always available
-#         })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# @login_required
-# def upload_notes(request):
-#     subjects = Subject.objects.select_related('category_id').all()
-    
-#     if request.method == 'POST':
-#         form_data = {
-#             'title': request.POST.get('title', '').strip(),
-#             'subject': request.POST.get('subject', '').strip(),
-#             'description': request.POST.get('description', '').strip(),
-#             'upload_date': request.POST.get('upload_date', '').strip(),
-#         }
-        
-#         try:
-#             # Validate required fields
-#             if not form_data['title']:
-#                 raise ValueError("Title is required")
-#             if not form_data['subject']:
-#                 raise ValueError("Subject is required")
-#             if not form_data['description']:
-#                 raise ValueError("Description is required")
-            
-#             # Get the specific subject instance
-#             try:
-#                 subject = Subject.objects.get(pk=form_data['subject'])
-#             except (Subject.DoesNotExist, ValueError):
-#                 raise ValueError("Invalid subject selected")
-            
-#             # Handle file upload
-#             if 'notes_file' not in request.FILES:
-#                 raise ValueError("No file was uploaded")
-            
-#             notes_file = request.FILES['notes_file']
-            
-#             # Validate file type
-#             allowed_types = [
-#                 'application/pdf',
-#                 'image/jpeg',
-#                 'image/png',
-#                 'application/msword',
-#                 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-#             ]
-            
-#             if notes_file.content_type not in allowed_types:
-#                 raise ValueError("Only PDF, JPG, PNG, DOC, and DOCX files are allowed")
-            
-#             # Validate file size (10MB limit)
-#             if notes_file.size > 10 * 1024 * 1024:  # 10MB
-#                 raise ValueError("File size exceeds 10MB limit")
-            
-#             # Validate upload date
-#             try:
-#                 upload_date = datetime.strptime(form_data['upload_date'], '%Y-%m-%d').date()
-#                 if upload_date > timezone.now().date():
-#                     raise ValueError("Date cannot be in the future")
-#             except (ValueError, TypeError):
-#                 raise ValueError("Invalid date format")
-            
-#             # Create and save note
-#             note = Notes(
-#                 title=form_data['title'],
-#                 subject_id=subject,
-#                 description=form_data['description'],
-#                 notes_file=notes_file,
-#                 user_id=request.user,
-#                 upload_date=upload_date
-#             )
-#             note.save()
-            
-#             messages.success(request, "Notes uploaded successfully!")
-#             return redirect('view_notes')
-            
-#         except Exception as e:
-#             messages.error(request, str(e))
-#             return render(request, 'upload_notes.html', {
-#                 'form_data': form_data,
-#                 'subjects': subjects,
-#                 'field_errors': {
-#                     'title': not form_data.get('title'),
-#                     'subject': not form_data.get('subject'),
-#                     'description': not form_data.get('description'),
-#                     'upload_date': not form_data.get('upload_date'),
-#                 }
-#             })
-    
-#     # GET request - show empty form
-#     today = timezone.now().date()
-#     return render(request, 'upload_notes.html', {
-#         'form_data': {
-#             'title': '',
-#             'subject': '',
-#             'description': '',
-#             'upload_date': today.isoformat(),
-#         },
-#         'subjects': subjects
-#     })
-
-
-
-# @login_required
-# def upload_notes(request):
-#     subjects = Subject.objects.select_related('category_id').all()
-    
-#     if request.method == 'POST':
-#         form_data = {
-#             'title': request.POST.get('title'),
-#             'subject': request.POST.get('subject'),  # This should be subject ID
-#             'description': request.POST.get('description'),
-#             'upload_date': request.POST.get('upload_date'),
-#         }
-        
-#         try:
-#             # Validate required fields
-#             if not all([form_data['title'], form_data['subject'], form_data['description']]):
-#                 raise ValueError("All required fields must be filled")
-            
-#             # Get the specific subject instance
-#             try:
-#                 subject = Subject.objects.get(pk=form_data['subject'])
-#             except Subject.DoesNotExist:
-#                 raise ValueError("Selected subject does not exist")
-            
-#             # Handle file upload
-#             if 'notes_file' not in request.FILES:
-#                 raise ValueError("No file was uploaded")
-            
-#             notes_file = request.FILES['notes_file']
-            
-#             # Validate file type
-#             allowed_types = [
-#                 'application/pdf',
-#                 'image/jpeg',
-#                 'image/png',
-#                 'application/msword',
-#                 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-#             ]
-            
-#             if notes_file.content_type not in allowed_types:
-#                 raise ValueError("Only PDF, JPG, PNG, DOC, and DOCX files are allowed")
-            
-#             # Validate upload date
-#             try:
-#                 upload_date = datetime.strptime(form_data['upload_date'], '%Y-%m-%d').date()
-#                 if upload_date > timezone.now().date():
-#                     raise ValueError("Date cannot be in the future")
-#             except (ValueError, TypeError):
-#                 raise ValueError("Invalid date format")
-            
-#             # Create and save note with the specific subject instance
-#             note = Notes(
-#                 title=form_data['title'],
-#                 subject_id=subject,  # Pass the subject instance here
-#                 description=form_data['description'],
-#                 notes_file=notes_file,
-#                 user_id=request.user,
-#                 upload_date=upload_date
-#             )
-#             note.save()
-            
-#             messages.success(request, "Notes uploaded successfully!")
-#             return redirect('view_notes')
-            
-#         except Exception as e:
-#             messages.error(request, str(e))
-#             return render(request, 'upload_notes.html', {
-#                 'form_data': form_data,
-#                 'subjects': subjects,
-#                 'field_errors': {
-#                     'title': not form_data.get('title'),
-#                     'subject': not form_data.get('subject'),
-#                     'description': not form_data.get('description'),
-#                 }
-#             })
-    
-#     # GET request - show empty form
-#     return render(request, 'upload_notes.html', {
-#         'form_data': {
-#             'title': '',
-#             'subject': '',
-#             'description': '',
-#             'upload_date': timezone.now().date().isoformat(),
-#         },
-#         'subjects': subjects
-#     })
-# ##
-
-
-
-
-
-
-
-# @login_required
-# def upload_notes(request):
-#     subjects = Subject.objects.all()
-#     if request.method == 'POST':
-#         try:
-#             title = request.POST['title']
-#             category = request.POST.get('category')
-#             subject_name = request.POST['subject_name']
-#             description = request.POST['description']
-#             notes_file = request.FILES['notes_file']
-#             upload_date_str = request.POST.get('upload_date')
-
-#             # Validate file type
-#             allowed_types = [
-#                 'application/pdf',
-#                 'image/jpeg',
-#                 'image/png',
-#                 'application/msword',               # .doc
-#                 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'  # .docx
-#             ]
-
-#             if notes_file.content_type not in allowed_types:
-#                 return render(request, 'upload_notes.html', {
-#                     'error': 'yes',
-#                     'error_message': 'Only PDF, JPG, PNG, DOC, and DOCX files are allowed',
-#                     'form_data': request.POST,
-#                 })
-
-#             # Validate upload date
-#             try:
-#                 upload_date = datetime.strptime(upload_date_str, '%Y-%m-%d').date()
-#                 if upload_date > datetime.now().date():
-#                     return render(request, 'upload_notes.html', {
-#                         'error': 'yes',
-#                         'error_message': 'Date cannot be in the future',
-#                         'form_data': request.POST,
-#                     })
-#             except (ValueError, TypeError):
-#                 return render(request, 'upload_notes.html', {
-#                     'error': 'yes',
-#                     'error_message': 'Invalid date format',
-#                     'form_data': request.POST,
-#                 })
-
-#             # # Get or create default category
-#             # default_category, _ = Category.objects.get_or_create(
-#             #     category_name='General',
-#             #     defaults={'category_code': 'GEN'}
-#             # )
-
-#             # # Get or create subject with the category
-#             # subject, _ = Subject.objects.get_or_create(
-#             #     subject_name=subject_name,
-#             #     defaults={'category_id': default_category}
-#             # )
-
-#             # Save the note
-#             note = Notes(
-#                 title=title,
-#                 category=category,
-#                 description=description,
-#                 notes_file=notes_file,
-#                 user_id=request.user,
-#                 subject_id=subjects,
-#                 upload_date=upload_date
-#             )
-#             note.save()
-
-#             return render(request, 'upload_notes.html', {'success': True,'subjects':subjects})
-
-#         except Exception as e:
-#             return render(request, 'upload_notes.html', {
-#                 'error': 'yes',
-#                 'error_message': str(e),
-#                 'form_data': request.POST,
-#             })
-
-#     form_data = {
-#         'title': '',
-#         'category': '',
-#         'subject_name': '',
-#         'description': '',
-#         'upload_date': date.today().isoformat(),
-#     }
-#     return render(request, 'upload_notes.html', {'form_data': form_data,'subjects':subjects})
-
-# #
-
-#
-# add? view
-#
-# from django.contrib import messages
-# from .models import Subject, Category
-
-# def add_subject(request):
-#     categories = Category.objects.all()
-#     if request.method == 'POST':
-#         subject_name = request.POST.get('subject_name')
-#         category_id = request.POST.get('category_id')
-
-#         if Subject.objects.filter(subject_name=subject_name).exists():
-#             messages.error(request, "Subject already exists.")
-#         else:
-#             category = Category.objects.get(category_id=category_id)
-#             Subject.objects.create(subject_name=subject_name, category_id=category)
-#             messages.success(request, "Subject added successfully.")
-#             return redirect('upload_notes')
-
-#     return render(request, 'add_subject.html', {'categories': categories})
-
-
-# def add_category(request):
-#     categories = Category.objects.all()
-#     if request.method == 'POST':
-#         category_name = request.POST.get('category_name')
-  
-      
-
-#         if Category.objects.filter(category_name=category_name).exists():
-#             messages.error(request, "category  already exists.")
-#         else:
-#             Category.objects.create(category_name=category_name)
-           
-#             messages.success(request, "category added successfully.")
-#             return redirect('upload_notes')
-
-#     return render(request, 'add_category.html', {'categories': categories})
-
-
-
-
-
 ##
 
 from django.shortcuts import render, redirect
@@ -1298,148 +573,7 @@ def add_category(request):
     return render(request, 'add_category.html')
 ##
 
-#
 
-
-
-
-# @login_required
-# def upload_notes(request):
-#     if request.method == 'POST':
-#         try:
-#             title = request.POST['title']
-#             category = request.POST.get('category')
-#             subject_name = request.POST['subject_name']
-#             description = request.POST['description']
-#             notes_file = request.FILES['notes_file']
-#             upload_date_str = request.POST.get('upload_date')
-
-#             allowed_types = ['application/pdf', 'image/jpeg', 'image/png']
-#             if notes_file.content_type not in allowed_types:
-#                 return render(request, 'upload_notes.html', {
-#                     'error': 'yes',
-#                     'error_message': 'Only PDF, JPG, and PNG files are allowed'
-#                 })
-#             try:
-#                 upload_date = datetime.strptime(upload_date_str, '%Y-%m-%d').date()
-#                 if upload_date > datetime.now().date():
-#                     return render(request, 'upload_notes.html', {
-#                         'error': 'yes',
-#                         'error_message': 'Date cannot be in the future'
-#                     })
-#             except (ValueError, TypeError):
-#                 return render(request, 'upload_notes.html', {
-#                     'error': 'yes',
-#                     'error_message': 'Invalid date format'
-#                 })
-            
-
-            
-
-#             # Create or get default category
-#             default_category, _ = Category.objects.get_or_create(
-#                 category_name='General',
-#                 defaults={'category_code': 'GEN'}
-#             )
-
-#             # Create or get subject with the required category
-#             subject, _ = Subject.objects.get_or_create(
-#                 subject_name=subject_name,
-#                 defaults={'category_id': default_category}
-#             )
-
-#             # Create the note
-#             note = Notes(
-#                 title=title,
-#                 category=category,
-#                 description=description,
-#                 notes_file=notes_file,
-#                 user_id=request.user,
-#                 subject_id=subject,
-#                 upload_date=upload_date  # New field added
-#             )
-#             note.save()
-
-#             return render(request, 'upload_notes.html', {'success': True})
-
-#         except Exception as e:
-#             return render(request, 'upload_notes.html', {
-#                 'error': 'yes',
-#                 'error_message': str(e)
-#             })
-
-#     return render(request, 'upload_notes.html')
-
-# #
-# from django.shortcuts import render, redirect
-# from django.contrib import messages
-# from datetime import datetime
-# from .models import Notes  # Import your Notes model
-# @login_required
-# def upload_notes(request):
-#     field_errors = {}
-#     form_data = {}
-    
-#     if request.method == 'POST':
-#         # Get form data
-#         title = request.POST.get('title')
-#         subject_name = request.POST.get('subject_name')
-#         description = request.POST.get('description')
-#         notes_file = request.FILES.get('notes_file')
-#         upload_date_str = request.POST.get('upload_date')
-        
-#         # Validate required fields
-#         if not title:
-#             field_errors['title'] = "Title is required"
-#         if not subject_name:
-#             field_errors['subject_name'] = "Subject is required"
-#         if not description:
-#             field_errors['description'] = "Description is required"
-#         if not notes_file:
-#             field_errors['notes_file'] = "File is required"
-        
-#         # Process and validate date
-#         try:
-#             upload_date = datetime.strptime(upload_date_str, '%Y-%m-%d').date()
-#             if upload_date > datetime.now().date():
-#                 field_errors['upload_date'] = "Date cannot be in the future"
-#         except (ValueError, TypeError):
-#             field_errors['upload_date'] = "Invalid date format"
-        
-#         # Save if no errors
-#         if not field_errors:
-#             try:
-#                 # Create and save new note
-#                 note = Notes(
-#                     title=title,
-#                     subject_name=subject_name,
-#                     description=description,
-#                     notes_file=notes_file,
-#                     upload_date=upload_date,
-#                     user_id=request.user  # Assuming you're using authentication
-#                 )
-#                 note.save()
-                
-#                 messages.success(request, "Notes uploaded successfully!")
-#                 return redirect('viewmy_notes')
-#             except Exception as e:
-#                 return render(request, 'upload_notes.html', {
-#                     'error': "yes",
-#                     'error_message': str(e),
-#                     'form_data': request.POST
-#                 })
-        
-#         # If errors, preserve form data
-#         form_data = request.POST
-    
-#     # For GET request or failed POST
-#     context = {
-#         'field_errors': field_errors,
-#         'form_data': form_data,
-#         # Set default to today's date
-#         'default_date': datetime.now().strftime('%Y-%m-%d')
-#     }
-#     return render(request, 'upload_notes.html', context)
 
 
 
@@ -1516,98 +650,7 @@ def viewall_notes_user(request):
         "datetime": date,
         "greet": msg
     })
-# def viewall_notes_user(request):
-#     date = datetime.now()
-#     h = time.strftime("%H")
-#     if h >= '0' and h < '12':
-#         msg = "Good Morning, "
-#     elif h >= '12' and h < '18':
-#         msg = "Good Afternoon, "
-#     else:
-#         msg = "Good Evening,"
-    
-#     # Get all notes ordered by upload date
-#     notes = Notes.objects.all().order_by('upload_date')
-#     return render(request, 'viewall_notes_user.html', {'notes': notes, 'datetime': date, 'greet': msg})
 
-
-# def viewall_notes_user(request):
-#     date=datetime.now()
-#     h=time.strftime("%H")
-#     if h>='0' and h<'12':
-#         msg="Good Morning, "
-#     elif h>='12' and h<'18':
-#         msg="Good Afternoon, "
-#     else:
-#         msg="Good Evening,"
-#     # Get all notes ordered by upload date
-#     notes = Notes.objects.all().order_by('upload_date')
-#     return render(request, 'viewall_notes_user.html', {'notes': notes,'datetime':date,'greet':msg})
-
-####
-# 
-# from django.shortcuts import render
-# from .models import Notes, Category  # 👈 Import your Category model
-# from django.utils import timezone
-# import time
-
-# def viewall_notes_user(request):
-#     """
-#     This view displays all note categories and allows users to view
-#     notes for each category in a modal pop-up.
-#     """
-#     # --- Greeting Logic (your original code is fine) ---
-#     now = timezone.now()
-#     h = now.strftime("%H")
-#     if '00' <= h < '12':
-#         msg = "Good Morning, "
-#     elif '12' <= h < '18':
-#         msg = "Good Afternoon, "
-#     else:
-#         msg = "Good Evening,"
-
-#     # --- Data Fetching Logic ---
-#     # 1. Get all notes and pre-fetch related subject and category data to avoid extra DB queries.
-#     all_notes = Notes.objects.select_related('subject_id__category_id').all().order_by('-upload_date')
-
-#     # 2. Get a list of category IDs that actually have notes.
-#     #    This prevents displaying empty category cards.
-#     category_ids_with_notes = all_notes.values_list('subject_id__category_id', flat=True).distinct()
-
-#     # 3. Fetch the actual category objects.
-#     categories = Category.objects.filter(id__in=category_ids_with_notes).order_by('category_name')
-
-#     # --- Context to be passed to the template ---
-#     context = {
-#         'notes': all_notes,
-#         'categories': categories,
-#         'datetime': now,
-#         'greet': msg,
-#     }
-    
-#     return render(request, 'viewall_notes_user.html', context)
-# ###
-
-# in nssapp/views.py
-
-# def viewall_notes_user(request):
-#     # ... (the rest of your view code) ...
-    
-#     category_ids_with_notes = all_notes.values_list('subject_id__category_id', flat=True).distinct()
-    
-#     #  FIX: Changed filter from 'id__in' to 'category_id__in'
-#     categories = Category.objects.filter(category_id__in=category_ids_with_notes).order_by('category_name')
-
-#     context = {
-#         'notes': all_notes,
-#         'categories': categories,
-#         'datetime': now,
-#         'greet': msg,
-#         # ... (the rest of your context) ...
-#     }
-    
-#     return render(request, 'viewall_notes_user.html', context)
-    
 
 
 
@@ -1661,21 +704,6 @@ from django.shortcuts import get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from .models import Notes
 
-# @login_required
-# def download_note(request, note_id):
-#     print(f"Processing download for note_id: {note_id}")
-#     note = get_object_or_404(Notes, id=note_id)
-#     print(f"Note found: {note.title}, download_count: {note.download_count}")
-#     if not note.notes_file:
-#         print("No file associated with this note")
-#         return render(request, 'error.html', {
-#             'error_message': 'File not found for this note.'
-#         })
-#     note.download_count += 1
-#     print(f"New download_count: {note.download_count}")
-#     note.save(update_fields=['download_count'])
-#     print(f"Redirecting to: {note.notes_file.url}")
-#     return redirect(note.notes_file.url)
 
 
 #
@@ -1697,89 +725,6 @@ def download_note(request, pk):  # Changed parameter name to be generic
 
 
 
-
-# def upload_notes_admin(request):
-
-
-# @login_required
-# def upload_notes_admin(request):
-#     if request.method == 'POST':
-#         try:
-#             title = request.POST['title']
-#             category = request.POST.get('category')
-#             subject_name = request.POST['subject_name']
-#             description = request.POST['description']
-#             notes_file = request.FILES['notes_file']
-#             upload_date_str = request.POST.get('upload_date')
-
-#             # Validate file type
-#             allowed_types = ['application/pdf', 'image/jpeg', 'image/png']
-#             if notes_file.content_type not in allowed_types:
-#                 return render(request, 'upload_notes_admin.html', {
-#                     'error': 'yes',
-#                     'error_message': 'Only PDF, JPG, and PNG files are allowed',
-#                     'form_data': request.POST,  # Preserve form data
-#                 })
-
-#             # Validate upload date
-#             try:
-#                 upload_date = datetime.strptime(upload_date_str, '%Y-%m-%d').date()
-#                 if upload_date > datetime.now().date():
-#                     return render(request, 'upload_notes.html', {
-#                         'error': 'yes',
-#                         'error_message': 'Date cannot be in the future',
-#                         'form_data': request.POST,  # Preserve form data
-#                     })
-#             except (ValueError, TypeError):
-#                 return render(request, 'upload_notes.html', {
-#                     'error': 'yes',
-#                     'error_message': 'Invalid date format',
-#                     'form_data': request.POST,  # Preserve form data
-#                 })
-
-#             # Create or get default category
-#             default_category, _ = Category.objects.get_or_create(
-#                 category_name='General',
-#                 defaults={'category_code': 'GEN'}
-#             )
-
-#             # Create or get subject with the required category
-#             subject, _ = Subject.objects.get_or_create(
-#                 subject_name=subject_name,
-#                 defaults={'category_id': default_category}
-#             )
-
-#             # Create the note
-#             note = Notes(
-#                 title=title,
-#                 category=category,
-#                 description=description,
-#                 notes_file=notes_file,
-#                 user_id=request.user,
-#                 subject_id=subject,
-#                 upload_date=upload_date
-#             )
-#             note.save()
-
-#             return render(request, 'upload_notes_admin.html', {'success': True})
-
-#         except Exception as e:
-#             return render(request, 'upload_notes_admin.html', {
-#                 'error': 'yes',
-#                 'error_message': str(e),
-#                 'form_data': request.POST,  # Preserve form data
-#             })
-
-#     # For GET requests, set default form data with today's date
-#     form_data = {
-#         'title': '',
-#         'category': '',
-#         'subject_name': '',
-#         'description': '',
-#         'upload_date': date.today().isoformat(),  # Sets to 2025-06-16
-#     }
-#     return render(request, 'upload_notes_admin.html', {'form_data': form_data})
-# #
 
 
 
@@ -1857,6 +802,7 @@ from django.contrib.auth import get_user_model  # Add this import
 # Use get_user_model() to get the correct User model
 User = get_user_model()
 #view user
+@staff_member_required
 @user_passes_test(lambda u: u.is_superuser)
 def view_users(request):
     users = User.objects.all()
@@ -2021,119 +967,7 @@ def custom_page_not_found(request, exception):
 
 
 
-# # 
-# # views.py - Add these imports
-# from google.oauth2 import id_token
-# from google.auth.transport import requests as google_requests
-# from django.conf import settings
 
-# # Add these simple views after your existing views
-# def google_auth(request):
-#     """Simple Google OAuth2 initiation"""
-#     google_auth_url = (
-#         "https://accounts.google.com/o/oauth2/v2/auth?"
-#         "response_type=code&"
-#         "client_id=348432816403-91ghfpoc20u6ruog0vg73lvsf6ti3hhg.apps.googleusercontent.com&"
-#         "redirect_uri=https://iwasbinod.pythonanywhere.com/note/auth/google/callback/&"
-#         "scope=openid%20email%20profile&"
-#         "access_type=online"
-#     )
-#     return redirect(google_auth_url)
-
-# def google_auth_callback(request):
-#     """Handle Google callback - SIMPLE VERSION"""
-#     code = request.GET.get('code')
-    
-#     if not code:
-#         messages.error(request, "Google login failed: No authorization code received")
-#         return redirect('login')
-    
-#     try:
-#         # Exchange code for tokens
-#         token_url = "https://oauth2.googleapis.com/token"
-#         data = {
-#             'code': code,
-#             'client_id': '348432816403-91ghfpoc20u6ruog0vg73lvsf6ti3hhg.apps.googleusercontent.com',
-#             'client_secret': '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',
-#             'redirect_uri': 'https://iwasbinod.pythonanywhere.com/note/auth/google/callback/',
-#             'grant_type': 'authorization_code',
-#         }
-        
-#         response = requests.post(token_url, data=data)
-#         token_data = response.json()
-        
-#         if 'id_token' not in token_data:
-#             messages.error(request, "Google login failed: No ID token received")
-#             return redirect('login')
-        
-#         # Verify the ID token using Google's library
-#         idinfo = id_token.verify_oauth2_token(
-#             token_data['id_token'], 
-#             google_requests.Request(), 
-#             '348432816403-91ghfpoc20u6ruog0vg73lvsf6ti3hhg.apps.googleusercontent.com'
-#         )
-        
-#         # Check if token is from Google
-#         if idinfo['iss'] not in ['accounts.google.com', 'https://accounts.google.com']:
-#             raise ValueError('Wrong issuer.')
-        
-#         # Get user data from the token
-#         email = idinfo['email']
-#         google_id = idinfo['sub']
-#         first_name = idinfo.get('given_name', '')
-#         last_name = idinfo.get('family_name', '')
-        
-#         # Simple user processing
-#         user = get_or_create_google_user(email, google_id, first_name, last_name)
-#         login(request, user)
-        
-#         messages.success(request, f"Welcome, {first_name or user.username}!")
-        
-#         if user.is_superuser:
-#             return redirect('adminpage')
-#         else:
-#             return redirect('dashboard')
-            
-#     except ValueError as e:
-#         messages.error(request, "Google login failed: Invalid token")
-#         return redirect('login')
-#     except Exception as e:
-#         messages.error(request, f"Login failed: {str(e)}")
-#         return redirect('login')
-
-# def get_or_create_google_user(email, google_id, first_name, last_name):
-#     """Simple function to get or create user"""
-#     try:
-#         # Try to find user by Google ID
-#         return User.objects.get(google_id=google_id)
-#     except User.DoesNotExist:
-#         try:
-#             # Try to find by email and link Google account
-#             user = User.objects.get(email=email)
-#             user.google_id = google_id
-#             user.save()
-#             return user
-#         except User.DoesNotExist:
-#             # Create new user
-#             username = email.split('@')[0]
-#             # Make username unique
-#             counter = 1
-#             original_username = username
-#             while User.objects.filter(username=username).exists():
-#                 username = f"{original_username}{counter}"
-#                 counter += 1
-            
-#             user = User.objects.create(
-#                 username=username,
-#                 email=email,
-#                 first_name=first_name,
-#                 last_name=last_name,
-#                 google_id=google_id,
-#                 is_active=True
-#             )
-#             user.set_unusable_password()
-#             user.save()
-#             return user
 
 
 
@@ -2351,13 +1185,14 @@ def download_exclusive_note(request, note_id):
 
 # Admin Views
 @login_required
-@user_passes_test(is_admin)
+@staff_member_required
+# @user_passes_test(is_admin)
 def admin_exclusive_notes(request):
     notes = ExclusiveNote.objects.all().order_by('-upload_date')
     return render(request, 'admin_exclusive_notes.html', {'notes': notes})
 
 @login_required
-@user_passes_test(is_admin)
+@staff_member_required
 def upload_exclusive_note(request):
     from .forms import ExclusiveNoteForm  # We'll create this form next
     
@@ -2374,15 +1209,212 @@ def upload_exclusive_note(request):
     
     return render(request, 'upload_exclusive_note.html', {'form': form})
 
+
+
+
 @login_required
-@user_passes_test(is_admin)
+@staff_member_required
 def view_purchase_details(request):
     purchases = NotePurchase.objects.all().order_by('-purchase_date')
     
-    # Calculate total revenue
-    total_revenue = sum(purchase.amount_paid for purchase in purchases)
+    # Calculate total revenue from completed purchases only
+    total_revenue = sum(
+        purchase.amount_paid for purchase in purchases 
+        if purchase.payment_status == 'COMPLETED'
+    )
     
     return render(request, 'purchase_details.html', {
         'purchases': purchases,
         'total_revenue': total_revenue
     })
+
+
+
+##esewa 
+
+
+# Add these imports at the top
+import uuid
+import hmac
+import hashlib
+import base64
+import json
+import requests
+from django.views import View
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+
+# eSewa Configuration
+ESEWA_MERCHANT_ID = "EPAYTEST"
+ESEWA_SECRET_KEY = "8gBm/:&EnhH.1/q"
+ESEWA_BASE_URL = "https://rc-epay.esewa.com.np"  # For testing
+
+
+@login_required
+def purchase_note(request, note_id):
+    note = get_object_or_404(ExclusiveNote, note_id=note_id, is_active=True)
+    
+    # Check if user already has any purchase record for this note (including failed ones)
+    existing_purchase = NotePurchase.objects.filter(
+        user=request.user, 
+        note=note
+    ).first()
+    
+    if existing_purchase:
+        if existing_purchase.payment_status == 'COMPLETED':
+            messages.warning(request, 'You have already purchased this note!')
+            return redirect('exclusive_notes_list')
+        else:
+            # If there's a pending or failed purchase, update it instead of creating new
+            existing_purchase.amount_paid = note.price
+            existing_purchase.payment_status = 'PENDING'
+            existing_purchase.save()
+            
+            # Redirect to eSewa payment with existing purchase
+            return redirect('esewa_payment', purchase_id=existing_purchase.purchase_id)
+    
+    # Create a new pending purchase record only if no existing record
+    purchase = NotePurchase.objects.create(
+        user=request.user,
+        note=note,
+        amount_paid=note.price,
+        payment_status='PENDING'
+    )
+    
+    # Redirect to eSewa payment
+    return redirect('esewa_payment', purchase_id=purchase.purchase_id)
+
+
+
+# eSewa Payment View
+class EsewaView(View):
+    def get(self, request, purchase_id, *args, **kwargs):
+        purchase = get_object_or_404(NotePurchase, purchase_id=purchase_id, user=request.user)
+        
+        if purchase.payment_status == 'COMPLETED':
+            messages.success(request, 'Payment already completed!')
+            return redirect('exclusive_notes_list')
+        
+        # Generate unique transaction UUID
+        transaction_uuid = str(uuid.uuid4())
+        purchase.esewa_transaction_uuid = transaction_uuid
+        purchase.save()
+        
+        # Prepare data for signature
+        amount = str(float(purchase.amount_paid))
+        tax_amount = "0"
+        product_service_charge = "0"
+        product_delivery_charge = "0"
+        total_amount = str(float(amount) + float(tax_amount) + float(product_service_charge) + float(product_delivery_charge))
+        
+        # Create signature
+        data_to_sign = f"total_amount={total_amount},transaction_uuid={transaction_uuid},product_code={ESEWA_MERCHANT_ID}"
+        signature = hmac.new(
+            ESEWA_SECRET_KEY.encode('utf-8'),
+            data_to_sign.encode('utf-8'),
+            hashlib.sha256
+        ).digest()
+        signature_base64 = base64.b64encode(signature).decode('utf-8')
+        
+        data = {
+            "amount": amount,
+            "tax_amount": tax_amount,
+            "product_service_charge": product_service_charge,
+            "product_delivery_charge": product_delivery_charge,
+            "total_amount": total_amount,
+            "transaction_uuid": transaction_uuid,
+            "product_code": ESEWA_MERCHANT_ID,
+            "success_url": request.build_absolute_uri(f'/note/esewa-verify/{purchase.purchase_id}/'),
+            "failure_url": request.build_absolute_uri(f'/note/esewa-verify/{purchase.purchase_id}/'),
+            "signed_field_names": "total_amount,transaction_uuid,product_code",
+            "signature": signature_base64,
+            "purchase_id": purchase.purchase_id,
+            "note_title": purchase.note.title,
+        }
+        
+        return render(request, "esewa_payment.html", {"data": data})
+
+# eSewa Verification View
+@login_required
+def esewa_verify(request, purchase_id):
+    if request.method == 'GET':
+        try:
+            data = request.GET.get('data')
+            purchase = get_object_or_404(NotePurchase, purchase_id=purchase_id, user=request.user)
+            
+            if not data:
+                messages.error(request, 'Payment verification failed: No data received')
+                return redirect('exclusive_notes_list')
+            
+            # Decode the response data
+            decoded_data = base64.b64decode(data).decode('utf-8')
+            map_data = json.loads(decoded_data)
+            
+            if map_data.get('status') == 'COMPLETE':
+                # Verify the transaction with eSewa
+                verification_data = {
+                    'product_code': ESEWA_MERCHANT_ID,
+                    'total_amount': str(float(purchase.amount_paid)),
+                    'transaction_uuid': purchase.esewa_transaction_uuid
+                }
+                
+                # In production, you should verify with eSewa's verification API
+                # For testing, we'll assume it's successful
+                
+                purchase.payment_status = 'COMPLETED'
+                purchase.esewa_transaction_code = map_data.get('transaction_code', '')
+                purchase.save()
+                
+                messages.success(request, f'Successfully purchased "{purchase.note.title}"! You can now download the note.')
+                return redirect('exclusive_notes_list')
+            else:
+                purchase.payment_status = 'FAILED'
+                purchase.save()
+                messages.error(request, 'Payment failed! Please try again.')
+                return redirect('exclusive_notes_list')
+                
+        except Exception as e:
+            messages.error(request, f'Payment verification error: {str(e)}')
+            return redirect('exclusive_notes_list')
+
+# Update the download view to check payment status
+@login_required
+def download_exclusive_note(request, note_id):
+    note = get_object_or_404(ExclusiveNote, note_id=note_id)
+    
+    # Check if user purchased this note or is admin
+    has_purchased = NotePurchase.objects.filter(
+        user=request.user, 
+        note=note, 
+        payment_status='COMPLETED'
+    ).exists()
+    
+    if not has_purchased and not is_admin(request.user):
+        messages.error(request, 'You need to purchase this note before downloading!')
+        return redirect('exclusive_notes_list')
+    
+    # Serve the file for download
+    response = FileResponse(note.notes_file.open(), as_attachment=True)
+    response['Content-Disposition'] = f'attachment; filename="{note.notes_file.name}"'
+    return response
+
+# Update the exclusive_notes_list view
+@login_required
+def exclusive_notes_list(request):
+    notes = ExclusiveNote.objects.filter(is_active=True)
+    
+    # Check which notes the user has purchased (only completed payments)
+    purchased_notes = NotePurchase.objects.filter(
+        user=request.user, 
+        payment_status='COMPLETED'
+    ).values_list('note_id', flat=True)
+    
+    # Create a list of purchased note IDs for the template
+    purchased_note_ids = list(purchased_notes)
+    
+    context = {
+        'notes': notes,
+        'purchased_note_ids': purchased_note_ids
+    }
+    
+    return render(request, 'exclusive_notes_list.html', context)
