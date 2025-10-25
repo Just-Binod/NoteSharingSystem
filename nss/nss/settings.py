@@ -20,6 +20,8 @@ SECRET_KEY = 'my_secret_key'  # Consider using environment variable in productio
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False  # Changed to False for production
 
+
+
 # Updated ALLOWED_HOSTS for your PythonAnywhere domain
 ALLOWED_HOSTS = [
     'iwasbinod.pythonanywhere.com',
@@ -137,6 +139,11 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+
+# import os
+# print(f"MEDIA_ROOT: {os.path.abspath(MEDIA_ROOT)}")
+
+
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -195,12 +202,6 @@ else:
     GOOGLE_OAUTH2_REDIRECT_URI = 'https://iwasbinod.pythonanywhere.com/note/auth/google/callback/'
     ALLOWED_HOSTS = ['127.0.0.1','iwasbinod.pythonanywhere.com']
     print("=== PRODUCTION MODE ===")
-
-
-
-
-
-
 
 
 

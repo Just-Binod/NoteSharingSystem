@@ -1,6 +1,4 @@
-
 {% extends "usernav.html" %} {% load static %} {% block content %}
-
 <style>
   :root {
     --teal: #20c997;
@@ -13,8 +11,8 @@
     --card-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
   }
 
-  .profile-container {
-    max-width: 800px;
+  .edit-profile-container {
+    max-width: 600px;
     margin: 2.5rem auto;
     padding: 2rem;
     background: white;
@@ -23,21 +21,19 @@
     animation: fadeIn 0.6s ease-in-out;
   }
 
-  .profile-header {
+  .edit-profile-header {
     text-align: center;
-    margin-bottom: 2.5rem;
-    position: relative;
+    margin-bottom: 2rem;
   }
 
-  .profile-header h2 {
+  .edit-profile-header h2 {
     color: var(--teal);
     font-weight: 700;
     position: relative;
     display: inline-block;
-    animation: slideIn 0.5s ease-out;
   }
 
-  .profile-header h2::after {
+  .edit-profile-header h2::after {
     content: "";
     position: absolute;
     width: 60px;
@@ -47,64 +43,51 @@
     left: 50%;
     transform: translateX(-50%);
     border-radius: 4px;
-    transition: width 0.3s ease;
   }
 
-  .profile-header h2:hover::after {
-    width: 80px;
+  .form-group {
+    margin-bottom: 1.5rem;
   }
 
-  .profile-detail {
-    padding: 1.5rem 0;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    transition: all 0.3s ease;
-    animation: fadeInUp 0.6s ease-out;
-    animation-delay: calc(0.1s * var(--order));
-  }
-
-  .profile-detail:hover {
-    background: var(--bg-light);
-    transform: translateX(8px);
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(32, 201, 151, 0.1);
-  }
-
-  .detail-label {
+  .form-label {
     font-weight: 600;
     color: var(--text-dark);
-    font-size: 1.2rem;
-  }
-
-  .detail-value {
-    color: var(--text-light);
     font-size: 1.1rem;
-    text-transform: capitalize;
   }
 
-  .edit-btn {
+  .form-control {
+    border-radius: 8px;
+    padding: 0.75rem;
+    border: 1px solid #ced4da;
+    transition: border-color 0.3s ease;
+  }
+
+  .form-control:focus {
+    border-color: var(--teal);
+    box-shadow: 0 0 8px rgba(32, 201, 151, 0.2);
+  }
+
+  .preview-img {
+    max-width: 150px;
+    border-radius: 10px;
+    margin-top: 1rem;
+  }
+
+  .btn-submit {
     background: var(--teal);
     border: none;
     padding: 0.9rem 2.5rem;
     font-weight: 600;
     color: white;
     border-radius: 50px;
-    letter-spacing: 0.5px;
     transition: all 0.3s ease;
-    margin-top: 2.5rem;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    animation: pulse 1.5s infinite;
+    width: 100%;
   }
 
-  .edit-btn:hover {
+  .btn-submit:hover {
     background: var(--dark-teal);
-    transform: scale(1.05) translateY(-3px);
+    transform: scale(1.05);
     box-shadow: 0 6px 20px rgba(32, 201, 151, 0.3);
-  }
-
-  .edit-btn i {
-    margin-right: 10px;
   }
 
   @keyframes fadeIn {
@@ -116,166 +99,76 @@
     }
   }
 
-  @keyframes slideIn {
-    from {
-      transform: translateY(-20px);
-      opacity: 0;
-    }
-    to {
-      transform: translateY(0);
-      opacity: 1;
-    }
-  }
-
-  @keyframes fadeInUp {
-    from {
-      transform: translateY(20px);
-      opacity: 0;
-    }
-    to {
-      transform: translateY(0);
-      opacity: 1;
-    }
-  }
-
-  @keyframes pulse {
-    0%,
-    100% {
-      transform: scale(1);
-    }
-    50% {
-      transform: scale(1.03);
-    }
-  }
-
   @media (max-width: 768px) {
-    .profile-container {
-      padding: 1.5rem;
+    .edit-profile-container {
       margin: 1.5rem;
-    }
-
-    .profile-detail {
-      padding: 1rem 0;
-    }
-
-    .edit-btn {
-      padding: 0.8rem 2rem;
-      width: 100%;
+      padding: 1.5rem;
     }
   }
 </style>
 
-<div class="profile-container">
-  <div class="profile-header">
-    <h2>update Profile</h2>
-  </div>
-   
-  
-
-  <form action="" method="POST">
-    {% csrf_token %}
-
-    
-    <div class="profile-detail row align-items-center" style="--order: 1">
-      <div>
-       
-      </div>
-    <div class="col-md-4 detail-label">Full Name</div>
-    <div class="col-md-8 detail-value"> <input
-        type="text"
-        name="username"
-        class="form-control"
-        value="{{ user.username }}"
-        required
-      /></div>
-   
-  </div>
-
-  <div class="profile-detail row align-items-center" style="--order: 2">
-    <div class="col-md-4 detail-label">Email</div>
-    <div class="col-md-8 detail-value" style="text-transform: lowercase">
-      <input
-        type="email"
-        name="email"
-        class="form-control"
-        value="{{ user.email }}"
-        required
-      />
-    </div>
-  </div>
-
-  <div class="text-center">
-     <button type="submit" class="btn edit-btn">
-      <i class="fas fa-save"></i> Save Changes
-    </button>
-    {% comment %} <a href="{% url 'logout' %}" class="btn edit-btn">
-      <i class="fas fa-edit"></i>update
-    </a> {% endcomment %}
-  </div>
-
-
-</div>
-
-
-
-  </form>
-
-  
-{% endblock %} 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-{% comment %} {% extends "usernav.html" %} {% load static %} {% block content %}
-<div class="profile-container">
-  <div class="profile-header">
+<div class="edit-profile-container">
+  <div class="edit-profile-header">
     <h2>Edit Profile</h2>
   </div>
 
-  <form method="post">
+  {% if messages %} {% for message in messages %}
+  <div
+    class="alert alert-{{ message.tags }} alert-dismissible fade show rounded-3"
+    role="alert"
+  >
+    {{ message }}
+    <button
+      type="button"
+      class="btn-close"
+      data-bs-dismiss="alert"
+      aria-label="Close"
+    ></button>
+  </div>
+  {% endfor %} {% endif %}
+
+  <form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
-    <div class="mb-3">
-      <label class="form-label">Full Name</label>
+    <div class="form-group">
+      <label for="username" class="form-label">Username</label>
       <input
         type="text"
-        name="username"
         class="form-control"
+        id="username"
+        name="username"
         value="{{ user.username }}"
         required
       />
     </div>
-
-    <div class="mb-3">
-      <label class="form-label">Email</label>
+    <div class="form-group">
+      <label for="email" class="form-label">Email</label>
       <input
         type="email"
-        name="email"
         class="form-control"
+        id="email"
+        name="email"
         value="{{ user.email }}"
         required
       />
     </div>
-
-    <button type="submit" class="btn edit-btn">
-      <i class="fas fa-save"></i> Save Changes
-    </button>
+    <div class="form-group">
+      <label for="profile_picture" class="form-label">Profile Picture</label>
+      <input
+        type="file"
+        class="form-control"
+        id="profile_picture"
+        name="profile_picture"
+        accept="image/jpeg,image/png"
+      />
+      {% if user.profile_picture %}
+      <img
+        src="{{ user.profile_picture.url }}"
+        alt="Profile Picture"
+        class="preview-img"
+      />
+      {% endif %}
+    </div>
+    <button type="submit" class="btn btn-submit">Save Changes</button>
   </form>
 </div>
-{% endblock %} {% endcomment %}
+{% endblock %}

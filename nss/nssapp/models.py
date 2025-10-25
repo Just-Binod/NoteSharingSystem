@@ -61,6 +61,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     
     # Add these simple Google fields
     google_id = models.CharField(max_length=100, blank=True, null=True, unique=True)
+##################
+    # Add profile picture field
+    profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
     
     objects = UserManager()
     
@@ -105,39 +108,11 @@ class Subject(models.Model):
 
 
    
-# class Notes(models.Model):
-#         CATEGORY_CHOICES = [
-#         ('BE_COMPUTER', 'BE COMPUTER'),
-#         ('BBA', 'BBA'),
-#         ('BCA', 'BCA'),
-#         ('BE_CIVIL', 'BE CIVIL'),
-#         ('MBA', 'MBA'),
-#         ('PLUS_TWO', '+2'),
-#         ('OTHERS', 'Others'),
-#     ]
-#     note_id=models.AutoField(primary_key=True)
-#     title=models.CharField(max_length=100)
-#     description=models.TextField()
-#     notes_file = models.FileField(upload_to='notes/')  # This creates a 'notes' subfolder in MEDIA_ROOT
-#     upload_date=models.DateTimeField(auto_now_add=True)
-#     user_id=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
-#     subject_id=models.ForeignKey(Subject,on_delete=models.CASCADE)
-#     download_count=models.PositiveIntegerField(default=0)
 
-#     def __str__(self):
-#         return self.title
 
 
 class Notes(models.Model):
-    # CATEGORY_CHOICES = [
-    #     ('BE_COMPUTER', 'BE COMPUTER'),
-    #     ('BBA', 'BBA'),
-    #     ('BCA', 'BCA'),
-    #     ('BE_CIVIL', 'BE CIVIL'),
-    #     ('MBA', 'MBA'),
-    #     ('PLUS_TWO', '+2'),
-    #     ('OTHERS', 'Others'),
-    # ]
+
     
     note_id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=100)
@@ -157,21 +132,6 @@ class Notes(models.Model):
         return self.title
 
 
-
-# class Role(models.Model):
-#     role_id=models.CharField(max_length=1,primary_key=True)
-#     role_name=models.CharField(max_length=20)
-#     code=models.CharField(max_length=10)
-#     def __str__(self):
-#         return self.role_name
-
-
-
-
-# class User(AbstractUser):
-#     role_id=models.ForeignKey(Role,on_delete=models.CASCADE)
-#     def __str__(self):
-#         return self.username
 
 
 
@@ -232,22 +192,7 @@ class ExclusiveNote(models.Model):
     def __str__(self):
         return f"{self.title} - ${self.price}"
 
-class NotePurchase(models.Model):
-    purchase_id = models.AutoField(primary_key=True)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    note = models.ForeignKey(ExclusiveNote, on_delete=models.CASCADE)
-    purchase_date = models.DateTimeField(auto_now_add=True)
-    amount_paid = models.DecimalField(max_digits=10, decimal_places=2)
-    
-    class Meta:
-        unique_together = ('user', 'note')  # Prevent duplicate purchases
-    
-    def __str__(self):
-        return f"{self.user.username} purchased {self.note.title}"
 
-
-####eseway payment model
-# Add to your existing models.py
 
 class NotePurchase(models.Model):
     purchase_id = models.AutoField(primary_key=True)

@@ -31,3 +31,13 @@ urlpatterns = [
     path('note/', include('nssapp.urls')),
     # path('accounts/', include('allauth.urls')),#all-auth---google login
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
+from django.conf import settings
+from django.views.static import serve
+from django.urls import re_path
+
+if not settings.DEBUG:
+    urlpatterns += [
+        re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
+    ]

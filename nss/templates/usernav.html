@@ -6,24 +6,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>NoteSharingSystem</title>
 
-    <!-- Favicon (Log o in Browser Tab) -->
     <link
       rel="icon"
-      type="image/png"
+      type="image/x-icon"
+      href="{% static 'images/favicon.ico' %}"
+    />
+    <link
+      rel="shortcut icon"
+      type="image/x-icon"
       href="{% static 'images/favicon.ico' %}"
     />
 
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
       rel="stylesheet"
-      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
       crossorigin="anonymous"
     />
-
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
       rel="stylesheet"
     />
+
     <style>
       :root {
         --violet: #7c3aed;
@@ -34,82 +37,126 @@
         --text-muted: #6b7280;
         --bg-light: #f9fafb;
       }
+
       body {
         background-color: var(--bg-light);
       }
+
+      /* Navbar Base */
       .navbar {
         background-color: var(--violet) !important;
         box-shadow: 0 4px 12px rgba(124, 58, 237, 0.15);
         animation: fadeInDown 0.8s ease-out;
       }
+
       .navbar-brand {
         color: #fff !important;
         font-weight: 700;
         font-size: 1.5rem;
         transition: all 0.3s ease;
       }
+
       .navbar-brand:hover {
         color: var(--amber) !important;
         transform: scale(1.05);
       }
+
       .nav-link {
         color: #fff !important;
         font-weight: 500;
         transition: all 0.3s ease;
         padding: 0.5rem 1rem !important;
       }
+
       .nav-link:hover {
         color: var(--amber) !important;
         transform: translateY(-2px);
       }
+
       .nav-link.active {
         color: var(--amber) !important;
         background-color: rgba(255, 255, 255, 0.1);
         border-radius: 8px;
       }
-      .navbar-user {
-        color: #fff !important;
-        font-weight: 600;
-        background-color: var(--dark-violet);
-        padding: 0.5rem 1rem;
-        border-radius: 12px;
-        transition: all 0.3s ease;
-      }
-      .navbar-user:hover {
-        background-color: var(--amber);
-        color: var(--text-dark) !important;
-        transform: scale(1.03);
-      }
-      .btn-search {
-        background-color: var(--amber);
-        color: var(--text-dark);
-        border: none;
-        padding: 0.5rem 1.5rem;
-        border-radius: 8px;
-        transition: all 0.3s ease;
-      }
-      .btn-search:hover {
-        background-color: var(--dark-amber);
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
-      }
-      .form-control,
-      .form-select {
-        border: 1px solid #d1d5db;
-        border-radius: 8px;
-        transition: all 0.3s ease;
-      }
-      .form-control:focus,
-      .form-select:focus {
-        border-color: var(--violet);
-        box-shadow: 0 0 8px rgba(124, 58, 237, 0.2);
-      }
+
+      /* Toggle (Hamburger) */
       .navbar-toggler {
-        border-color: rgba(255, 255, 255, 0.5);
+        border: none;
+        outline: none;
+        padding: 6px 10px;
+        background-color: rgba(255, 255, 255, 0.15);
+        border-radius: 8px;
+        transition: all 0.3s ease;
       }
+
+      .navbar-toggler:hover {
+        background-color: rgba(255, 255, 255, 0.3);
+        transform: scale(1.05);
+      }
+
       .navbar-toggler-icon {
-        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 0.8)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255,255,255,0.9)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
       }
+
+      /* Animation for Navbar Collapse */
+      .navbar-collapse {
+        transition: max-height 0.4s ease, opacity 0.4s ease;
+      }
+
+      .navbar-collapse.collapsing {
+        opacity: 0;
+        max-height: 0;
+      }
+
+      .navbar-collapse.show {
+        opacity: 1;
+        max-height: 100vh;
+      }
+
+      /* Dropdown Styles */
+      .dropdown-menu {
+        background-color: var(--violet);
+        border: none;
+        border-radius: 10px;
+        padding: 0.5rem;
+      }
+
+      .dropdown-item {
+        color: #fff;
+        transition: all 0.2s ease;
+      }
+
+      .dropdown-item:hover {
+        background-color: var(--dark-violet);
+        color: var(--amber);
+      }
+
+      /* Mobile Styles */
+      @media (max-width: 991px) {
+        .navbar-nav {
+          background-color: var(--violet);
+          border-radius: 12px;
+          margin-top: 0.5rem;
+          padding: 0.5rem 0;
+          text-align: center;
+          animation: slideDown 0.4s ease;
+        }
+
+        .navbar-nav .nav-item {
+          margin: 5px 0;
+        }
+
+        .navbar-nav .nav-link {
+          padding: 0.6rem 1rem !important;
+          font-size: 1.05rem;
+        }
+
+        .dropdown-menu {
+          width: 100%;
+          text-align: center;
+        }
+      }
+
       @keyframes fadeInDown {
         from {
           opacity: 0;
@@ -120,34 +167,15 @@
           transform: translateY(0);
         }
       }
-      @keyframes gentleScale {
-        0%,
-        100% {
-          transform: scale(1);
+
+      @keyframes slideDown {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
         }
-        50% {
-          transform: scale(1.02);
-        }
-      }
-      @media (max-width: 991px) {
-        .navbar-nav {
-          padding: 1rem;
-          background-color: var(--violet);
-          border-radius: 8px;
-          margin-top: 0.5rem;
-        }
-        .navbar-username {
-          color: #fff !important;
-          font-weight: 600;
-          padding: 0.5rem 1rem;
-          border-radius: 12px;
-        }
-        .navbar-user {
-          margin-top: 0.5rem;
-        }
-        .search-form {
-          margin-top: 1rem;
-          width: 100%;
+        to {
+          opacity: 1;
+          transform: translateY(0);
         }
       }
     </style>
@@ -170,26 +198,7 @@
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarScroll">
-          <ul
-            class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll"
-            style="--bs-scroll-height: 100px"
-          >
-            {% comment %}
-            <li class="nav-item">
-              <a
-                class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
-                href="{% url 'dashboard' %}"
-                >Dashboard</a
-              >
-            </li>
-            {% endcomment %}
-            <li class="nav-item">
-              <a
-                class="nav-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}"
-                href="{% url 'profile' %}"
-                >Profile</a
-              >
-            </li>
+          <ul class="navbar-nav me-auto my-2 my-lg-0">
             <li class="nav-item">
               <a
                 class="nav-link {% if request.resolver_match.url_name == 'upload_notes' %}active{% endif %}"
@@ -221,16 +230,56 @@
             </li>
           </ul>
 
-          <ul class="navbar-nav ms-3">
-            <li class="nav-item">
-              <span class="nav-link navbar-username">
-                <i style="color: black">{{datetime}}</i>&nbsp;&nbsp;&nbsp;
-                <b style="color: yellow">{{ greet }}</b>
-                <b> {{ request.user.username }}</b></span
+          <ul class="navbar-nav ms-auto">
+            <!-- Replace the existing dropdown <li> in the navbar -->
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle d-flex align-items-center"
+                href="#"
+                id="userDropdown"
+                role="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
               >
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                {% if request.user.profile_picture %}
+                <img
+                  src="{{ request.user.profile_picture.url }}"
+                  alt="Profile Picture"
+                  class="rounded-circle me-1"
+                  style="width: 30px; height: 30px; object-fit: cover"
+                />
+
+                {% else %}
+                <img
+                  src="https://bootdey.com/img/Content/avatar/avatar7.png"
+                  alt="Default Profile Picture"
+                  class="rounded-circle me-1"
+                  style="width: 30px; height: 30px; object-fit: cover"
+                />
+
+                {% endif %}
+                <span>
+                  <b style="color: yellow">{{ greet }}</b>
+                  {{ request.user.username }}
+                </span>
+              </a>
+              <ul
+                class="dropdown-menu dropdown-menu-end shadow"
+                aria-labelledby="userDropdown"
+              >
+                <li>
+                  <a class="dropdown-item" href="{% url 'profile' %}">
+                    <i class="fa-solid fa-user me-2"></i>My Profile
+                  </a>
+                </li>
+
+                <li><hr class="dropdown-divider" /></li>
+                <li>
+                  <a class="dropdown-item" href="{% url 'logout' %}">
+                    <i class="fa-solid fa-right-from-bracket me-2"></i>Logout
+                  </a>
+                </li>
+              </ul>
             </li>
           </ul>
         </div>
@@ -241,22 +290,11 @@
 
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
       crossorigin="anonymous"
     ></script>
     <script
       src="https://kit.fontawesome.com/4f3965c7a3.js"
       crossorigin="anonymous"
-    ></script>
-
-    <!-- Facebook SDK -->
-    <div id="fb-root"></div>
-    <script
-      async
-      defer
-      crossorigin="anonymous"
-      src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v18.0"
-      nonce="xyz"
     ></script>
   </body>
 </html>

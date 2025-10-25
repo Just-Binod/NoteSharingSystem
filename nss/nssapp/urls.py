@@ -12,6 +12,7 @@ from .views import custom_page_not_found
 from .views import delete_user
 from  nssapp import views as exclusive_views
 ##
+from django.views.static import serve
 
 
 urlpatterns = [
@@ -114,12 +115,20 @@ urlpatterns = [
 
 
 
-
+# path('media/<path:path>', serve, {'document_root': settings.MEDIA_ROOT}),
    
 #    path('edit_profile/', views.edit_profile, name='edit_profile'),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
+from django.conf import settings
+from django.views.static import serve
+from django.urls import re_path
+
+if not settings.DEBUG:
+    urlpatterns += [
+        re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
+    ]
 
 
 # outside
