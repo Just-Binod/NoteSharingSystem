@@ -84,6 +84,34 @@
       style="animation: slideIn 0.6s ease-out; animation-delay: calc(0.1s * {{ forloop.counter0 }});"
     >
       <div class="card h-100 border-0 shadow-sm rounded-3 note-card">
+        <!---->
+        <div class="card-header bg-white border-0 pb-0">
+          <div class="d-flex justify-content-between align-items-start">
+            <h5 class="card-title mb-1 text-violet">{{ note.title }}</h5>
+            <span class="badge bg-amber text-dark">{{ note.category }}</span>
+          </div>
+          <div class="d-flex align-items-center mt-2">
+            {% if note.user_id.profile_picture %}
+            <img
+              src="{{ note.user_id.profile_picture.url }}"
+              alt="{{ note.user_id.username }}"
+              class="rounded-circle profile-img-sm me-2"
+            />
+            {% else %}
+            <img
+              src="https://bootdey.com/img/Content/avatar/avatar7.png"
+              alt="Default Profile"
+              class="rounded-circle me-2"
+              style="width: 32px; height: 32px; object-fit: cover"
+            />
+            {% endif %}
+            <span class="text-muted small">{{ note.user_id.username }}</span>
+          </div>
+        </div>
+
+        <!----->
+
+        {% comment %}
         <div class="card-header bg-white border-0 pb-0">
           <div class="d-flex justify-content-between align-items-start">
             <h5 class="card-title mb-1 text-violet">{{ note.title }}</h5>
@@ -93,6 +121,7 @@
             <i class="fas fa-user me-1"></i>{{ note.user_id.username }}
           </p>
         </div>
+        {% endcomment %}
         <div class="card-body pt-2">
           <p class="card-text text-muted mb-3">
             {{ note.description|truncatechars:120 }}
@@ -411,6 +440,26 @@
     font-weight: 500;
     color: var(--text-dark);
   }
+
+  /**/
+  .profile-img-sm {
+    width: 32px;
+    height: 32px;
+    object-fit: cover;
+    border: 2px solid #7c3aed;
+  }
+
+  .profile-placeholder {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, #7c3aed, #f59e0b);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+  }
+  /**/
 
   /* Toast animations */
   @keyframes slideInRight {

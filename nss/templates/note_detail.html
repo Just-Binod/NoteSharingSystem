@@ -6,7 +6,200 @@
     </div>
     <div class="card-body">
       <p class="text-muted">{{ note.description }}</p>
-      <p><strong>Uploaded by:</strong> {{ note.user_id.username }}</p>
+
+      <!-- Uploader Info -->
+      <div class="d-flex align-items-center mt-2">
+        <p class="mb-0">
+          <strong>Uploaded by:</strong>
+          {% if note.user_id.profile_picture %}
+          <img
+            src="{{ note.user_id.profile_picture.url }}"
+            alt="{{ note.user_id.username }}"
+            class="rounded-circle me-2"
+            style="width: 32px; height: 32px; object-fit: cover"
+          />
+          {% else %}
+          <img
+            src="https://bootdey.com/img/Content/avatar/avatar7.png"
+            alt="Default Profile"
+            class="rounded-circle me-2"
+            style="width: 32px; height: 32px; object-fit: cover"
+          />
+          {% endif %} {{ note.user_id.username }}
+        </p>
+      </div>
+
+      <p><strong>Subject:</strong> {{ note.subject_id.subject_name }}</p>
+      <p><strong>Uploaded on:</strong> {{ note.upload_date|date:"M d, Y" }}</p>
+
+      <!-- Download button -->
+      <a
+        href="{% url 'download_note' note.note_id %}"
+        class="btn btn-violet rounded-pill"
+      >
+        <i class="fas fa-download"></i> Download Note
+      </a>
+
+      <!-- Upvote -->
+      <form
+        method="POST"
+        action="{% url 'upvote_note' note.note_id %}"
+        class="d-inline"
+      >
+        {% csrf_token %}
+        <button
+          type="submit"
+          class="btn btn-outline-success rounded-pill upvote-button"
+        >
+          <i class="fas fa-arrow-up"></i>
+          Upvote ({{ upvotes }})
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Comments Section -->
+  <div class="card mt-4 shadow-sm border-0 rounded-3">
+    <div class="card-header bg-light">
+      <h4 class="mb-0">Comments</h4>
+    </div>
+    <div class="card-body">
+      <!-- Add Comment Form -->
+      <form method="POST" action="{% url 'add_comment' note.note_id %}">
+        {% csrf_token %} {% if user.is_authenticated %}
+        <textarea
+          name="content"
+          class="form-control mb-2"
+          rows="3"
+          placeholder="Write your comment..."
+          required
+        ></textarea>
+        {% else %}
+        <input
+          type="text"
+          name="guest_name"
+          class="form-control mb-2"
+          placeholder="Your name"
+          required
+        />
+        <textarea
+          name="content"
+          class="form-control mb-2"
+          rows="3"
+          placeholder="Write your comment..."
+          required
+        ></textarea>
+        {% endif %}
+        <button type="submit" class="btn btn-violet rounded-pill">
+          Submit
+        </button>
+      </form>
+
+      <hr />
+
+      <!-- Comment List -->
+      <ul class="list-group">
+        {% for comment in comments %}
+        <li class="list-group-item">
+          <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+              {% if comment.user %}
+              <!-- Registered User -->
+              {% if comment.user.profile_picture %}
+              <img
+                src="{{ comment.user.profile_picture.url }}"
+                alt="{{ comment.user.username }}"
+                class="rounded-circle me-2"
+                style="width: 32px; height: 32px; object-fit: cover"
+              />
+              {% else %}
+              <img
+                src="https://bootdey.com/img/Content/avatar/avatar7.png"
+                alt="Default Profile"
+                class="rounded-circle me-2"
+                style="width: 32px; height: 32px; object-fit: cover"
+              />
+              {% endif %}
+              <strong>{{ comment.user.username }}</strong>
+              {% else %}
+              <!-- Guest User -->
+              <img
+                src="https://bootdey.com/img/Content/avatar/avatar7.png"
+                alt="Guest Profile"
+                class="rounded-circle me-2"
+                style="width: 32px; height: 32px; object-fit: cover"
+              />
+              <strong>{{ comment.guest_name }}</strong>
+              {% endif %}
+            </div>
+            <small class="text-muted"
+              >{{ comment.created_at|date:"M d, Y H:i" }}</small
+            >
+          </div>
+          <p class="mb-0 mt-2">{{ comment.content }}</p>
+        </li>
+        {% empty %}
+        <li class="list-group-item text-muted">
+          No comments yet. Be the first!
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+
+<style>
+  .btn-violet {
+    background-color: #7c3aed;
+    color: #fff;
+    border: none;
+    transition: all 0.3s ease;
+  }
+  .btn-violet:hover {
+    background-color: #6d28d9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+  }
+</style>
+{% endblock %}
+
+<!---->
+{% comment %} {% extends "usernav.html" %} {% load static %} {% block content %}
+<div class="container mt-5">
+  <div class="card shadow-sm border-0 rounded-3">
+    <div class="card-header bg-violet text-black text-center rounded-top">
+      <h3 class="mb-0">{{ note.title }}</h3>
+    </div>
+    <div class="card-body">
+      <p class="text-muted">{{ note.description }}</p>
+
+      <!---->
+      <!---->
+
+      <div class="d-flex align-items-center mt-2">
+        <p>
+          <strong>Uploaded by:</strong>
+          {% if note.user_id.profile_picture %}
+          <img
+            src="{{ note.user_id.profile_picture.url }}"
+            alt="{{ note.user_id.username }}"
+            class="rounded-circle profile-img-sm me-2"
+          />
+          {% else %}
+          <img
+            src="https://bootdey.com/img/Content/avatar/avatar7.png"
+            alt="Default Profile"
+            class="rounded-circle me-2"
+            style="width: 32px; height: 32px; object-fit: cover"
+          />
+          {% endif %} {{ note.user_id.username }}
+        </p>
+      </div>
+
+      <!----->
+
+      <!---->
+
       <p><strong>Subject:</strong> {{ note.subject_id.subject_name }}</p>
       <p><strong>Uploaded on:</strong> {{ note.upload_date|date:"M d, Y" }}</p>
 
@@ -83,8 +276,47 @@
         <li class="list-group-item">
           <div class="d-flex justify-content-between align-items-center">
             <strong>
-              {% if comment.user %} {{ comment.user.username }} {% else %} {{
-              comment.guest_name }} {% endif %}
+              {% if comment.user %}
+
+              <!---->
+              <!---->
+
+              <div class="d-flex align-items-center mt-2">
+                {% if note.user_id.profile_picture %}
+                <img
+                  src="{{ note.user_id.profile_picture.url }}"
+                  alt="{{ note.user_id.username }}"
+                  class="rounded-circle profile-img-sm me-2"
+                />
+                {% else %}
+                <img
+                  src="https://bootdey.com/img/Content/avatar/avatar7.png"
+                  alt="Default Profile"
+                  class="rounded-circle me-2"
+                  style="width: 32px; height: 32px; object-fit: cover"
+                />
+                {% endif %} {{ comment.user.username }}
+              </div>
+
+              <!----->
+
+              <!---->
+
+              {% else %}
+
+              <div>
+                <img
+                  src="https://bootdey.com/img/Content/avatar/avatar7.png"
+                  alt="stranger Profile"
+                  class="rounded-circle me-2"
+                  style="width: 32px; height: 32px; object-fit: cover"
+                />
+
+                {{ comment.guest_name }}
+              </div>
+
+              <!---->
+              {% endif %}
             </strong>
             <small class="text-muted"
               >{{ comment.created_at|date:"M d, Y H:i" }}</small
@@ -114,16 +346,23 @@
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
   }
-</style>
-{% endblock %}
 
-<!---->
-{% comment %} {% extends 'usernav.html' %} {% block content %}
-<h2>{{ note.title }}</h2>
-<p>{{ note.description }}</p>
-<p>Subject: {{ note.subject_id }}</p>
-<p>Uploaded on: {{ note.upload_date }}</p>
-<p>Downloads: {{ note.download_count }}</p>
-{% if note.notes_file %}
-<a href="{{ note.notes_file.url }}" download>Download File</a>
-{% endif %} {% endblock %} {% endcomment %}
+  .profile-img-sm {
+    width: 32px;
+    height: 32px;
+    object-fit: cover;
+    border: 2px solid #7c3aed;
+  }
+
+  .profile-placeholder {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, #7c3aed, #f59e0b);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+  }
+</style>
+{% endblock %} {% endcomment %}
