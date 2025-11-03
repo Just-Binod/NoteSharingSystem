@@ -213,6 +213,18 @@ def send_activation_email(user, request):
 @login_required
 def dashboard_view(request):
     notes = Notes.objects.all()
+
+    # 
+
+    # note = get_object_or_404(Notes, pk=note_id)
+
+    # upvotes = notes.upvotes.count()
+
+
+
+    # 
+
+
     date=datetime.now()
     h=time.strftime("%H")
     if h>='0' and h<'12':
@@ -222,7 +234,7 @@ def dashboard_view(request):
     else:
         msg="Good Evening,"
     
-    return render(request,'dashboard.html',{'notes':notes,'datetime':date,'greet':msg})
+    return render(request,'dashboard.html',{'notes':notes,'datetime':date,'greet':msg,})
 
 def logout_view(request):
     logout(request)

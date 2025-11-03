@@ -89,6 +89,13 @@
           <div class="d-flex justify-content-between align-items-start">
             <h5 class="card-title mb-1 text-violet">{{ note.title }}</h5>
             <span class="badge bg-amber text-dark">{{ note.category }}</span>
+            <span>
+              <div class="upvote-section text-center mt-">
+                <i class="fas fa-arrow-up upvote-arrow">
+                  {{ note.upvotes.count }}</i
+                >
+              </div>
+            </span>
           </div>
           <div class="d-flex align-items-center mt-2">
             {% if note.user_id.profile_picture %}
@@ -126,6 +133,7 @@
           <p class="card-text text-muted mb-3">
             {{ note.description|truncatechars:120 }}
           </p>
+
           <div class="d-flex align-items-center mb-2">
             <i class="fas fa-book me-2 text-violet"></i>
             <span>{{ note.subject_id.subject_name }}</span>
@@ -141,6 +149,7 @@
           <span class="badge bg-light text-dark">
             <i class="fas fa-download me-1"></i>{{ note.download_count }}
           </span>
+
           {% if user.is_authenticated %}
           <a
             href="{% url 'download_note' note.note_id %}"
@@ -459,6 +468,32 @@
     justify-content: center;
     font-size: 0.8rem;
   }
+  .upvote-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #9ca3af; /* gray */
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .upvote-section:hover .upvote-arrow {
+    color: #f59e0b; /* amber on hover */
+    transform: translateY(-2px);
+  }
+
+  .upvote-arrow {
+    font-size: 1.2rem;
+    color: #9ca3af;
+    transition: all 0.2s ease;
+  }
+
+  .upvote-count {
+    font-size: 0.9rem;
+    color: #374151;
+  }
+
   /**/
 
   /* Toast animations */
