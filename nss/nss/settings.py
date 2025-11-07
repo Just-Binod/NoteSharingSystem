@@ -455,7 +455,37 @@ print("=== DEVELOPMENT MODE ===")
 #     ALLOWED_HOSTS = ['127.0.0.1','iwasbinod.pythonanywhere.com']
 #     print("=== PRODUCTION MODE ===")
 
+#################
+#############
+import os
 
+# Detect if running on PythonAnywhere (simple environment check)
+if 'pythonanywhere' in os.getenv('HOSTNAME', '') or not DEBUG:
+    # === PRODUCTION (PythonAnywhere) ===
+    CSRF_TRUSTED_ORIGINS = ['https://iwasbinod.pythonanywhere.com']
+    CSRF_COOKIE_SECURE = True          # Cookies only via HTTPS
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_HTTPONLY = False       # Let browser send CSRF token
+    CSRF_USE_SESSIONS = False
+else:
+    # === LOCAL DEVELOPMENT ===
+    CSRF_TRUSTED_ORIGINS = [
+        'http://127.0.0.1:8000',
+        'http://localhost:8000',
+    ]
+    CSRF_COOKIE_SECURE = False
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_HTTPONLY = False
+    CSRF_USE_SESSIONS = False
+
+# Common settings for both
+CSRF_COOKIE_NAME = "csrftoken"
+CSRF_COOKIE_AGE = None  # token lasts per session
+
+
+
+#####################
+################
 
 #
 #

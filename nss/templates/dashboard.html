@@ -89,13 +89,6 @@
           <div class="d-flex justify-content-between align-items-start">
             <h5 class="card-title mb-1 text-violet">{{ note.title }}</h5>
             <span class="badge bg-amber text-dark">{{ note.category }}</span>
-            <span>
-              <div class="upvote-section text-center mt-">
-                <i class="fas fa-arrow-up upvote-arrow">
-                  {{ note.upvotes.count }}</i
-                >
-              </div>
-            </span>
           </div>
           <div class="d-flex align-items-center mt-2">
             {% if note.user_id.profile_picture %}
@@ -117,23 +110,10 @@
         </div>
 
         <!----->
-
-        {% comment %}
-        <div class="card-header bg-white border-0 pb-0">
-          <div class="d-flex justify-content-between align-items-start">
-            <h5 class="card-title mb-1 text-violet">{{ note.title }}</h5>
-            <span class="badge bg-amber text-dark">{{ note.category }}</span>
-          </div>
-          <p class="text-muted small mb-0">
-            <i class="fas fa-user me-1"></i>{{ note.user_id.username }}
-          </p>
-        </div>
-        {% endcomment %}
         <div class="card-body pt-2">
           <p class="card-text text-muted mb-3">
             {{ note.description|truncatechars:120 }}
           </p>
-
           <div class="d-flex align-items-center mb-2">
             <i class="fas fa-book me-2 text-violet"></i>
             <span>{{ note.subject_id.subject_name }}</span>
@@ -146,6 +126,17 @@
         <div
           class="card-footer bg-white border-0 d-flex justify-content-between align-items-center pt-0"
         >
+          <!---->
+          <span>
+            <div class="upvote-section text-center mt-">
+              upvote
+              <i class="fas fa-arrow-up upvote-arrow">
+                {{ note.upvotes.count }}</i
+              >
+            </div>
+          </span>
+
+          <!---->
           <span class="badge bg-light text-dark">
             <i class="fas fa-download me-1"></i>{{ note.download_count }}
           </span>
@@ -408,6 +399,27 @@
     border: none;
   }
 
+  /* profile logic */
+  .profile-img-sm {
+    width: 32px;
+    height: 32px;
+    object-fit: cover;
+    border: 2px solid #7c3aed;
+  }
+
+  .profile-placeholder {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, #7c3aed, #f59e0b);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+  }
+
+  /*  */
+
   /* Toast-specific styles */
   .toast-container {
     z-index: 1055; /* Ensure toasts appear above other elements */
@@ -449,25 +461,7 @@
     font-weight: 500;
     color: var(--text-dark);
   }
-
   /**/
-  .profile-img-sm {
-    width: 32px;
-    height: 32px;
-    object-fit: cover;
-    border: 2px solid #7c3aed;
-  }
-
-  .profile-placeholder {
-    width: 32px;
-    height: 32px;
-    background: linear-gradient(135deg, #7c3aed, #f59e0b);
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.8rem;
-  }
   .upvote-section {
     display: flex;
     flex-direction: column;
@@ -484,13 +478,13 @@
   }
 
   .upvote-arrow {
-    font-size: 1.2rem;
+    font-size: 0.7rem;
     color: #9ca3af;
     transition: all 0.2s ease;
   }
 
   .upvote-count {
-    font-size: 0.9rem;
+    font-size: 0.7rem;
     color: #374151;
   }
 

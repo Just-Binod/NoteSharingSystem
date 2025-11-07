@@ -49,19 +49,6 @@
 
         <!----->
 
-        <!---->
-        {% comment %}
-        <div class="card-header bg-white border-0 pb-0">
-          <div class="d-flex justify-content-between align-items-start">
-            <h5 class="card-title mb-1 text-violet">{{ note.title }}</h5>
-            <span class="badge bg-amber text-dark">{{ note.category }}</span>
-          </div>
-          <p class="text-muted small mb-0">
-            <i class="fas fa-user me-1"></i>{{ note.user_id.username }}
-          </p>
-        </div>
-        {% endcomment %}
-
         <!-- Card Body -->
         <div class="card-body pt-2">
           <p class="card-text text-muted mb-3">
@@ -81,6 +68,17 @@
         <div
           class="card-footer bg-white border-0 d-flex justify-content-between align-items-center pt-0"
         >
+          <!---->
+          <span>
+            <div class="upvote-section text-center mt-">
+              upvote
+              <b class="fas fa-arrow-up upvote-arrow">
+                {{ note.upvotes.count }}</b
+              >
+            </div>
+          </span>
+
+          <!---->
           <span class="badge bg-light text-dark">
             <i class="fas fa-download me-1"></i>{{ note.download_count }}
           </span>
@@ -256,6 +254,34 @@
     justify-content: center;
     font-size: 0.8rem;
   }
+  /**/
+  .upvote-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #9ca3af; /* gray */
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .upvote-section:hover .upvote-arrow {
+    color: #f59e0b; /* amber on hover */
+    transform: translateY(-2px);
+  }
+
+  .upvote-arrow {
+    font-size: 0.7rem;
+    color: #9ca3af;
+    transition: all 0.2s ease;
+  }
+
+  .upvote-count {
+    font-size: 0.7rem;
+    color: #374151;
+  }
+
+  /**/
 
   /**/
 
